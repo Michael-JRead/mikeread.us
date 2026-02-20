@@ -40,7 +40,7 @@ export const SITE_META = {
   shareTitle: "Michael Read | Information Security Manager | Security Engineer",
   shareDescription:
     "Marine Corps veteran with 9 years of cybersecurity experience across AWS, DoD programs, cloud security engineering, and risk-driven architecture.",
-  shareImageUrl: "https://www.mikeread.us/assets/og-preview-v1.png",
+  shareImageUrl: "https://www.mikeread.us/assets/og-preview-v2.png",
   shareImageAlt:
     "Michael Read cybersecurity portfolio preview with headshot and security engineering title.",
   fullName: "Michael Read",
