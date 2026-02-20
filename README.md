@@ -1,27 +1,28 @@
 # mike.read.us
 
-Modern React-based portfolio landing page for Mike Read, designed for GitHub hosting.
+GitHub Pages-compatible portfolio site for Mike Read.
 
-## What is included
+## Highlights
 
-- Hero section with a modern, gradient visual style
-- Resume snapshot section
-- Featured projects cards
-- Contact links section
+- Root `index.html` entry point (required for GitHub Pages)
+- Modern hero-style design
+- Resume snapshot, projects, and contact sections
+- No build step required (plain static hosting)
 
 ## Run locally
-
-Because this uses browser-hosted React/Babel scripts, you can serve it as static files:
 
 ```bash
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173`.
+Open `http://localhost:4173`.
 
-## Host on GitHub Pages
+## Deploy to GitHub Pages
 
-1. Push this repo to GitHub.
-2. Open **Settings → Pages**.
-3. Set source to deploy from the default branch root.
-4. Your site will be available at your configured Pages/custom domain.
+1. Push this repository to GitHub.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, choose **Deploy from a branch**.
+4. Select your branch (for example `main`) and folder `/ (root)`.
+5. Save. GitHub will publish the site from `index.html`.
+
+If you use the custom domain `mike.read.us`, add it in the Pages settings and point DNS records to GitHub Pages.

@@ -5,17 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Portfolio site for Mike Read featuring experience, projects, and contact details."
+      content="Mike Read's portfolio: software engineer focused on Java and React with projects, resume highlights, and contact links."
     />
-    <title>Mike Read | Portfolio</title>
+    <title>Mike Read | Software Engineer</title>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
-    <div id="root"></div>
+    <header class="hero">
+      <nav class="top-nav">
+        <span class="brand">mike.read.us</span>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
 
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script type="text/babel" data-presets="react" src="./src/app.jsx"></script>
+      <div class="hero-content">
+        <p class="eyebrow">Software Engineer · Java + React</p>
+        <h1>Hi, I'm Mike Read.</h1>
+        <p class="lead">
+          I build reliable backend services in Java and polished front-end experiences in React.
+          This site is my professional home for resume highlights, selected projects, and contact info.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn btn-primary">View Projects</a>
+          <a href="#resume" class="btn btn-secondary">Resume Snapshot</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="resume" class="panel">
+        <h2>Resume Snapshot</h2>
+        <p>
+          Full-stack engineer with a focus on scalable Java services and modern React UIs.
+          I enjoy delivering maintainable systems, leading collaborative teams, and shipping measurable business outcomes.
+        </p>
+        <ul class="skill-grid">
+          <li>Java / Spring Boot</li>
+          <li>React / Front-End Architecture</li>
+          <li>REST API Design</li>
+          <li>Cloud & CI/CD</li>
+          <li>System Design</li>
+          <li>Technical Leadership</li>
+        </ul>
+      </section>
+
+      <section id="projects" class="panel">
+        <h2>Featured Projects</h2>
+        <div class="project-grid">
+          <article class="project-card">
+            <h3>Production Analytics Dashboard</h3>
+            <p>
+              Role-based KPI reporting with near-real-time telemetry, anomaly alerts, and executive-ready drilldowns.
+            </p>
+            <span>React, Java Spring Boot, PostgreSQL</span>
+          </article>
+
+          <article class="project-card">
+            <h3>Developer Self-Service Platform</h3>
+            <p>
+              Internal tooling that automated environment provisioning and release approvals to reduce delivery friction.
+            </p>
+            <span>Java, Spring Cloud, Docker, GitHub Actions</span>
+          </article>
+
+          <article class="project-card">
+            <h3>Customer Experience Redesign</h3>
+            <p>
+              Conversion-focused UX refresh with a reusable component system and improved accessibility baseline.
+            </p>
+            <span>React, Design System, Cypress</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="panel panel-contact">
+        <h2>Let's Connect</h2>
+        <p>If you're hiring or building something impactful, I'd love to connect.</p>
+        <div class="contact-links">
+          <a href="mailto:mike@example.com">mike@example.com</a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Mike Read</p>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

@@ -152,3 +152,9 @@ h2 {
 .contact-links a {
   color: #b5c3ff;
 }
+
+.site-footer {
+  padding: 0 1rem 2rem;
+  text-align: center;
+  color: #9fb0ff;
+}
