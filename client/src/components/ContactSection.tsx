@@ -1,6 +1,7 @@
 import { SITE_META } from "@/data/siteContent";
 import { Mail, Phone, MapPin, Linkedin, Github, Send } from "lucide-react";
 import { useState } from "react";
+import ScrambleText from "./ScrambleText";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -33,7 +34,11 @@ export default function ContactSection() {
         <div className="max-w-5xl mx-auto">
           {/* Section Header */}
           <div className="mb-16 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Let's Connect</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <ScrambleText trigger="mount" speed={0.05}>
+                Let's Connect
+              </ScrambleText>
+            </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto"></div>
             <p className="text-lg text-gray-600 mt-4">
               I'm always interested in discussing cybersecurity challenges, opportunities, and collaborations.

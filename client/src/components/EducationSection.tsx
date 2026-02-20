@@ -1,5 +1,6 @@
 import { EDUCATION } from "@/data/siteContent";
 import { BookOpen, Award } from "lucide-react";
+import ScrambleText from "./ScrambleText";
 
 export default function EducationSection() {
   return (
@@ -8,7 +9,11 @@ export default function EducationSection() {
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Education & Certifications</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <ScrambleText trigger="mount" speed={0.05}>
+                Education & Certifications
+              </ScrambleText>
+            </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
           </div>
 

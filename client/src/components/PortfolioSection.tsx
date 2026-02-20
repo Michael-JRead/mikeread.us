@@ -1,5 +1,6 @@
 import { PROJECTS } from "@/data/siteContent";
 import { Github, ExternalLink, Zap } from "lucide-react";
+import ScrambleText from "./ScrambleText";
 
 export default function PortfolioSection() {
   return (
@@ -8,7 +9,11 @@ export default function PortfolioSection() {
         <div className="max-w-5xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Featured Projects</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <ScrambleText trigger="mount" speed={0.05}>
+                Featured Projects
+              </ScrambleText>
+            </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
             <p className="text-lg text-gray-600 mt-4">Security-focused projects and tools designed to solve real-world challenges</p>
           </div>

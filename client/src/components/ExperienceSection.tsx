@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EXPERIENCES } from "@/data/siteContent";
 import { ChevronDown } from "lucide-react";
+import ScrambleText from "./ScrambleText";
 
 export default function ExperienceSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
@@ -11,7 +12,11 @@ export default function ExperienceSection() {
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Professional Experience</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <ScrambleText trigger="mount" speed={0.05}>
+                Professional Experience
+              </ScrambleText>
+            </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
             <p className="text-lg text-gray-600 mt-4">9 years of expertise in cybersecurity, cloud architecture, and security operations</p>
           </div>

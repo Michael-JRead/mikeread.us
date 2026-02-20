@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CERTIFICATIONS, CERTIFICATION_CATEGORIES } from "@/data/siteContent";
 import { Award, Filter } from "lucide-react";
+import ScrambleText from "./ScrambleText";
 
 export default function CertificationsSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -28,7 +29,11 @@ export default function CertificationsSection() {
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-4">
               <Award className="text-blue-600" size={32} />
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">Certifications</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                <ScrambleText trigger="mount" speed={0.05}>
+                  Certifications
+                </ScrambleText>
+              </h2>
             </div>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
             <p className="text-lg text-gray-600 mt-4">

@@ -1,4 +1,5 @@
-import { ABOUT_PARAGRAPHS, CORE_SKILLS } from "@/data/siteContent";
+import { ABOUT_PARAGRAPHS, CORE_SKILLS, APPROACH_ITEMS } from "@/data/siteContent";
+import ScrambleText from "./ScrambleText";
 
 export default function AboutSection() {
   return (
@@ -7,7 +8,11 @@ export default function AboutSection() {
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">About Me</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <ScrambleText trigger="mount" speed={0.05}>
+                About Me
+              </ScrambleText>
+            </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
           </div>
 
@@ -22,7 +27,11 @@ export default function AboutSection() {
 
           {/* Core Skills */}
           <div className="mt-16">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8">Core Competencies</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-8">
+              <ScrambleText trigger="hover" speed={0.06}>
+                Core Competencies
+              </ScrambleText>
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {CORE_SKILLS.map((skill, index) => (
                 <div
@@ -38,7 +47,11 @@ export default function AboutSection() {
 
           {/* Approach */}
           <div className="mt-16 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-blue-100">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">My Approach</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              <ScrambleText trigger="hover" speed={0.06}>
+                My Approach
+              </ScrambleText>
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
