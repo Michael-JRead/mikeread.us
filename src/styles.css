@@ -69,6 +69,39 @@ h1 {
   max-width: 640px;
 }
 
+.social-icon-row {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-top: 1.3rem;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: #e8edff;
+  border: 1px solid rgba(163, 180, 255, 0.5);
+  background: rgba(14, 22, 60, 0.7);
+  padding: 0.62rem 0.95rem;
+  border-radius: 999px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.icon-btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: #a8bbff;
+  box-shadow: 0 10px 24px rgba(8, 15, 44, 0.45);
+}
+
 .hero-photo-card {
   background: rgba(13, 20, 51, 0.65);
   border: 1px solid rgba(155, 171, 255, 0.26);
@@ -81,11 +114,14 @@ h1 {
   width: 100%;
   border-radius: 16px;
   display: block;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
 }
 
 .hero-cta {
   display: flex;
   gap: 0.8rem;
+  margin-top: 1.2rem;
   margin-top: 1.8rem;
   flex-wrap: wrap;
 }

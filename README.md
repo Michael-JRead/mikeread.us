@@ -7,6 +7,18 @@ GitHub Pages-compatible portfolio site for Mike Read.
 - Root `index.html` entry point (required for GitHub Pages)
 - Modern hero layout with profile photo panel
 - Resume-driven cybersecurity content (summary, experience highlights, certifications)
+- Clickable icon buttons for LinkedIn and GitHub repo
+- No build step required (plain static hosting)
+
+## Profile photo import
+
+Put your real profile image in `assets/` using one of these names (first match is auto-loaded):
+
+- `profile-photo.jpg` (recommended)
+- `profile-photo.jpeg`
+- `profile-photo.png`
+- `profile-photo.webp`
+- `profile-photo.svg`
 - Clickable LinkedIn and GitHub repo buttons
 - No build step required (plain static hosting)
 
