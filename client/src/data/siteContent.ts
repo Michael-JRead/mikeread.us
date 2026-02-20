@@ -37,16 +37,16 @@ export interface CertificationItem {
 
 export const SITE_META = {
   canonicalUrl: "https://www.mikeread.us/",
-  fullName: "Mike Read",
+  fullName: "Michael Read",
   initials: "MR",
-  role: "Cybersecurity Professional",
-  location: "United States",
-  availability: "Open to remote and hybrid opportunities",
-  email: "mike@mikeread.us",
+  role: "Information Security Manager | Security Engineer",
+  location: "Celina, TX",
+  availability: "Open to remote, hybrid, and cleared opportunities",
+  email: "public.michaelread@gmail.com",
   headline:
-    "Security engineering focused on resilient cloud and enterprise systems.",
+    "Marine Corps veteran with 9 years of cybersecurity and cloud security engineering experience.",
   summary:
-    "I design practical security programs that combine cloud hardening, incident response, and automation so teams can ship quickly without sacrificing defense.",
+    "I secure cloud deployments and sensitive data by aligning technical controls with business goals, leading cross-functional execution, and driving measurable risk reduction in regulated environments.",
   social: {
     github: "https://github.com/Michael-JRead/MichaelJRead",
     linkedin: "https://www.linkedin.com/in/michael-j-read99/",
@@ -66,144 +66,172 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export const HERO_STATS = [
-  { value: "Cloud", label: "AWS and Azure security controls" },
-  { value: "SOC", label: "Detection and incident response" },
-  { value: "Automation", label: "Python and IaC workflows" },
+  { value: "9 Years", label: "Cybersecurity and network engineering" },
+  { value: "AWS", label: "Cloud security architecture and compliance" },
+  { value: "Secret", label: "Active security clearance" },
 ];
 
 export const ABOUT_PARAGRAPHS = [
-  "I work across cloud and on-prem environments to reduce attack surface, improve visibility, and turn security requirements into repeatable engineering outcomes.",
-  "My approach balances architecture, tooling, and process. I care about measurable risk reduction, clear communication, and systems that remain usable for the teams that depend on them.",
-  "I continue to sharpen my skills through labs, offensive security practice, and active research into modern threat tradecraft.",
+  "I am a cybersecurity engineer with a background spanning AWS, DoD programs, and high-impact cloud modernization efforts. My focus is securing enterprise-scale systems without slowing delivery.",
+  "I have led security architecture, incident response, compliance hardening, and automation initiatives across organizations where reliability, audit readiness, and mission continuity are non-negotiable.",
+  "I work closely with technical and executive stakeholders to prioritize risk, align resources, and deliver outcomes with accountability.",
 ];
 
 export const CORE_SKILLS = [
-  "Cloud Security (AWS, Azure)",
-  "SIEM and Detection Engineering",
-  "Zero Trust Architecture",
-  "Identity and Access Management",
-  "Vulnerability Management",
-  "Incident Response",
-  "Security Automation",
-  "Risk and Compliance",
-  "Network Security",
+  "Cloud Security",
+  "Security Governance",
+  "Risk Management",
+  "Security Architecture",
+  "Security Assessment and Testing",
+  "Incident Management",
   "Threat Intelligence",
-  "Python and Bash",
-  "Infrastructure as Code",
+  "Identity and Access Management",
+  "Compliance Management",
+  "Business Continuity and DR",
+  "Python",
+  "LAN/WAN and Cloud Networking",
 ];
 
 export const EXPERIENCES: ExperienceItem[] = [
   {
-    role: "Security Engineer",
-    company: "Enterprise Technology Team",
-    period: "2024 - Present",
-    location: "Remote",
+    role: "Solutions Architect Security Specialist",
+    company: "Amazon Web Services",
+    period: "Dec 2024 - Jun 2025",
+    location: "Dallas, TX",
     summary:
-      "Built cloud-native guardrails and hardened IAM boundaries across production environments to improve preventive controls and reduce drift.",
+      "Designed and implemented secure, scalable AWS architectures for mission-critical environments with strict compliance and resiliency requirements.",
     highlights: [
-      "Shipped policy-as-code workflows for repeatable baseline enforcement.",
-      "Partnered with platform teams to standardize secure deployment patterns.",
-      "Reduced manual review time with automation and targeted telemetry.",
+      "Delivered AWS architectures aligned to NIST, ISO 27001, and DoD standards protecting 50M+ in digital assets.",
+      "Led security assessments with ACAS and AWS Config and remediated 95% of high-severity findings.",
+      "Integrated security controls into CI/CD workflows improving deployment efficiency by 20%.",
+      "Built CloudWatch, Lambda, and GuardDuty monitoring flows that reduced incident response time by 40%.",
     ],
-    tags: ["AWS", "Azure", "Terraform", "Python"],
+    tags: ["AWS", "CloudWatch", "Lambda", "GuardDuty", "ACAS", "NIST"],
   },
   {
-    role: "SOC Analyst II",
-    company: "Security Operations Center",
-    period: "2022 - 2024",
-    location: "On-site",
+    role: "Principal Cloud Security Engineer",
+    company: "Science Applications International Corporation",
+    period: "Dec 2023 - Dec 2024",
+    location: "Dallas, TX",
     summary:
-      "Led triage and investigation across high-volume alert pipelines, with focus on detection quality and faster containment playbooks.",
+      "Orchestrated secure cloud infrastructure design and optimization for USAF AFMS and broader DoD workloads.",
     highlights: [
-      "Improved signal-to-noise ratio through rule tuning and threat mapping.",
-      "Created incident response runbooks to shorten responder handoffs.",
-      "Supported post-incident reviews with practical remediation guidance.",
+      "Secured cloud infrastructure supporting 1M+ users with 99.5% uptime.",
+      "Drove STIG compliance and reduced risk by remediating 95% of high-severity vulnerabilities in six months.",
+      "Built AWS cost visibility tooling that saved 750K annually through tagging-based optimization.",
+      "Improved operational efficiency by 50% through containerized workloads and infrastructure automation.",
     ],
-    tags: ["Splunk", "KQL", "Incident Response", "MITRE ATT&CK"],
+    tags: ["AWS", "STIG", "DoD", "IaC", "Fargate", "ServiceNow"],
   },
   {
-    role: "Security Analyst",
-    company: "Infrastructure and Risk Team",
-    period: "2021 - 2022",
-    location: "Hybrid",
+    role: "Cloud Security Engineer",
+    company: "Amazon Web Services",
+    period: "May 2022 - Dec 2023",
+    location: "Dallas, TX",
     summary:
-      "Performed vulnerability assessments and supported remediation planning across web applications, endpoints, and network infrastructure.",
+      "Enforced AWS Acceptable Use Policy and led abuse mitigation, threat analysis, and secure architecture guidance for customer environments.",
     highlights: [
-      "Documented prioritized findings with risk-based remediation actions.",
-      "Coordinated with engineering owners to verify closure of key issues.",
-      "Expanded internal testing coverage for common misconfiguration paths.",
+      "Reduced abuse incidents by 30% while maintaining rapid handling across a high-volume case queue.",
+      "Handled roughly 200 cases weekly at 99% quality assurance and exceeded targets by 20%.",
+      "Improved fraud prevention by strengthening identity verification and reducing fraudulent activity by 15%.",
+      "Delivered architecture guidance and workshops that reduced customer infrastructure costs by 120K monthly.",
     ],
-    tags: ["Nessus", "Burp Suite", "Nmap", "Risk Assessment"],
+    tags: ["AUP", "Threat Analysis", "AWS", "IAM", "Security Operations"],
+  },
+  {
+    role: "Satellite Network Engineer",
+    company: "United States Marine Corps",
+    period: "Sep 2017 - May 2022",
+    location: "United States, Japan, South Korea",
+    summary:
+      "Integrated, assessed, and troubleshot secure multi-channel communications systems for classified and unclassified network operations.",
+    highlights: [
+      "Conducted 350+ infrastructure evaluations while maintaining a 94% approval rate.",
+      "Led 30 personnel and increased network security proficiency by 25% over two years.",
+      "Managed 12M equipment inventory with strict security and accountability controls.",
+      "Improved daily mission productivity by 30% through workflow optimization and standards.",
+    ],
+    tags: ["Network Security", "Communications", "Operations", "Leadership", "DoD"],
   },
 ];
 
 export const EDUCATION: EducationItem[] = [
   {
-    degree: "B.S. in Cybersecurity",
-    institution: "University Program in Information Security",
-    period: "2018 - 2022",
+    degree: "Master of Science, Information Security Engineering",
+    institution: "SANS Technology Institute",
+    period: "Expected May 2027",
     details: [
-      "Concentration in network defense, cryptography, and secure architecture.",
-      "Participated in collegiate cyber competitions and blue-team exercises.",
-      "Built practical labs for incident response and vulnerability analysis.",
+      "Graduate-level focus on applied information security engineering and defensive operations.",
     ],
+  },
+  {
+    degree: "Graduate Certificate, Penetration Testing and Ethical Hacking",
+    institution: "SANS Technology Institute",
+    period: "Mar 2025",
+    details: [
+      "Specialized training in offensive testing methods and adversarial security techniques.",
+    ],
+  },
+  {
+    degree: "Master of Science, Cybersecurity Technology",
+    institution: "University of Maryland",
+    period: "May 2023",
+    details: ["Graduated Summa Cum Laude."],
+  },
+  {
+    degree: "Bachelor of Science, Cybersecurity and Networking",
+    institution: "University of Maryland",
+    period: "Dec 2021",
+    details: ["Graduated Magna Cum Laude."],
   },
 ];
 
 export const PROJECTS: ProjectItem[] = [
   {
-    title: "Cloud Security Baseline Toolkit",
+    title: "AWS Security Architecture Reference Library",
     summary:
-      "A controls-first toolkit for validating account configuration against internal baselines and turning drift into actionable tasks.",
-    tags: ["Python", "AWS", "IaC", "Compliance"],
+      "Security-first architecture patterns for implementing IAM, KMS, network controls, and monitoring in regulated AWS environments.",
+    tags: ["AWS", "IAM", "KMS", "Compliance"],
     githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
   },
   {
-    title: "Detection Engineering Playbook",
+    title: "Cloud Compliance Automation Toolkit",
     summary:
-      "Versioned detection lifecycle templates for developing, testing, and deploying SIEM rules with measurable quality gates.",
-    tags: ["SIEM", "Detection", "ATT&CK", "CI/CD"],
+      "Automated checks and reporting templates for continuous control validation across cloud workloads.",
+    tags: ["Automation", "Compliance", "Security Engineering", "Python"],
     githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
   },
   {
-    title: "Zero Trust Lab Environment",
+    title: "Threat and Incident Response Playbooks",
     summary:
-      "Hands-on lab that models segmented access, identity-aware controls, and continuous verification in a practical learning environment.",
-    tags: ["Zero Trust", "Identity", "Networking", "Lab"],
+      "Operational playbooks for triage, escalation, and containment built to improve consistency and response speed.",
+    tags: ["Incident Response", "Threat Intel", "Operations", "Runbooks"],
     githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
   },
   {
-    title: "Threat Intel Triage Dashboard",
+    title: "Infrastructure Hardening Baselines",
     summary:
-      "Dashboard workflow for correlating external indicators with internal telemetry to speed analyst prioritization.",
-    tags: ["Threat Intel", "Dashboards", "Automation", "SOC"],
+      "Baseline hardening controls and implementation guidance aligned with STIG and cloud best practices.",
+    tags: ["STIG", "Hardening", "Cloud", "Security Baselines"],
     githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
   },
 ];
 
 export const CERTIFICATIONS: CertificationItem[] = [
-  {
-    name: "CompTIA Security+",
-    issuer: "CompTIA",
-    year: "2021",
-    status: "Active",
-  },
-  {
-    name: "CompTIA CySA+",
-    issuer: "CompTIA",
-    year: "2022",
-    status: "Active",
-  },
-  {
-    name: "AWS Certified Security - Specialty",
-    issuer: "Amazon Web Services",
-    year: "2023",
-    status: "Active",
-  },
-  {
-    name: "Certified Ethical Hacker",
-    issuer: "EC-Council",
-    year: "2022",
-    status: "Active",
-  },
+  { name: "Certified Information Security Manager (CISM)", issuer: "ISACA", year: "Active", status: "Active" },
+  { name: "Certified Information Systems Security Professional (CISSP)", issuer: "ISC2", year: "Active", status: "Active" },
+  { name: "Certified Cloud Security Professional (CCSP)", issuer: "ISC2", year: "Active", status: "Active" },
+  { name: "GIAC Certified Incident Handler (GCIH)", issuer: "SANS", year: "Active", status: "Active" },
+  { name: "GIAC Penetration Tester (GPEN)", issuer: "SANS", year: "Active", status: "Active" },
+  { name: "GIAC Cloud Penetration Tester (GCPN)", issuer: "SANS", year: "Active", status: "Active" },
+  { name: "GIAC Web Application Penetration Tester (GWAPT)", issuer: "SANS", year: "Active", status: "Active" },
+  { name: "GIAC Security Essentials (GSEC)", issuer: "SANS", year: "Active", status: "Active" },
+  { name: "AWS Certified Solutions Architect - Professional", issuer: "AWS", year: "Active", status: "Active" },
+  { name: "AWS Advanced Networking - Specialty", issuer: "AWS", year: "Active", status: "Active" },
+  { name: "AWS Security - Specialty", issuer: "AWS", year: "Active", status: "Active" },
+  { name: "CompTIA CASP+", issuer: "CompTIA", year: "Active", status: "Active" },
+  { name: "CompTIA CySA+", issuer: "CompTIA", year: "Active", status: "Active" },
+  { name: "CompTIA Security+", issuer: "CompTIA", year: "Active", status: "Active" },
+  { name: "CompTIA Network+", issuer: "CompTIA", year: "Active", status: "Active" },
+  { name: "CompTIA Linux+", issuer: "CompTIA", year: "Active", status: "Active" },
 ];
