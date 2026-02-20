@@ -22,21 +22,21 @@ export default function CertificationsSection() {
   );
 
   return (
-    <section id="certifications" className="py-20 bg-white">
+    <section id="certifications" className="py-20 relative">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-4">
-              <Award className="text-blue-600" size={32} />
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                <ScrambleText trigger="mount" speed={0.05}>
+              <Award className="text-cyan-400" size={32} />
+              <h2 className="text-4xl md:text-5xl font-bold text-white">
+                <ScrambleText trigger="mount" speed={0.03}>
                   Certifications
                 </ScrambleText>
               </h2>
             </div>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
-            <p className="text-lg text-gray-600 mt-4">
+            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            <p className="text-lg text-gray-400 mt-4">
               15+ active industry certifications demonstrating expertise across cloud security, penetration testing, compliance, and security management.
             </p>
           </div>
@@ -44,16 +44,16 @@ export default function CertificationsSection() {
           {/* Filter Buttons */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <Filter size={20} className="text-gray-600" />
-              <span className="text-gray-700 font-semibold">Filter by Category:</span>
+              <Filter size={20} className="text-cyan-400" />
+              <span className="text-gray-300 font-semibold">Filter by Category:</span>
             </div>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   selectedCategory === null
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-500 border-opacity-60"
+                    : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-cyan-500 border-opacity-20 hover:border-opacity-40"
                 }`}
               >
                 All ({CERTIFICATIONS.length})
@@ -64,8 +64,8 @@ export default function CertificationsSection() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     selectedCategory === category
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-500 border-opacity-60"
+                      : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-cyan-500 border-opacity-20 hover:border-opacity-40"
                   }`}
                 >
                   {category} ({certsByCategory[category].length})
@@ -81,31 +81,31 @@ export default function CertificationsSection() {
               return (
                 <div
                   key={index}
-                  className="group p-6 bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-lg hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                  className="group p-6 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all duration-300 backdrop-blur-sm"
                 >
                   {/* Badge */}
                   {categoryInfo && (
-                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${categoryInfo.color}`}>
+                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 bg-cyan-500 bg-opacity-20 text-cyan-300 border border-cyan-500 border-opacity-40">
                       {cert.category}
                     </div>
                   )}
 
                   {/* Content */}
-                  <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="font-bold text-white text-sm leading-tight mb-2 group-hover:text-cyan-300 transition-colors">
                     {cert.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-3">{cert.issuer}</p>
+                  <p className="text-gray-400 text-sm mb-3">{cert.issuer}</p>
 
                   {/* Status Badge */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-gray-600">{cert.year}</span>
+                    <span className="text-xs font-semibold text-gray-500">{cert.year}</span>
                     <span
                       className={`px-2 py-1 rounded text-xs font-bold ${
                         cert.status === "Active"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-500 bg-opacity-20 text-green-300 border border-green-500 border-opacity-40"
                           : cert.status === "In Progress"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-gray-100 text-gray-700"
+                            ? "bg-yellow-500 bg-opacity-20 text-yellow-300 border border-yellow-500 border-opacity-40"
+                            : "bg-slate-700 text-gray-400 border border-slate-600"
                       }`}
                     >
                       {cert.status}
@@ -118,17 +118,17 @@ export default function CertificationsSection() {
 
           {/* Summary Stats */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-lg">
-              <div className="text-4xl font-bold mb-2">{CERTIFICATIONS.length}</div>
-              <div className="text-blue-100">Active Certifications</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-cyan-300">{CERTIFICATIONS.length}</div>
+              <div className="text-gray-400">Active Certifications</div>
             </div>
-            <div className="p-6 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-lg">
-              <div className="text-4xl font-bold mb-2">{Object.keys(certsByCategory).length}</div>
-              <div className="text-purple-100">Certification Categories</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-cyan-300">{Object.keys(certsByCategory).length}</div>
+              <div className="text-gray-400">Certification Categories</div>
             </div>
-            <div className="p-6 bg-gradient-to-br from-cyan-600 to-cyan-700 text-white rounded-lg">
-              <div className="text-4xl font-bold mb-2">100%</div>
-              <div className="text-cyan-100">Current & Maintained</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-cyan-300">100%</div>
+              <div className="text-gray-400">Current & Maintained</div>
             </div>
           </div>
         </div>

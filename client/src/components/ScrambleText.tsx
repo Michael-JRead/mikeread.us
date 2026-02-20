@@ -10,15 +10,17 @@ interface ScrambleTextProps {
 }
 
 /**
- * ScrambleText Component
+ * ScrambleText Component - Cyclic Animation
  * 
- * Creates an algorithm-style text scrambling animation effect.
- * Characters randomly change before settling on the final text.
+ * Creates an algorithm-style text scrambling animation with cyclic behavior:
+ * - 1.5 seconds: Active character scrambling
+ * - 5 seconds: Hold steady (display final text)
+ * - Repeat infinitely
  * 
- * Design Philosophy: Cybersecurity-themed with tech aesthetic
- * - Uses alphanumeric + tech symbols for authentic hacker feel
- * - Smooth animation that feels purposeful, not chaotic
- * - Optimized for performance with proper cleanup
+ * Design Philosophy: Cybersecurity threat defender aesthetic
+ * - Conveys active monitoring and continuous threat detection
+ * - Character set includes tech symbols for authenticity
+ * - Smooth animation that feels purposeful and professional
  */
 export default function ScrambleText({
   children,
@@ -31,6 +33,7 @@ export default function ScrambleText({
   const [displayText, setDisplayText] = useState(children);
   const [isScrambling, setIsScrambling] = useState(trigger === "mount" || trigger === "always");
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const cycleIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get random character from character set
   const getRandomChar = () => {
@@ -43,25 +46,27 @@ export default function ScrambleText({
     timeoutsRef.current = [];
   };
 
-  // Scramble animation logic
-  useEffect(() => {
-    if (!isScrambling) {
-      setDisplayText(children);
-      return;
+  // Clear cycle interval
+  const clearCycleInterval = () => {
+    if (cycleIntervalRef.current) {
+      clearInterval(cycleIntervalRef.current);
+      cycleIntervalRef.current = null;
     }
+  };
 
+  // Perform a single scramble animation
+  const performScrambleAnimation = () => {
     clearAllTimeouts();
     const textArray = children.split("");
-    const scrambleDuration = speed * 1000; // Convert to milliseconds
+    const scrambleDuration = 1500; // 1.5 seconds for scrambling phase
+    const scrambleCount = 8 + Math.floor(Math.random() * 4);
+    const scrambleInterval = scrambleDuration / scrambleCount;
 
     // Animate each character with staggered timing
     textArray.forEach((char, index) => {
       if (char === " ") return; // Skip spaces
 
       // Scramble phase: randomly change character multiple times
-      const scrambleCount = 8 + Math.floor(Math.random() * 4);
-      const scrambleInterval = scrambleDuration / scrambleCount;
-
       for (let i = 0; i < scrambleCount; i++) {
         const timeout = setTimeout(() => {
           setDisplayText((prev) => {
@@ -69,7 +74,7 @@ export default function ScrambleText({
             arr[index] = getRandomChar();
             return arr.join("");
           });
-        }, index * scrambleDuration + i * scrambleInterval);
+        }, index * 50 + i * scrambleInterval);
 
         timeoutsRef.current.push(timeout);
       }
@@ -81,38 +86,49 @@ export default function ScrambleText({
           arr[index] = char;
           return arr.join("");
         });
-      }, index * scrambleDuration + scrambleDuration);
+      }, index * 50 + scrambleDuration);
 
       timeoutsRef.current.push(revealTimeout);
     });
+  };
 
-    // Cleanup and call completion callback
-    const finalTimeout = setTimeout(() => {
-      if (onAnimationComplete) {
-        onAnimationComplete();
-      }
-      if (trigger !== "always") {
-        setIsScrambling(false);
-      }
-    }, textArray.length * scrambleDuration + scrambleDuration + 200);
+  // Setup cyclic animation
+  useEffect(() => {
+    if (trigger === "always" || (trigger === "mount" && isScrambling)) {
+      // Perform initial scramble
+      performScrambleAnimation();
 
-    timeoutsRef.current.push(finalTimeout);
+      // Setup cycle: 1.5s scramble + 5s hold = 6.5s total cycle
+      cycleIntervalRef.current = setInterval(() => {
+        performScrambleAnimation();
+      }, 6500); // 1.5s scramble + 5s hold
 
-    return () => {
-      clearAllTimeouts();
-    };
-  }, [isScrambling, children, speed, characterSet, trigger, onAnimationComplete]);
+      return () => {
+        clearAllTimeouts();
+        clearCycleInterval();
+      };
+    }
+  }, [trigger, isScrambling, children, characterSet]);
 
-  // Handle trigger modes
+  // Handle trigger modes for hover
   const handleHover = () => {
     if (trigger === "hover" && !isScrambling) {
       setIsScrambling(true);
+      performScrambleAnimation();
+
+      // Start cycle for hover trigger
+      cycleIntervalRef.current = setInterval(() => {
+        performScrambleAnimation();
+      }, 6500);
     }
   };
 
   const handleHoverEnd = () => {
     if (trigger === "hover") {
       setIsScrambling(false);
+      setDisplayText(children);
+      clearAllTimeouts();
+      clearCycleInterval();
     }
   };
 

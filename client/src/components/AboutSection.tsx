@@ -3,23 +3,23 @@ import ScrambleText from "./ScrambleText";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-20 bg-white">
+    <section id="about" className="py-20 relative">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              <ScrambleText trigger="mount" speed={0.05}>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <ScrambleText trigger="mount" speed={0.03}>
                 About Me
               </ScrambleText>
             </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
           </div>
 
           {/* About Content */}
           <div className="space-y-6 mb-12">
             {ABOUT_PARAGRAPHS.map((paragraph, index) => (
-              <p key={index} className="text-lg text-gray-700 leading-relaxed">
+              <p key={index} className="text-lg text-gray-300 leading-relaxed">
                 {paragraph}
               </p>
             ))}
@@ -27,8 +27,8 @@ export default function AboutSection() {
 
           {/* Core Skills */}
           <div className="mt-16">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8">
-              <ScrambleText trigger="hover" speed={0.06}>
+            <h3 className="text-2xl font-bold text-white mb-8">
+              <ScrambleText trigger="mount" speed={0.03}>
                 Core Competencies
               </ScrambleText>
             </h3>
@@ -36,52 +36,52 @@ export default function AboutSection() {
               {CORE_SKILLS.map((skill, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors"
+                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-cyan-500 border-opacity-30 hover:border-opacity-60 hover:bg-slate-800 transition-all duration-300 group"
                 >
-                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                  <span className="text-gray-800 font-medium">{skill}</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full group-hover:shadow-lg group-hover:shadow-cyan-400/50 transition-all"></div>
+                  <span className="text-gray-200 font-medium group-hover:text-cyan-300 transition-colors">{skill}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Approach */}
-          <div className="mt-16 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-blue-100">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              <ScrambleText trigger="hover" speed={0.06}>
+          <div className="mt-16 p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-cyan-500 border-opacity-20 hover:border-opacity-40 transition-all duration-300 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold text-white mb-6">
+              <ScrambleText trigger="mount" speed={0.03}>
                 My Approach
               </ScrambleText>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">→</span> Strategic Thinking
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">→</span> Strategic Thinking
                 </h4>
-                <p className="text-gray-700">
+                <p className="text-gray-400">
                   I align security initiatives with business objectives, ensuring that security investments drive measurable value while reducing risk.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">→</span> Technical Depth
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">→</span> Technical Depth
                 </h4>
-                <p className="text-gray-700">
+                <p className="text-gray-400">
                   I combine hands-on technical expertise with architectural thinking to design solutions that are both secure and scalable.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">→</span> Operational Excellence
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">→</span> Operational Excellence
                 </h4>
-                <p className="text-gray-700">
+                <p className="text-gray-400">
                   I build processes and automation that enable teams to operate securely at scale without sacrificing speed or agility.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">→</span> Leadership & Collaboration
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <span className="text-cyan-400">→</span> Leadership & Collaboration
                 </h4>
-                <p className="text-gray-700">
+                <p className="text-gray-400">
                   I work effectively across technical and executive teams, translating complex security concepts into actionable strategies.
                 </p>
               </div>
