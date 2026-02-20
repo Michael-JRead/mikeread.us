@@ -122,6 +122,7 @@ h1 {
   display: flex;
   gap: 0.8rem;
   margin-top: 1.2rem;
+  margin-top: 1.8rem;
   flex-wrap: wrap;
 }
 
@@ -130,6 +131,16 @@ h1 {
   border-radius: 999px;
   text-decoration: none;
   font-weight: 600;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #5d79ff 0%, #8e62ff 100%);
+  color: #fff;
+}
+
+.btn-secondary {
+  border: 1px solid #7f8dd4;
+  color: #d8dffd;
 }
 
 .btn-ghost {

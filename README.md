@@ -19,6 +19,13 @@ Put your real profile image in `assets/` using one of these names (first match i
 - `profile-photo.png`
 - `profile-photo.webp`
 - `profile-photo.svg`
+- Clickable LinkedIn and GitHub repo buttons
+- No build step required (plain static hosting)
+
+## Profile photo
+
+- The page currently references `assets/profile-photo.svg`.
+- Replace that file with your real headshot (same filename) to use your exact profile picture.
 
 ## Run locally
 
