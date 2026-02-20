@@ -1,7 +1,6 @@
 import { SITE_META } from "@/data/siteContent";
 import { Mail, Phone, MapPin, Linkedin, Github, Send } from "lucide-react";
 import { useState } from "react";
-import ScrambleText from "./ScrambleText";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -35,11 +34,9 @@ export default function ContactSection() {
           {/* Section Header */}
           <div className="mb-16 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              <ScrambleText trigger="mount" speed={0.03}>
-                Let's Connect
-              </ScrambleText>
+              Let's Connect
             </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full mx-auto"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full mx-auto"></div>
             <p className="text-lg text-gray-400 mt-4">
               I'm always interested in discussing cybersecurity challenges, opportunities, and collaborations.
             </p>
@@ -47,25 +44,25 @@ export default function ContactSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {/* Contact Info Cards */}
-            <div className="p-6 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
+            <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-cyan-500 bg-opacity-20 rounded-lg border border-cyan-500 border-opacity-40">
-                  <Mail className="text-cyan-400" size={24} />
+                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
+                  <Mail className="text-red-500" size={24} />
                 </div>
                 <h3 className="font-bold text-white">Email</h3>
               </div>
               <a
                 href={`mailto:${SITE_META.email}`}
-                className="text-cyan-300 hover:text-cyan-200 font-medium break-all transition-colors"
+                className="text-red-400 hover:text-red-300 font-medium break-all transition-colors"
               >
                 {SITE_META.email}
               </a>
             </div>
 
-            <div className="p-6 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
+            <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-cyan-500 bg-opacity-20 rounded-lg border border-cyan-500 border-opacity-40">
-                  <MapPin className="text-cyan-400" size={24} />
+                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
+                  <MapPin className="text-red-500" size={24} />
                 </div>
                 <h3 className="font-bold text-white">Location</h3>
               </div>
@@ -73,10 +70,10 @@ export default function ContactSection() {
               <p className="text-gray-400 text-sm mt-1">{SITE_META.availability}</p>
             </div>
 
-            <div className="p-6 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
+            <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-cyan-500 bg-opacity-20 rounded-lg border border-cyan-500 border-opacity-40">
-                  <Linkedin className="text-cyan-400" size={24} />
+                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
+                  <Linkedin className="text-red-500" size={24} />
                 </div>
                 <h3 className="font-bold text-white">Social</h3>
               </div>
@@ -85,7 +82,7 @@ export default function ContactSection() {
                   href={SITE_META.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-200 font-medium transition-colors"
+                  className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 font-medium transition-colors"
                 >
                   <Linkedin size={18} />
                   LinkedIn
@@ -94,7 +91,7 @@ export default function ContactSection() {
                   href={SITE_META.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-200 font-medium transition-colors"
+                  className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 font-medium transition-colors"
                 >
                   <Github size={18} />
                   GitHub
@@ -104,7 +101,7 @@ export default function ContactSection() {
           </div>
 
           {/* Contact Form */}
-          <div className="max-w-2xl mx-auto p-8 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg backdrop-blur-sm hover:border-opacity-60 transition-all">
+          <div className="max-w-2xl mx-auto p-8 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg backdrop-blur-sm hover:border-opacity-60 transition-all">
             <h3 className="text-2xl font-bold text-white mb-6">Send me a message</h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,7 +117,7 @@ export default function ContactSection() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-slate-800 border border-cyan-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 bg-slate-800 border border-red-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     placeholder="Your name"
                   />
                 </div>
@@ -135,7 +132,7 @@ export default function ContactSection() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-slate-800 border border-cyan-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 bg-slate-800 border border-red-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -152,7 +149,7 @@ export default function ContactSection() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-slate-800 border border-cyan-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2 bg-slate-800 border border-red-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="What is this about?"
                 />
               </div>
@@ -168,14 +165,14 @@ export default function ContactSection() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full px-4 py-2 bg-slate-800 border border-cyan-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-2 bg-slate-800 border border-red-500 border-opacity-30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"
                   placeholder="Your message here..."
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-cyan-500 bg-opacity-20 text-cyan-300 rounded-lg hover:bg-opacity-40 transition-all font-semibold flex items-center justify-center gap-2 border border-cyan-500 border-opacity-40 hover:border-opacity-60"
+                className="w-full px-6 py-3 bg-red-500 bg-opacity-20 text-red-400 rounded-lg hover:bg-opacity-40 transition-all font-semibold flex items-center justify-center gap-2 border border-red-500 border-opacity-40 hover:border-opacity-60"
               >
                 <Send size={20} />
                 Send Message

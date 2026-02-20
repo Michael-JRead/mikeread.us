@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CERTIFICATIONS, CERTIFICATION_CATEGORIES } from "@/data/siteContent";
 import { Award, Filter } from "lucide-react";
-import ScrambleText from "./ScrambleText";
+
 
 export default function CertificationsSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -28,14 +28,12 @@ export default function CertificationsSection() {
           {/* Section Header */}
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-4">
-              <Award className="text-cyan-400" size={32} />
+              <Award className="text-red-500" size={32} />
               <h2 className="text-4xl md:text-5xl font-bold text-white">
-                <ScrambleText trigger="mount" speed={0.03}>
-                  Certifications
-                </ScrambleText>
+                Certifications
               </h2>
             </div>
-            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
             <p className="text-lg text-gray-400 mt-4">
               15+ active industry certifications demonstrating expertise across cloud security, penetration testing, compliance, and security management.
             </p>
@@ -44,7 +42,7 @@ export default function CertificationsSection() {
           {/* Filter Buttons */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <Filter size={20} className="text-cyan-400" />
+              <Filter size={20} className="text-red-500" />
               <span className="text-gray-300 font-semibold">Filter by Category:</span>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -52,8 +50,8 @@ export default function CertificationsSection() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   selectedCategory === null
-                    ? "bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-500 border-opacity-60"
-                    : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-cyan-500 border-opacity-20 hover:border-opacity-40"
+                    ? "bg-red-500 bg-opacity-30 text-red-400 border border-red-500 border-opacity-60"
+                    : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-red-500 border-opacity-20 hover:border-opacity-40"
                 }`}
               >
                 All ({CERTIFICATIONS.length})
@@ -64,8 +62,8 @@ export default function CertificationsSection() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     selectedCategory === category
-                      ? "bg-cyan-500 bg-opacity-30 text-cyan-300 border border-cyan-500 border-opacity-60"
-                      : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-cyan-500 border-opacity-20 hover:border-opacity-40"
+                      ? "bg-red-500 bg-opacity-30 text-red-400 border border-red-500 border-opacity-60"
+                      : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-red-500 border-opacity-20 hover:border-opacity-40"
                   }`}
                 >
                   {category} ({certsByCategory[category].length})
@@ -81,17 +79,17 @@ export default function CertificationsSection() {
               return (
                 <div
                   key={index}
-                  className="group p-6 bg-slate-900 bg-opacity-40 border border-cyan-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all duration-300 backdrop-blur-sm"
+                  className="group p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all duration-300 backdrop-blur-sm"
                 >
                   {/* Badge */}
                   {categoryInfo && (
-                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 bg-cyan-500 bg-opacity-20 text-cyan-300 border border-cyan-500 border-opacity-40">
+                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 bg-red-500 bg-opacity-20 text-red-400 border border-red-500 border-opacity-40">
                       {cert.category}
                     </div>
                   )}
 
                   {/* Content */}
-                  <h3 className="font-bold text-white text-sm leading-tight mb-2 group-hover:text-cyan-300 transition-colors">
+                  <h3 className="font-bold text-white text-sm leading-tight mb-2 group-hover:text-red-400 transition-colors">
                     {cert.name}
                   </h3>
                   <p className="text-gray-400 text-sm mb-3">{cert.issuer}</p>
@@ -118,16 +116,16 @@ export default function CertificationsSection() {
 
           {/* Summary Stats */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-cyan-300">{CERTIFICATIONS.length}</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-red-400">{CERTIFICATIONS.length}</div>
               <div className="text-gray-400">Active Certifications</div>
             </div>
-            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-cyan-300">{Object.keys(certsByCategory).length}</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-red-400">{Object.keys(certsByCategory).length}</div>
               <div className="text-gray-400">Certification Categories</div>
             </div>
-            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-cyan-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-cyan-300">100%</div>
+            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
+              <div className="text-4xl font-bold mb-2 text-red-400">100%</div>
               <div className="text-gray-400">Current & Maintained</div>
             </div>
           </div>

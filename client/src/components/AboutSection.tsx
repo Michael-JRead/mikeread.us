@@ -1,5 +1,4 @@
 import { ABOUT_PARAGRAPHS, CORE_SKILLS, APPROACH_ITEMS } from "@/data/siteContent";
-import ScrambleText from "./ScrambleText";
 
 export default function AboutSection() {
   return (
@@ -9,11 +8,9 @@ export default function AboutSection() {
           {/* Section Header */}
           <div className="mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              <ScrambleText trigger="mount" speed={0.03}>
-                About Me
-              </ScrambleText>
+              About Me
             </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
           </div>
 
           {/* About Content */}
@@ -28,34 +25,30 @@ export default function AboutSection() {
           {/* Core Skills */}
           <div className="mt-16">
             <h3 className="text-2xl font-bold text-white mb-8">
-              <ScrambleText trigger="mount" speed={0.03}>
-                Core Competencies
-              </ScrambleText>
+              Core Competencies
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {CORE_SKILLS.map((skill, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-cyan-500 border-opacity-30 hover:border-opacity-60 hover:bg-slate-800 transition-all duration-300 group"
+                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-red-500 border-opacity-30 hover:border-opacity-60 hover:bg-slate-800 transition-all duration-300 group"
                 >
-                  <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full group-hover:shadow-lg group-hover:shadow-cyan-400/50 transition-all"></div>
-                  <span className="text-gray-200 font-medium group-hover:text-cyan-300 transition-colors">{skill}</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-red-700 rounded-full group-hover:shadow-lg group-hover:shadow-red-500/50 transition-all"></div>
+                  <span className="text-gray-200 font-medium group-hover:text-red-400 transition-colors">{skill}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Approach */}
-          <div className="mt-16 p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-cyan-500 border-opacity-20 hover:border-opacity-40 transition-all duration-300 backdrop-blur-sm">
+          <div className="mt-16 p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-red-500 border-opacity-20 hover:border-opacity-40 transition-all duration-300 backdrop-blur-sm">
             <h3 className="text-2xl font-bold text-white mb-6">
-              <ScrambleText trigger="mount" speed={0.03}>
-                My Approach
-              </ScrambleText>
+              My Approach
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">→</span> Strategic Thinking
+                  <span className="text-red-500">→</span> Strategic Thinking
                 </h4>
                 <p className="text-gray-400">
                   I align security initiatives with business objectives, ensuring that security investments drive measurable value while reducing risk.
@@ -63,7 +56,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">→</span> Technical Depth
+                  <span className="text-red-500">→</span> Technical Depth
                 </h4>
                 <p className="text-gray-400">
                   I combine hands-on technical expertise with architectural thinking to design solutions that are both secure and scalable.
@@ -71,7 +64,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">→</span> Operational Excellence
+                  <span className="text-red-500">→</span> Operational Excellence
                 </h4>
                 <p className="text-gray-400">
                   I build processes and automation that enable teams to operate securely at scale without sacrificing speed or agility.
@@ -79,7 +72,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-cyan-400">→</span> Leadership & Collaboration
+                  <span className="text-red-500">→</span> Leadership & Collaboration
                 </h4>
                 <p className="text-gray-400">
                   I work effectively across technical and executive teams, translating complex security concepts into actionable strategies.
