@@ -23,3 +23,15 @@ Validation script:
 ## Routing fallback
 
 - `scripts/postbuild-pages.mjs` copies `dist/public/index.html` to `dist/public/404.html` for SPA fallback handling on GitHub Pages.
+
+## Link preview QA checklist
+
+- Run `corepack pnpm check`
+- Run `corepack pnpm build:pages`
+- Confirm `dist/public/index.html` contains `og:*` and `twitter:*` tags
+- Confirm output assets exist:
+  - `dist/public/assets/og-preview-v1.png`
+  - `dist/public/icon-192.png`
+  - `dist/public/icon-512.png`
+  - `dist/public/apple-touch-icon.png`
+  - `dist/public/manifest.webmanifest`
