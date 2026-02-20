@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface ScrambleTextProps {
   children: string;
@@ -19,22 +18,29 @@ interface ScrambleTextProps {
  * Design Philosophy: Cybersecurity-themed with tech aesthetic
  * - Uses alphanumeric + tech symbols for authentic hacker feel
  * - Smooth animation that feels purposeful, not chaotic
- * - Performs well with Framer Motion's motion values
+ * - Optimized for performance with proper cleanup
  */
 export default function ScrambleText({
   children,
   className = "",
   trigger = "mount",
-  speed = 0.05,
-  characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*",
+  speed = 0.03,
+  characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*!",
   onAnimationComplete,
 }: ScrambleTextProps) {
   const [displayText, setDisplayText] = useState(children);
-  const [isScrambling, setIsScrambling] = useState(trigger === "always");
+  const [isScrambling, setIsScrambling] = useState(trigger === "mount" || trigger === "always");
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   // Get random character from character set
   const getRandomChar = () => {
     return characterSet[Math.floor(Math.random() * characterSet.length)];
+  };
+
+  // Clear all timeouts
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+    timeoutsRef.current = [];
   };
 
   // Scramble animation logic
@@ -44,15 +50,18 @@ export default function ScrambleText({
       return;
     }
 
-    let animationFrames: NodeJS.Timeout[] = [];
+    clearAllTimeouts();
     const textArray = children.split("");
+    const scrambleDuration = speed * 1000; // Convert to milliseconds
 
     // Animate each character with staggered timing
     textArray.forEach((char, index) => {
       if (char === " ") return; // Skip spaces
 
-      // Scramble phase: randomly change character
-      const scrambleCount = Math.floor(8 + Math.random() * 4);
+      // Scramble phase: randomly change character multiple times
+      const scrambleCount = 8 + Math.floor(Math.random() * 4);
+      const scrambleInterval = scrambleDuration / scrambleCount;
+
       for (let i = 0; i < scrambleCount; i++) {
         const timeout = setTimeout(() => {
           setDisplayText((prev) => {
@@ -60,9 +69,9 @@ export default function ScrambleText({
             arr[index] = getRandomChar();
             return arr.join("");
           });
-        }, (index * speed * 1000) / 2 + (i * speed * 1000) / scrambleCount);
+        }, index * scrambleDuration + i * scrambleInterval);
 
-        animationFrames.push(timeout);
+        timeoutsRef.current.push(timeout);
       }
 
       // Reveal phase: show final character
@@ -72,9 +81,9 @@ export default function ScrambleText({
           arr[index] = char;
           return arr.join("");
         });
-      }, (index * speed * 1000) / 2 + (scrambleCount * speed * 1000) / scrambleCount);
+      }, index * scrambleDuration + scrambleDuration);
 
-      animationFrames.push(revealTimeout);
+      timeoutsRef.current.push(revealTimeout);
     });
 
     // Cleanup and call completion callback
@@ -85,12 +94,12 @@ export default function ScrambleText({
       if (trigger !== "always") {
         setIsScrambling(false);
       }
-    }, children.length * speed * 1000 + 500);
+    }, textArray.length * scrambleDuration + scrambleDuration + 200);
 
-    animationFrames.push(finalTimeout);
+    timeoutsRef.current.push(finalTimeout);
 
     return () => {
-      animationFrames.forEach((timeout) => clearTimeout(timeout));
+      clearAllTimeouts();
     };
   }, [isScrambling, children, speed, characterSet, trigger, onAnimationComplete]);
 
@@ -108,15 +117,20 @@ export default function ScrambleText({
   };
 
   return (
-    <motion.span
+    <span
       className={className}
       onMouseEnter={handleHover}
       onMouseLeave={handleHoverEnd}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      style={{
+        display: "inline-block",
+        fontFamily: "inherit",
+        fontWeight: "inherit",
+        fontSize: "inherit",
+        lineHeight: "inherit",
+        letterSpacing: "inherit",
+      }}
     >
       {displayText}
-    </motion.span>
+    </span>
   );
 }
