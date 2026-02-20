@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Mike Read's portfolio: Information Security Manager and Security Engineer with expertise in cloud security, compliance, and cyber operations."
+    />
+    <title>Mike Read | Information Security Manager</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="top-nav">
+        <span class="brand">mike.read.us</span>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="hero-layout">
+        <div class="hero-content">
+          <p class="eyebrow">Information Security Manager · Security Engineer</p>
+          <h1>Hi, I'm Mike Read.</h1>
+          <p class="lead">
+            Marine Corps veteran and cybersecurity leader with 9+ years of experience securing cloud
+            environments, reducing operational risk, and delivering resilient security architectures.
+          </p>
+          <div class="hero-cta">
+            <a
+              href="https://github.com/Michael-JRead/MichaelJRead"
+              target="_blank"
+              rel="noreferrer"
+              class="btn btn-primary"
+              >GitHub Repo</a
+            >
+            <a
+              href="https://www.linkedin.com/in/michael-j-read99/"
+              target="_blank"
+              rel="noreferrer"
+              class="btn btn-secondary"
+              >LinkedIn</a
+            >
+            <a href="#experience" class="btn btn-ghost">View Experience</a>
+          </div>
+        </div>
+
+        <aside class="hero-photo-card" aria-label="Mike Read profile photo">
+          <img src="./assets/profile-photo.svg" alt="Mike Read professional headshot" class="hero-photo" />
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <section id="summary" class="panel">
+        <h2>Professional Summary</h2>
+        <p>
+          I lead security initiatives that align cloud architecture, compliance, and incident response
+          with business objectives. My work spans AWS security engineering, STIG/NIST/ISO-aligned governance,
+          and cross-functional enablement for teams operating in high-trust environments.
+        </p>
+        <ul class="skill-grid">
+          <li>Cloud Security (AWS)</li>
+          <li>Security Compliance (NIST, ISO 27001, DoD/STIG)</li>
+          <li>Identity & Access Management</li>
+          <li>Incident Response & Risk Reduction</li>
+          <li>Security Analytics</li>
+          <li>Training & Security Awareness</li>
+        </ul>
+      </section>
+
+      <section id="experience" class="panel">
+        <h2>Experience Highlights</h2>
+        <div class="experience-list">
+          <article>
+            <h3>Amazon Web Services · Solutions Architect Security Specialist</h3>
+            <p class="meta">Dec 2024 – Jun 2025</p>
+            <ul>
+              <li>Designed secure AWS architectures for mission-critical workloads and compliance-first operations.</li>
+              <li>Improved deployment efficiency by 20% through CI/CD security integration and automation.</li>
+              <li>Reduced high-severity vulnerability exposure via ACAS/AWS Config assessment programs.</li>
+            </ul>
+          </article>
+
+          <article>
+            <h3>SAIC · Principal Cloud Security Engineer</h3>
+            <p class="meta">Dec 2023 – Dec 2024</p>
+            <ul>
+              <li>Secured cloud systems supporting 1M+ users with 99.5% uptime and strong control coverage.</li>
+              <li>Led infrastructure hardening, patch discipline, and STIG-aligned remediation workflows.</li>
+              <li>Improved cost and operational resilience across cloud-hosted defense workloads.</li>
+            </ul>
+          </article>
+
+          <article>
+            <h3>United States Marine Corps · Satellite Network Engineer</h3>
+            <p class="meta">Sep 2017 – May 2022</p>
+            <ul>
+              <li>Led secure communications operations across U.S., Japan, and South Korea environments.</li>
+              <li>Managed high-value assets while improving security performance and team readiness.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="certs" class="panel">
+        <h2>Education & Certifications</h2>
+        <div class="cert-grid">
+          <p><strong>Education:</strong> M.S. Information Security Engineering (SANS, in progress), M.S. Cybersecurity Technology, B.S. Cybersecurity and Networking.</p>
+          <p><strong>Core Certifications:</strong> CISSP, CCSP, GCIH, GPEN, GCPN, GWAPT, GSEC, GSDA, CySA+, Security+, Network+, Linux+.</p>
+        </div>
+      </section>
+
+      <section id="contact" class="panel panel-contact">
+        <h2>Connect</h2>
+        <p>For roles and collaborations, connect through LinkedIn or review my GitHub work.</p>
+        <div class="contact-links">
+          <a href="mailto:public.michaelread@gmail.com">public.michaelread@gmail.com</a>
+          <a href="https://www.linkedin.com/in/michael-j-read99/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com/Michael-JRead/MichaelJRead" target="_blank" rel="noreferrer">GitHub Repo</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Mike Read</p>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
