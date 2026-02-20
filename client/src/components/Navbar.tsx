@@ -1,102 +1,81 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
 
-function scrollToHash(hash: string) {
-  if (hash === "#") {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  const target = document.querySelector(hash);
-  if (target) {
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}
-
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 18);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth > 900) {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+  const handleNavClick = () => {
+    setIsOpen(false);
+  };
 
   return (
-    <header className={`site-nav ${isScrolled ? "site-nav-scrolled" : ""}`}>
-      <div className="container nav-row">
-        <a
-          href="#"
-          className="brand-mark"
-          onClick={(event) => {
-            event.preventDefault();
-            scrollToHash("#");
-            setMenuOpen(false);
-          }}
-          aria-label="Back to top"
-        >
-          {SITE_META.initials}
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <a href="#" className="flex items-center gap-2 font-bold text-xl text-gray-900 hover:text-blue-600 transition-colors">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+            {SITE_META.initials}
+          </div>
+          <span className="hidden sm:inline">{SITE_META.fullName}</span>
         </a>
 
-        <nav className="desktop-nav" aria-label="Primary navigation">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="nav-item"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToHash(item.href);
-              }}
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm"
             >
               {item.label}
             </a>
           ))}
-        </nav>
+        </div>
 
+        {/* CTA Button */}
+        <div className="hidden md:flex items-center gap-4">
+          <a
+            href={`mailto:${SITE_META.email}`}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+          >
+            Get in Touch
+          </a>
+        </div>
+
+        {/* Mobile Menu Button */}
         <button
-          type="button"
-          className="mobile-nav-toggle"
-          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {menuOpen ? (
-        <nav className="mobile-nav" aria-label="Mobile navigation">
-          {NAV_ITEMS.map((item) => (
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={handleNavClick}
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors py-2"
+              >
+                {item.label}
+              </a>
+            ))}
             <a
-              key={item.href}
-              href={item.href}
-              className="mobile-nav-item"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToHash(item.href);
-                setMenuOpen(false);
-              }}
+              href={`mailto:${SITE_META.email}`}
+              onClick={handleNavClick}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
             >
-              {item.label}
+              Get in Touch
             </a>
-          ))}
-        </nav>
-      ) : null}
-    </header>
+          </div>
+        </div>
+      )}
+    </nav>
   );
 }

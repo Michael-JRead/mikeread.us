@@ -6,12 +6,13 @@ import EducationSection from "@/components/EducationSection";
 import PortfolioSection from "@/components/PortfolioSection";
 import CertificationsSection from "@/components/CertificationsSection";
 import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="site-shell">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <HeroSection />
         <AboutSection />
         <ExperienceSection />
@@ -20,6 +21,7 @@ export default function Home() {
         <CertificationsSection />
         <ContactSection />
       </main>
+      <Footer />
     </div>
   );
 }
