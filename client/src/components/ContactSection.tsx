@@ -1,5 +1,5 @@
 import { SITE_META } from "@/data/siteContent";
-import { Mail, Phone, MapPin, Linkedin, Github, Send } from "lucide-react";
+import { Mail, MapPin, Linkedin, Github, Send } from "lucide-react";
 import { useState } from "react";
 
 export default function ContactSection() {
@@ -46,8 +46,8 @@ export default function ContactSection() {
             {/* Contact Info Cards */}
             <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
-                  <Mail className="text-red-500" size={24} />
+                <div className="p-3 bg-gradient-to-br from-red-500/30 to-rose-500/20 rounded-xl border border-red-400/50 shadow-[0_0_20px_rgba(248,113,113,0.25)]">
+                  <Mail className="text-red-300" size={22} />
                 </div>
                 <h3 className="font-bold text-white">Email</h3>
               </div>
@@ -61,8 +61,8 @@ export default function ContactSection() {
 
             <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
-                  <MapPin className="text-red-500" size={24} />
+                <div className="p-3 bg-gradient-to-br from-red-500/30 to-orange-500/20 rounded-xl border border-red-400/50 shadow-[0_0_20px_rgba(248,113,113,0.25)]">
+                  <MapPin className="text-red-300" size={22} />
                 </div>
                 <h3 className="font-bold text-white">Location</h3>
               </div>
@@ -72,8 +72,8 @@ export default function ContactSection() {
 
             <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-40">
-                  <Linkedin className="text-red-500" size={24} />
+                <div className="p-3 bg-gradient-to-br from-red-500/30 to-fuchsia-500/20 rounded-xl border border-red-400/50 shadow-[0_0_20px_rgba(248,113,113,0.25)]">
+                  <Linkedin className="text-red-300" size={22} />
                 </div>
                 <h3 className="font-bold text-white">Social</h3>
               </div>
@@ -82,7 +82,7 @@ export default function ContactSection() {
                   href={SITE_META.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 font-medium transition-colors"
+                  className="inline-flex items-center gap-2 text-red-300 hover:text-red-200 font-medium transition-colors px-2 py-1 rounded-md bg-slate-800/60 border border-red-500/30"
                 >
                   <Linkedin size={18} />
                   LinkedIn
@@ -91,7 +91,7 @@ export default function ContactSection() {
                   href={SITE_META.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 font-medium transition-colors"
+                  className="inline-flex items-center gap-2 text-red-300 hover:text-red-200 font-medium transition-colors px-2 py-1 rounded-md bg-slate-800/60 border border-red-500/30"
                 >
                   <Github size={18} />
                   GitHub
@@ -172,7 +172,7 @@ export default function ContactSection() {
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-red-500 bg-opacity-20 text-red-400 rounded-lg hover:bg-opacity-40 transition-all font-semibold flex items-center justify-center gap-2 border border-red-500 border-opacity-40 hover:border-opacity-60"
+                className="w-full px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-400 transition-all font-semibold flex items-center justify-center gap-2 border border-red-300/60 shadow-[0_12px_24px_rgba(220,38,38,0.32)]"
               >
                 <Send size={20} />
                 Send Message

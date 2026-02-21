@@ -95,14 +95,13 @@ export default function CertificationsSection() {
                   <p className="text-gray-400 text-sm mb-3">{cert.issuer}</p>
 
                   {/* Status Badge */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-gray-500">{cert.year}</span>
+                  <div className="flex items-center justify-end">
                     <span
                       className={`px-2 py-1 rounded text-xs font-bold ${
                         cert.status === "Active"
-                          ? "bg-green-500 bg-opacity-20 text-green-300 border border-green-500 border-opacity-40"
+                          ? "bg-emerald-400 bg-opacity-20 text-emerald-100 border border-emerald-300 border-opacity-60 shadow-[0_0_14px_rgba(16,185,129,0.18)]"
                           : cert.status === "In Progress"
-                            ? "bg-yellow-500 bg-opacity-20 text-yellow-300 border border-yellow-500 border-opacity-40"
+                            ? "bg-amber-400 bg-opacity-20 text-amber-100 border border-amber-300 border-opacity-55"
                             : "bg-slate-700 text-gray-400 border border-slate-600"
                       }`}
                     >

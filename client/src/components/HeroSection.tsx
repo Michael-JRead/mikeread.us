@@ -8,21 +8,6 @@ export default function HeroSection() {
       id="hero"
       className="relative pt-20 pb-32 overflow-hidden w-full"
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-0 right-0 w-96 h-96 bg-red-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob"
-          style={{ animation: "blob 7s infinite" }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob"
-          style={{ animation: "blob 7s infinite 2s" }}
-        />
-        <div
-          className="absolute top-1/2 left-1/2 w-80 h-80 bg-orange-500 rounded-full mix-blend-screen filter blur-3xl opacity-5 animate-blob"
-          style={{ animation: "blob 7s infinite 4s" }}
-        />
-      </div>
-
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -125,23 +110,6 @@ export default function HeroSection() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          25% {
-            transform: translate(20px, -50px) scale(1.1);
-          }
-          50% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          75% {
-            transform: translate(50px, 50px) scale(1.05);
-          }
-        }
-      `}</style>
     </section>
   );
 }
