@@ -32,9 +32,9 @@ export default function ExperienceSection() {
                   className="w-full p-6 bg-slate-900 bg-opacity-40 hover:bg-opacity-60 transition-all duration-300 flex items-start justify-between gap-4 text-left"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-white">{experience.role}</h3>
-                      <span className="px-3 py-1 bg-red-500 bg-opacity-20 text-red-300 rounded-full text-sm font-semibold border border-red-500 border-opacity-40">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-white min-w-0">{experience.role}</h3>
+                      <span className="glass-readable-chip inline-flex px-3 py-1 rounded-full text-sm font-semibold max-w-full break-words">
                         {experience.company}
                       </span>
                     </div>

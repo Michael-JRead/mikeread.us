@@ -7,30 +7,18 @@ export default function HeroSection() {
     <section
       id="hero"
       className="relative pt-20 pb-32 overflow-hidden w-full"
-      style={{
-        backgroundColor: "#120607",
-        backgroundImage: `
-          linear-gradient(135deg, rgba(18, 6, 7, 0.98) 0%, rgba(33, 8, 11, 0.95) 50%, rgba(45, 11, 14, 0.92) 100%),
-          radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.14) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.12) 0%, transparent 50%)
-        `,
-        backgroundSize: "100% 100%, 100% 100%, 100% 100%",
-        backgroundAttachment: "fixed",
-        backgroundPosition: "0 0, 0 0, 0 0",
-        backgroundRepeat: "no-repeat",
-      }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
-          className="absolute top-0 right-0 w-96 h-96 bg-red-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"
+          className="absolute top-0 right-0 w-96 h-96 bg-red-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob"
           style={{ animation: "blob 7s infinite" }}
         />
         <div
-          className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob"
+          className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob"
           style={{ animation: "blob 7s infinite 2s" }}
         />
         <div
-          className="absolute top-1/2 left-1/2 w-80 h-80 bg-orange-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob"
+          className="absolute top-1/2 left-1/2 w-80 h-80 bg-orange-500 rounded-full mix-blend-screen filter blur-3xl opacity-5 animate-blob"
           style={{ animation: "blob 7s infinite 4s" }}
         />
       </div>
@@ -39,8 +27,8 @@ export default function HeroSection() {
         className="absolute inset-0 opacity-5"
         style={{
           backgroundImage: `
-            linear-gradient(0deg, transparent 24%, rgba(239, 68, 68, 0.06) 25%, rgba(239, 68, 68, 0.06) 26%, transparent 27%, transparent 74%, rgba(239, 68, 68, 0.06) 75%, rgba(239, 68, 68, 0.06) 76%, transparent 77%, transparent),
-            linear-gradient(90deg, transparent 24%, rgba(239, 68, 68, 0.06) 25%, rgba(239, 68, 68, 0.06) 26%, transparent 27%, transparent 74%, rgba(239, 68, 68, 0.06) 75%, rgba(239, 68, 68, 0.06) 76%, transparent 77%, transparent)
+            linear-gradient(0deg, transparent 24%, rgba(248, 113, 113, 0.04) 25%, rgba(248, 113, 113, 0.04) 26%, transparent 27%, transparent 74%, rgba(248, 113, 113, 0.04) 75%, rgba(248, 113, 113, 0.04) 76%, transparent 77%, transparent),
+            linear-gradient(90deg, transparent 24%, rgba(248, 113, 113, 0.04) 25%, rgba(248, 113, 113, 0.04) 26%, transparent 27%, transparent 74%, rgba(248, 113, 113, 0.04) 75%, rgba(248, 113, 113, 0.04) 76%, transparent 77%, transparent)
           `,
           backgroundSize: "50px 50px",
         }}

@@ -41,7 +41,7 @@ export default function EducationSection() {
                     <ul className="mt-4 space-y-2">
                       {edu.details.map((detail, dIndex) => (
                         <li key={dIndex} className="flex gap-2 text-gray-300 text-sm">
-                          <span className="text-red-500 font-bold">•</span>
+                          <span className="text-red-500 font-bold">-</span>
                           <span>{detail}</span>
                         </li>
                       ))}
@@ -63,9 +63,9 @@ export default function EducationSection() {
             </p>
             <a
               href="#certifications"
-              className="inline-block px-6 py-2 bg-red-500 bg-opacity-20 text-red-400 rounded-lg font-semibold hover:bg-opacity-40 transition-all duration-300 border border-red-500 border-opacity-40 hover:border-opacity-60"
+              className="glass-readable-button inline-block px-6 py-2 rounded-lg font-semibold hover:bg-red-500 transition-all duration-300"
             >
-              View All Certifications →
+              View All Certifications {"->"}
             </a>
           </div>
         </div>
@@ -73,3 +73,4 @@ export default function EducationSection() {
     </section>
   );
 }
+

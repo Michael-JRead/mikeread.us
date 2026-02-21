@@ -43,9 +43,9 @@ export default function PortfolioSection() {
 
                   {/* Impact */}
                   {project.impact && (
-                    <div className="mb-4 p-3 bg-red-500 bg-opacity-10 border border-red-500 border-opacity-40 rounded-lg flex gap-2">
+                    <div className="glass-readable-panel mb-4 p-3 rounded-lg flex gap-2">
                       <Zap size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-400">{project.impact}</p>
+                      <p className="text-sm text-red-100">{project.impact}</p>
                     </div>
                   )}
 
@@ -92,7 +92,7 @@ export default function PortfolioSection() {
           </div>
 
           {/* CTA */}
-          <div className="mt-16 p-8 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 text-center backdrop-blur-sm">
+          <div className="mt-16 p-8 bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-red-400 border-opacity-50 hover:border-opacity-70 transition-all duration-300 text-center backdrop-blur-sm">
             <h3 className="text-2xl font-bold text-white mb-4">Want to see more?</h3>
             <p className="text-gray-400 mb-6">
               Explore my GitHub repository for additional security tools, automation scripts, and reference implementations.
@@ -101,7 +101,7 @@ export default function PortfolioSection() {
               href="https://github.com/Michael-JRead/MichaelJRead"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-red-500 bg-opacity-20 text-red-400 rounded-lg hover:bg-opacity-40 transition-all font-semibold border border-red-500 border-opacity-40 hover:border-opacity-60"
+              className="glass-readable-button inline-flex items-center gap-2 px-8 py-3 rounded-lg transition-all font-semibold hover:bg-red-500"
             >
               <Github size={20} />
               Visit GitHub Profile

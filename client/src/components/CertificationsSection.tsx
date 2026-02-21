@@ -50,8 +50,8 @@ export default function CertificationsSection() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   selectedCategory === null
-                    ? "bg-red-500 bg-opacity-30 text-red-400 border border-red-500 border-opacity-60"
-                    : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-red-500 border-opacity-20 hover:border-opacity-40"
+                    ? "bg-red-700 bg-opacity-60 text-red-100 border border-red-300 border-opacity-60"
+                    : "bg-slate-800 bg-opacity-70 text-gray-200 hover:bg-slate-700 border border-red-500 border-opacity-30 hover:border-opacity-50"
                 }`}
               >
                 All ({CERTIFICATIONS.length})
@@ -62,8 +62,8 @@ export default function CertificationsSection() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     selectedCategory === category
-                      ? "bg-red-500 bg-opacity-30 text-red-400 border border-red-500 border-opacity-60"
-                      : "bg-slate-800 text-gray-400 hover:bg-slate-700 border border-red-500 border-opacity-20 hover:border-opacity-40"
+                      ? "bg-red-700 bg-opacity-60 text-red-100 border border-red-300 border-opacity-60"
+                      : "bg-slate-800 bg-opacity-70 text-gray-200 hover:bg-slate-700 border border-red-500 border-opacity-30 hover:border-opacity-50"
                   }`}
                 >
                   {category} ({certsByCategory[category].length})
@@ -83,7 +83,7 @@ export default function CertificationsSection() {
                 >
                   {/* Badge */}
                   {categoryInfo && (
-                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 bg-red-500 bg-opacity-20 text-red-400 border border-red-500 border-opacity-40">
+                    <div className="glass-readable-chip inline-block px-3 py-1 rounded-full text-xs font-bold mb-3">
                       {cert.category}
                     </div>
                   )}
