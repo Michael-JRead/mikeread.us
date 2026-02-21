@@ -41,10 +41,10 @@ export interface CertificationItem {
 
 export const SITE_META = {
   canonicalUrl: "https://www.mikeread.us/",
-  shareTitle: "Michael Read | Information Security Manager | Security Engineer",
+  shareTitle: "Michael Read | Cybersecurity Leader",
   shareDescription:
-    "Marine Corps veteran with 9 years of cybersecurity experience across AWS, DoD programs, cloud security engineering, and risk-driven architecture.",
-  shareImageUrl: "https://www.mikeread.us/assets/og-preview-v2.png",
+    "Information Security Manager and Security Engineer focused on AWS, compliance, and measurable risk reduction.",
+  shareImageUrl: "https://www.mikeread.us/assets/og-preview-v4.jpg",
   shareImageAlt:
     "Michael Read cybersecurity portfolio preview with headshot and security engineering title.",
   fullName: "Michael Read",
