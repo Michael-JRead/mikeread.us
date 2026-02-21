@@ -83,7 +83,7 @@ export const HERO_STATS = [
 
 export const ABOUT_PARAGRAPHS = [
   "I am a cybersecurity engineer with a background spanning AWS, DoD programs, and high-impact cloud modernization efforts. My focus is securing enterprise-scale systems without slowing delivery. I bring a unique combination of military discipline, technical depth, and strategic thinking to every engagement.",
-  "I have led security architecture, incident response, compliance hardening, and automation initiatives across organizations where reliability, audit readiness, and mission continuity are non-negotiable. My expertise spans cloud security, risk management, security governance, and threat intelligence—with a proven track record of translating complex security requirements into actionable, scalable solutions.",
+  "I have led security architecture, incident response, compliance hardening, and automation initiatives across organizations where reliability, audit readiness, and mission continuity are non-negotiable. My expertise spans cloud security, risk management, security governance, and threat intelligence, with a proven track record of translating complex security requirements into actionable, scalable solutions.",
   "I work closely with technical and executive stakeholders to prioritize risk, align resources, and deliver outcomes with accountability. I am passionate about building secure, resilient systems that enable business growth while maintaining the highest standards of security and compliance.",
 ];
 
@@ -288,10 +288,11 @@ export const CERTIFICATIONS: CertificationItem[] = [
 ];
 
 export const CERTIFICATION_CATEGORIES = [
-  { name: "Management", color: "bg-blue-100 text-blue-900", count: 1 },
-  { name: "Professional", color: "bg-purple-100 text-purple-900", count: 3 },
-  { name: "Cloud", color: "bg-cyan-100 text-cyan-900", count: 5 },
-  { name: "Incident Response", color: "bg-red-100 text-red-900", count: 1 },
-  { name: "Offensive", color: "bg-orange-100 text-orange-900", count: 3 },
-  { name: "Fundamentals", color: "bg-green-100 text-green-900", count: 5 },
+  { name: "Management", color: "bg-red-900/30 text-red-200", count: 1 },
+  { name: "Professional", color: "bg-rose-900/30 text-rose-200", count: 3 },
+  { name: "Cloud", color: "bg-orange-900/30 text-orange-200", count: 5 },
+  { name: "Incident Response", color: "bg-red-900/30 text-red-200", count: 1 },
+  { name: "Offensive", color: "bg-amber-900/30 text-amber-200", count: 3 },
+  { name: "Fundamentals", color: "bg-slate-800 text-slate-200", count: 5 },
 ];
+

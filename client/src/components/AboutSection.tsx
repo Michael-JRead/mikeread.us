@@ -1,4 +1,4 @@
-import { ABOUT_PARAGRAPHS, CORE_SKILLS, APPROACH_ITEMS } from "@/data/siteContent";
+import { ABOUT_PARAGRAPHS, CORE_SKILLS } from "@/data/siteContent";
 
 export default function AboutSection() {
   return (
@@ -48,7 +48,7 @@ export default function AboutSection() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-red-500">→</span> Strategic Thinking
+                  <span className="text-red-500">-&gt;</span> Strategic Thinking
                 </h4>
                 <p className="text-gray-400">
                   I align security initiatives with business objectives, ensuring that security investments drive measurable value while reducing risk.
@@ -56,7 +56,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-red-500">→</span> Technical Depth
+                  <span className="text-red-500">-&gt;</span> Technical Depth
                 </h4>
                 <p className="text-gray-400">
                   I combine hands-on technical expertise with architectural thinking to design solutions that are both secure and scalable.
@@ -64,7 +64,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-red-500">→</span> Operational Excellence
+                  <span className="text-red-500">-&gt;</span> Operational Excellence
                 </h4>
                 <p className="text-gray-400">
                   I build processes and automation that enable teams to operate securely at scale without sacrificing speed or agility.
@@ -72,7 +72,7 @@ export default function AboutSection() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                  <span className="text-red-500">→</span> Leadership & Collaboration
+                  <span className="text-red-500">-&gt;</span> Leadership & Collaboration
                 </h4>
                 <p className="text-gray-400">
                   I work effectively across technical and executive teams, translating complex security concepts into actionable strategies.
@@ -85,3 +85,4 @@ export default function AboutSection() {
     </section>
   );
 }
+

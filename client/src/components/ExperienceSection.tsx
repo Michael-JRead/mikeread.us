@@ -34,13 +34,13 @@ export default function ExperienceSection() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold text-white">{experience.role}</h3>
-                      <span className="px-3 py-1 bg-cyan-500 bg-opacity-20 text-cyan-300 rounded-full text-sm font-semibold border border-cyan-500 border-opacity-40">
+                      <span className="px-3 py-1 bg-red-500 bg-opacity-20 text-red-300 rounded-full text-sm font-semibold border border-red-500 border-opacity-40">
                         {experience.company}
                       </span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-400 text-sm">
                       <span className="font-medium">{experience.period}</span>
-                      <span className="hidden sm:inline">•</span>
+                      <span className="hidden sm:inline">|</span>
                       <span>{experience.location}</span>
                     </div>
                     <p className="text-gray-300 mt-3">{experience.summary}</p>
@@ -70,7 +70,7 @@ export default function ExperienceSection() {
                       <ul className="space-y-2">
                         {experience.highlights.map((highlight, hIndex) => (
                           <li key={hIndex} className="flex gap-3 text-gray-300">
-                            <span className="text-red-500 font-bold flex-shrink-0">✓</span>
+                            <span className="text-red-500 font-bold flex-shrink-0">+</span>
                             <span>{highlight}</span>
                           </li>
                         ))}
@@ -101,3 +101,4 @@ export default function ExperienceSection() {
     </section>
   );
 }
+

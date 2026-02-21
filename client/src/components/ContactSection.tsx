@@ -180,7 +180,7 @@ export default function ContactSection() {
 
               {submitted && (
                 <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 border-opacity-40 text-green-300 rounded-lg">
-                  ✓ Message sent! Your default email client will open.
+                  Message sent! Your default email client will open.
                 </div>
               )}
             </form>
@@ -190,3 +190,4 @@ export default function ContactSection() {
     </section>
   );
 }
+
