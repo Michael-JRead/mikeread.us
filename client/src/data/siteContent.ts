@@ -103,9 +103,27 @@ export const CORE_SKILLS = [
 
 export const EXPERIENCES: ExperienceItem[] = [
   {
+    role: "Senior Security Engineer",
+    company: "JPMorganChase",
+    period: "2025 - Present",
+    location: "Plano, TX",
+    summary:
+      "Lead threat modeling and secure architecture reviews for cloud and application initiatives across the JPMorgan Chase Cybersecurity organization.",
+    details:
+      "As a Senior Security Engineer at JPMorganChase, I lead threat modeling engagements across cloud and application initiatives, identifying architectural weaknesses, abuse paths, trust boundary violations, and control gaps before production release. I embed threat modeling into the SDLC across engineering teams and review Terraform pull requests for AWS infrastructure deployments, enforcing least-privilege access. I built a threat modeling application adopted by the Cybersecurity organization that automates STRIDE analysis, MITRE ATT&CK mapping, control gap identification, threat actor profiling, mitigation recommendations, and cost-benefit assessments.",
+    highlights: [
+      "Lead threat modeling engagements across 12 cloud and application initiatives, identifying architectural weaknesses, abuse paths, trust boundary violations, and control gaps before production release.",
+      "Embed threat modeling into the SDLC for 3 engineering teams, reducing late-stage security findings by 27% and strengthening secure design adoption across enterprise platforms.",
+      "Review and approve 40+ Terraform pull requests monthly for AWS infrastructure deployments, enforcing least-privilege IAM and preventing 25+ high-risk permission issues per quarter, reducing access-related findings by 30%.",
+      "Built a threat modeling application adopted by the JPMorgan Chase Cybersecurity organization, reducing threat model turnaround time by 83% (6 weeks to 1 week) through automation of STRIDE analysis, MITRE ATT&CK mapping, control gap identification, threat actor profiling, mitigation recommendations, and cost-benefit assessments.",
+      "Engineered a cloud-native threat modeling tool using AWS vendor documentation and security guidance to identify control gaps, improving assessment consistency by 20% and reducing manual review effort by 10 hours per assessment.",
+    ],
+    tags: ["Threat Modeling", "STRIDE", "MITRE ATT&CK", "AWS", "Terraform", "IAM", "SDLC", "Secure Architecture"],
+  },
+  {
     role: "Solutions Architect Security Specialist",
     company: "Amazon Web Services",
-    period: "Dec 2024 - Jun 2025",
+    period: "2024 - 2025",
     location: "Dallas, TX",
     summary:
       "Designed and implemented secure, scalable AWS architectures for mission-critical environments with strict compliance and resiliency requirements.",
@@ -123,7 +141,7 @@ export const EXPERIENCES: ExperienceItem[] = [
   {
     role: "Principal Cloud Security Engineer",
     company: "Science Applications International Corporation",
-    period: "Dec 2023 - Dec 2024",
+    period: "2023 - 2024",
     location: "Dallas, TX",
     summary:
       "Orchestrated secure cloud infrastructure design and optimization for USAF AFMS and broader DoD workloads.",
@@ -141,7 +159,7 @@ export const EXPERIENCES: ExperienceItem[] = [
   {
     role: "Cloud Security Engineer",
     company: "Amazon Web Services",
-    period: "May 2022 - Dec 2023",
+    period: "2022 - 2023",
     location: "Dallas, TX",
     summary:
       "Enforced AWS Acceptable Use Policy and led abuse mitigation, threat analysis, and secure architecture guidance for customer environments.",
@@ -159,7 +177,7 @@ export const EXPERIENCES: ExperienceItem[] = [
   {
     role: "Satellite Network Engineer",
     company: "United States Marine Corps",
-    period: "Sep 2017 - May 2022",
+    period: "2017 - 2022",
     location: "United States, Japan, South Korea",
     summary:
       "Integrated, assessed, and troubleshot secure multi-channel communications systems for classified and unclassified network operations.",
