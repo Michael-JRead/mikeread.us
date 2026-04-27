@@ -235,44 +235,38 @@ export const EDUCATION: EducationItem[] = [
 
 export const PROJECTS: ProjectItem[] = [
   {
-    title: "AWS Security Architecture Reference Library",
+    title: "Threataform",
     summary:
-      "Security-first architecture patterns for implementing IAM, KMS, network controls, and monitoring in regulated AWS environments.",
+      "A 100% client-side threat modeling and IaC analysis platform with a custom in-browser language model — zero data ever leaves the user's machine.",
     description:
-      "A comprehensive reference library documenting security-first architecture patterns for AWS. Covers identity and access management (IAM) best practices, encryption key management (KMS), network segmentation, and advanced monitoring. Designed for organizations implementing compliance frameworks like NIST, ISO 27001, and DoD standards. Includes Terraform modules, CloudFormation templates, and implementation guides.",
-    tags: ["AWS", "IAM", "KMS", "Compliance", "Infrastructure as Code", "NIST"],
-    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
-    impact: "Used by 50+ enterprise customers to accelerate secure cloud deployments",
+      "Threataform ingests Terraform, CloudFormation, and 15+ document formats (PDF, DOCX, spreadsheets, OCR'd images) and produces an end-to-end threat model in the browser. A custom HCL parser walks cross-file dependencies, module hierarchies, and PAVE architectural layers (L0 organization controls through L4 service workloads), then runs 30+ automated misconfiguration checks. Findings map to STRIDE categories, MITRE ATT&CK techniques, and CWE weaknesses, and trust boundaries are inferred across network, IAM, storage, compute, and organizational layers. The platform exports drawio/Lucidchart-compatible Data Flow Diagrams as mxGraphModel XML with threat annotations baked in. A custom 200M-parameter causal transformer (ThreataformLM) ships entirely in JavaScript with RoPE+YaRN positional scaling, Grouped Query Attention, SwiGLU activations, and Q4/Q8 quantization for a ~50MB footprint, and supports in-browser LoRA fine-tuning on uploaded documents. A hybrid RAG pipeline fuses BM25, dense HNSW vector search, and ColBERT late interaction via Reciprocal Rank Fusion, with HyDE and SELF-RAG control tokens for retrieval quality. Inference and ingestion run on Web Workers; state lives in localStorage and IndexedDB so the entire workspace works offline as a PWA.",
+    tags: ["Threat Modeling", "STRIDE", "MITRE ATT&CK", "Terraform", "RAG", "LLM", "React", "PWA", "Privacy"],
+    githubUrl: "https://github.com/Michael-JRead/threataform",
+    impact:
+      "Air-gap-ready threat modeling with zero telemetry — covers HIPAA, FedRAMP, PCI DSS v4, NIST 800-53 r5, CMMC L2, and ISO 27001 out of the box.",
   },
   {
-    title: "Cloud Compliance Automation Toolkit",
+    title: "AWS RSS Feed Digest",
     summary:
-      "Automated checks and reporting templates for continuous control validation across cloud workloads.",
+      "Streamlit application that subscribes to 50+ official AWS service feeds and delivers branded HTML email digests on a daily or weekly schedule.",
     description:
-      "A Python-based toolkit for automating compliance validation across AWS, Azure, and GCP environments. Implements continuous compliance monitoring for NIST, CIS Benchmarks, and STIG standards. Generates automated reports, tracks remediation progress, and integrates with SIEM solutions. Reduces manual compliance assessment time by 80%.",
-    tags: ["Automation", "Compliance", "Security Engineering", "Python", "AWS"],
-    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
-    impact: "Reduced compliance assessment time from weeks to hours",
+      "A self-hosted security and operations awareness tool that consolidates the AWS What's New feed and per-topic AWS Blog feeds (security, database, ML, DevOps, analytics, and more) into a single subscriber-friendly digest. Users select services through a searchable multi-select UI, add categories in bulk, or paste arbitrary RSS URLs. The scraper deduplicates and filters by per-service keyword registries, the email builder renders an AWS-branded HTML digest grouped by service with titles, dates, summaries, and links, and APScheduler runs the delivery loop in the background. SMTP supports Gmail App Passwords, Microsoft 365, and any standard SMTP provider, and credentials stay local in a gitignored config.json — nothing is sent to a third-party service.",
+    tags: ["Python", "Streamlit", "AWS", "Threat Intelligence", "Automation", "RSS", "SMTP"],
+    githubUrl: "https://github.com/Michael-JRead/AWS-RSS-Feeds",
+    impact:
+      "Replaces manual feed-watching with a 50-service automated digest tuned for security teams tracking AWS service launches and advisories.",
   },
   {
-    title: "Threat and Incident Response Playbooks",
+    title: "mikeread.us — Portfolio Site",
     summary:
-      "Operational playbooks for triage, escalation, and containment built to improve consistency and response speed.",
+      "This site. A React + Vite portfolio statically deployed to GitHub Pages with a strict required-asset validator and a custom build pipeline.",
     description:
-      "A collection of incident response playbooks covering common attack scenarios, triage procedures, escalation workflows, and containment strategies. Includes templates for incident documentation, communication protocols, and post-incident analysis. Designed to improve MTTR and ensure consistent response across security teams.",
-    tags: ["Incident Response", "Threat Intel", "Operations", "Runbooks", "Security Operations"],
-    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
-    impact: "Improved mean time to response (MTTR) by 40%",
-  },
-  {
-    title: "Infrastructure Hardening Baselines",
-    summary:
-      "Baseline hardening controls and implementation guidance aligned with STIG and cloud best practices.",
-    description:
-      "Comprehensive hardening baselines for Linux, Windows, and cloud infrastructure aligned with DISA STIG standards and CIS Benchmarks. Includes automated scanning scripts, remediation playbooks, and configuration management templates. Covers OS hardening, service hardening, and security monitoring configuration.",
-    tags: ["STIG", "Hardening", "Cloud", "Security Baselines", "Infrastructure"],
-    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
-    impact: "Reduced vulnerability count by 85% across infrastructure",
+      "A TypeScript/React single-page portfolio styled with Tailwind v4 and a custom red-on-slate theme. Vite handles bundling and a postbuild script generates a Pages-friendly 404.html for client-side routing fallback. A pre-build asset validator hard-fails the build if required imagery is missing so the deployed site never ships broken. Content is data-driven from a single typed module so experience, certifications, and projects can be edited without touching components. CI builds and deploys to GitHub Pages on push to main.",
+    tags: ["React", "TypeScript", "Vite", "Tailwind", "GitHub Pages", "GitHub Actions"],
+    githubUrl: "https://github.com/Michael-JRead/mikeread.us",
+    liveUrl: "https://www.mikeread.us/",
+    impact:
+      "Zero-backend deploy — every commit to main triggers a typed build, asset validation, and Pages publish.",
   },
 ];
 
