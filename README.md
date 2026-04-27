@@ -116,7 +116,6 @@ Current design direction:
 Build will fail if these are missing:
 
 - `client/public/assets/profile-photo.png`
-- `client/public/assets/MichaelReadResumeFeb2026.pdf`
 
 Validation script:
 
@@ -193,7 +192,6 @@ Artifact path:
 - `dist/public/404.html`
 - `dist/public/CNAME`
 - `dist/public/assets/profile-photo.png`
-- `dist/public/assets/MichaelReadResumeFeb2026.pdf`
 - `dist/public/assets/og-preview-v4.jpg`
 
 ## Troubleshooting
@@ -237,7 +235,6 @@ Notes:
 
 - Keep changes scoped per task (content vs theme vs metadata).
 - Use clear commit messages:
-  - `Update resume content and experience details`
   - `Refine contact form readability`
   - `Polish OG preview and social metadata`
 

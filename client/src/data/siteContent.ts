@@ -62,7 +62,6 @@ export const SITE_META = {
     linkedin: "https://www.linkedin.com/in/michael-j-read99/",
   },
   requiredPhotoSrc: "/assets/profile-photo.png",
-  requiredResumeSrc: "/assets/MichaelReadResumeFeb2026.pdf",
   heroBackgroundSrc: "/assets/hero-bg.jpg",
 } as const;
 

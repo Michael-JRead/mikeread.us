@@ -1,5 +1,5 @@
 import { SITE_META, HERO_STATS } from "@/data/siteContent";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ScrambleText from "./ScrambleText";
 
 export default function HeroSection() {
@@ -52,14 +52,6 @@ export default function HeroSection() {
               >
                 Let's Connect
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </a>
-              <a
-                href={SITE_META.requiredResumeSrc}
-                download
-                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-slate-700 bg-opacity-50 text-white rounded-lg hover:bg-slate-600 transition-all duration-300 font-semibold border border-slate-600 backdrop-blur-sm"
-              >
-                <Download size={20} />
-                Download Resume
               </a>
             </div>
 

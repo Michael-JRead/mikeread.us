@@ -5,7 +5,6 @@ const root = process.cwd();
 
 const requiredAssets = [
   path.join(root, "client", "public", "assets", "profile-photo.png"),
-  path.join(root, "client", "public", "assets", "MichaelReadResumeFeb2026.pdf"),
 ];
 
 const missing = requiredAssets.filter((assetPath) => !fs.existsSync(assetPath));

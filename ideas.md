@@ -115,7 +115,7 @@
 **Signature Elements:**
 - Ember-glow radial behind portrait (red → transparent)
 - Monospaced small-caps "HI, MY NAME IS" label
-- Crimson-filled "Get in Touch" button; ghost buttons for Resume/LinkedIn/GitHub
+- Crimson-filled "Get in Touch" button; ghost buttons for LinkedIn/GitHub
 
 **Interaction Philosophy:**
 - Nav links: letter-spacing expands on hover

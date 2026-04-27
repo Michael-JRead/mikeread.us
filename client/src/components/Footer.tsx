@@ -57,11 +57,6 @@ export default function Footer() {
               <h4 className="font-semibold mb-4 text-white">Resources</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href={SITE_META.requiredResumeSrc} download className="text-gray-400 hover:text-red-400 transition-colors">
-                    Download Resume
-                  </a>
-                </li>
-                <li>
                   <a href={SITE_META.social.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-400 transition-colors">
                     GitHub Projects
                   </a>
