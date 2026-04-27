@@ -1,4 +1,4 @@
-import { PROJECTS } from "@/data/siteContent";
+import { PROJECTS, SITE_META } from "@/data/siteContent";
 import { Github, ExternalLink, Zap } from "lucide-react";
 
 
@@ -98,7 +98,7 @@ export default function PortfolioSection() {
               Explore my GitHub repository for additional security tools, automation scripts, and reference implementations.
             </p>
             <a
-              href="https://github.com/Michael-JRead/MichaelJRead"
+              href={SITE_META.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="glass-readable-button inline-flex items-center gap-2 px-8 py-3 rounded-lg transition-all font-semibold hover:bg-red-500"

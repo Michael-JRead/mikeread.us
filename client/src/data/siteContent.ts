@@ -58,7 +58,7 @@ export const SITE_META = {
   summary:
     "I secure cloud deployments and sensitive data by aligning technical controls with business goals, leading cross-functional execution, and driving measurable risk reduction in regulated environments.",
   social: {
-    github: "https://github.com/Michael-JRead/MichaelJRead",
+    github: "https://github.com/Michael-JRead",
     linkedin: "https://www.linkedin.com/in/michael-j-read99/",
   },
   requiredPhotoSrc: "/assets/profile-photo.png",
@@ -267,6 +267,17 @@ export const PROJECTS: ProjectItem[] = [
     liveUrl: "https://www.mikeread.us/",
     impact:
       "Zero-backend deploy — every commit to main triggers a typed build, asset validation, and Pages publish.",
+  },
+  {
+    title: "Cybersecurity Portfolio & Case Studies",
+    summary:
+      "Curated collection of threat models, governance artifacts, security assessments, and AWS architecture case studies from academic and professional work.",
+    description:
+      "A public reference index covering the governance and assessment side of the cybersecurity discipline. Includes a mobile application threat model, an enterprise key management primer paired with an enforceable EKM policy, a Security Assessment Report on the OPM breach analyzing root cause and control failures, and a Risk Assessment Report walking a simulated organization through vulnerability identification, likelihood/impact scoring, and treatment options. The AWS section pulls in customer-style case study decks from time as a Security Solutions Architect: a highly available web application reference architecture, an analytics-platform cloud migration, a security architecture for AWS infrastructure, and a HIPAA-aligned telehealth platform migration.",
+    tags: ["Threat Modeling", "Risk Assessment", "Key Management", "Governance", "AWS", "HIPAA", "Case Studies"],
+    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
+    impact:
+      "Public artifacts spanning threat modeling, EKM policy, breach analysis, RAR methodology, and four AWS architecture case studies.",
   },
 ];
 
