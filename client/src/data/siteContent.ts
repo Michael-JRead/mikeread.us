@@ -97,7 +97,7 @@ export const CORE_SKILLS = [
   "Identity and Access Management",
   "Compliance Management",
   "Business Continuity and DR",
-  "Python",
+  "Offensive Security",
   "LAN/WAN and Cloud Networking",
 ];
 
@@ -267,6 +267,7 @@ export const CERTIFICATIONS: CertificationItem[] = [
   { name: "Certified Cloud Security Professional (CCSP)", issuer: "ISC2", year: "Active", status: "Active", category: "Cloud" },
   
   // SANS/GIAC Certifications
+  { name: "GIAC Defensible Security Architect (GDSA)", issuer: "SANS", year: "Active", status: "Active", category: "Professional" },
   { name: "GIAC Certified Incident Handler (GCIH)", issuer: "SANS", year: "Active", status: "Active", category: "Incident Response" },
   { name: "GIAC Penetration Tester (GPEN)", issuer: "SANS", year: "Active", status: "Active", category: "Offensive" },
   { name: "GIAC Cloud Penetration Tester (GCPN)", issuer: "SANS", year: "Active", status: "Active", category: "Cloud" },
