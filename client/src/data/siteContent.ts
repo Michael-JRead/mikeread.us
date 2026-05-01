@@ -39,6 +39,15 @@ export interface CertificationItem {
   category?: string;
 }
 
+export type CaseStudyFormat = "Report" | "Policy" | "Presentation" | "Document";
+
+export interface CaseStudyItem {
+  title: string;
+  category: string;
+  format: CaseStudyFormat;
+  url: string;
+}
+
 export const SITE_META = {
   canonicalUrl: "https://www.mikeread.us/",
   shareTitle: "Michael Read | Cybersecurity Leader",
@@ -70,6 +79,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Experience", href: "#experience" },
   { label: "Education", href: "#education" },
   { label: "Projects", href: "#portfolio" },
+  { label: "Case Studies", href: "#case-studies" },
   { label: "Certifications", href: "#certifications" },
   { label: "Contact", href: "#contact" },
 ];
@@ -268,16 +278,163 @@ export const PROJECTS: ProjectItem[] = [
     impact:
       "Zero-backend deploy — every commit to main triggers a typed build, asset validation, and Pages publish.",
   },
+];
+
+export const CASE_STUDIES: CaseStudyItem[] = [
+  // Threat Modeling
   {
-    title: "Cybersecurity Portfolio & Case Studies",
-    summary:
-      "Curated collection of threat models, governance artifacts, security assessments, and AWS architecture case studies from academic and professional work.",
-    description:
-      "A public reference index covering the governance and assessment side of the cybersecurity discipline. Includes a mobile application threat model, an enterprise key management primer paired with an enforceable EKM policy, a Security Assessment Report on the OPM breach analyzing root cause and control failures, and a Risk Assessment Report walking a simulated organization through vulnerability identification, likelihood/impact scoring, and treatment options. The AWS section pulls in customer-style case study decks from time as a Security Solutions Architect: a highly available web application reference architecture, an analytics-platform cloud migration, a security architecture for AWS infrastructure, and a HIPAA-aligned telehealth platform migration.",
-    tags: ["Threat Modeling", "Risk Assessment", "Key Management", "Governance", "AWS", "HIPAA", "Case Studies"],
-    githubUrl: "https://github.com/Michael-JRead/MichaelJRead",
-    impact:
-      "Public artifacts spanning threat modeling, EKM policy, breach analysis, RAR methodology, and four AWS architecture case studies.",
+    title: "Mobile Application Threat Model",
+    category: "Threat Modeling",
+    format: "Report",
+    url: "https://drive.google.com/file/d/13fa8S2QdARld-aRrK2LXDzagzouQzL2w/view?usp=sharing",
+  },
+
+  // Enterprise Key Management
+  {
+    title: "What is Enterprise Key Management",
+    category: "Enterprise Key Management",
+    format: "Document",
+    url: "https://drive.google.com/file/d/1xdx2bMyKnVHr5_SldNObIlOHSvWpPd8P/view?usp=sharing",
+  },
+  {
+    title: "Enterprise Key Management Policy",
+    category: "Enterprise Key Management",
+    format: "Policy",
+    url: "https://drive.google.com/file/d/1KtaZ3n_wIihTexb4HQ39cf9oKGvBiHMg/view?usp=sharing",
+  },
+
+  // Security Assessment Report (SAR)
+  {
+    title: "Office of Personnel Management (OPM) Breach",
+    category: "Security Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1r0ZgMN1lbi3BYCQGNbHjDy7p2CucPQ_x/view?usp=sharing",
+  },
+  {
+    title: "APT28 & APT29",
+    category: "Security Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1C9N3ELT7SeH1zbRqYEMi47-nPmL6MBWX/view?usp=sharing",
+  },
+  {
+    title: "Hybrid Cloud Implementation",
+    category: "Security Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1MubpOqCJ6miXpLU2eqruKwJey7koceG7/view?usp=sharing",
+  },
+
+  // After Action Reports (AAR)
+  {
+    title: "APT28 & APT29 After Action Report",
+    category: "After Action",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1eTBo-e7KhUWYSJT7cnSBJyyjt39uDrBY/view?usp=sharing",
+  },
+
+  // Risk Assessment Reports (RAR)
+  {
+    title: "Simulation of Organization with Vulnerabilities",
+    category: "Risk Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1I4KK98iVWLDzUkL8d0nGl9ckfLB3zFBv/view?usp=sharing",
+  },
+  {
+    title: "Nations Behaving Badly",
+    category: "Risk Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1oLtP0WJznlf12BBKG66ELdv4-Qsoe2KA/view?usp=drive_link",
+  },
+  {
+    title: "Protecting the Homeland",
+    category: "Risk Assessment",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1y4Fxzkw3xdHaTnwDFYLeQbpLJYZBhbYE/view?usp=sharing",
+  },
+
+  // AWS Solutions Architect Case Studies
+  {
+    title: "Highly Available Web Application in AWS",
+    category: "AWS Architecture",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1z9eAV_quyTLkegRjyY6nXQkUZVYVR4eP/edit?usp=sharing",
+  },
+  {
+    title: "Cloud Migration for Data Analytics Company",
+    category: "AWS Architecture",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1gi50cEvxLsh6X96w_38ZfmRSulBPkxLV/edit?usp=sharing",
+  },
+  {
+    title: "Security Architecture for AWS Infrastructure",
+    category: "AWS Architecture",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1Q3I5oirZgeer08_61nHbUfy-e3XpR8FN/edit?usp=sharing",
+  },
+  {
+    title: "Telehealth Platform to AWS",
+    category: "AWS Architecture",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1hc_re3RFxUCFiiso6E5yLVVjg4NKBI7C/edit?usp=sharing",
+  },
+  {
+    title: "On-Prem to AWS Migration",
+    category: "AWS Architecture",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1z9eAV_quyTLkegRjyY6nXQkUZVYVR4eP/edit?usp=sharing",
+  },
+
+  // Advanced Cyber Exploitation & Mitigation Methodologies
+  {
+    title: "Strategic Plan for Data Loss Prevention",
+    category: "Exploitation & Mitigation",
+    format: "Document",
+    url: "https://docs.google.com/document/d/1hqhKzXhclBSX-fgDCY9t8eMg71ySIfMa/edit?usp=sharing",
+  },
+  {
+    title: "Secure Video Conferencing Communications",
+    category: "Exploitation & Mitigation",
+    format: "Document",
+    url: "https://docs.google.com/document/d/1yDmfYas6hccSJk46o5Tjs6gj-oC2DLjU/edit?usp=sharing",
+  },
+  {
+    title: "System Security Report",
+    category: "Exploitation & Mitigation",
+    format: "Document",
+    url: "https://docs.google.com/document/d/1PZvayMaVWCp1RncwT3vrRDMfEnz5dsep/edit?usp=sharing",
+  },
+
+  // Digital Forensics
+  {
+    title: "Digital Forensics Overview",
+    category: "Digital Forensics",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1158WeWxdbQiBsCnubMZGyPnCvGu_RXH5/view?usp=sharing",
+  },
+  {
+    title: "Network Intrusion",
+    category: "Digital Forensics",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/16Vw_i2JEL427uLxsC4IDrWn7YJfIOdFR/edit?usp=sharing",
+  },
+  {
+    title: "Data Exfiltration Walkthrough",
+    category: "Digital Forensics",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1MtTFtQOvkwqN46zCUIJeKTAV4IO53xV_/edit?usp=sharing",
+  },
+  {
+    title: "Forensic Analysis of an Intrusion",
+    category: "Digital Forensics",
+    format: "Presentation",
+    url: "https://docs.google.com/presentation/d/1IjwaexTztnmmHZOL943JJE5e0IFb2Xqd/edit?usp=sharing",
+  },
+
+  // Cryptography
+  {
+    title: "Cryptography Report",
+    category: "Cryptography",
+    format: "Report",
+    url: "https://drive.google.com/file/d/1j_IUFM1J6XaDY-vuSiDau5aWWGTUCWfM/view?usp=sharing",
   },
 ];
 
