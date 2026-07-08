@@ -14,7 +14,7 @@ const API_HOSTS = [
   "https://app.hackthebox.com/api/v4",
 ];
 
-const token = process.env.HTB_APP_TOKEN;
+const token = process.env.HTB_APP_TOKEN?.trim();
 if (!token) {
   console.error("HTB_APP_TOKEN is not set. Add it as a GitHub Actions secret.");
   process.exit(1);
