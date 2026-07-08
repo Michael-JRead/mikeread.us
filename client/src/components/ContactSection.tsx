@@ -1,5 +1,5 @@
 import { SITE_META } from "@/data/siteContent";
-import { Mail, MapPin, Linkedin, Github, Send } from "lucide-react";
+import { Mail, MapPin, Linkedin, Github, Send, UserRound } from "lucide-react";
 import HackTheBoxIcon from "./HackTheBoxIcon";
 import { useState } from "react";
 
@@ -74,7 +74,7 @@ export default function ContactSection() {
             <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 bg-gradient-to-br from-red-500/30 to-fuchsia-500/20 rounded-xl border border-red-400/50 shadow-[0_0_20px_rgba(248,113,113,0.25)]">
-                  <Linkedin className="text-red-300" size={22} />
+                  <UserRound className="text-red-300" size={22} />
                 </div>
                 <h3 className="font-bold text-white">Social</h3>
               </div>

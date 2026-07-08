@@ -59,7 +59,7 @@ export const SITE_META = {
   fullName: "Michael Read",
   initials: "MR",
   role: "Information Security Manager | Security Engineer",
-  location: "Celina, TX",
+  location: "Dallas, TX",
   availability: "Open to remote, hybrid, and cleared opportunities",
   email: "public.michaelread@gmail.com",
   headline:
