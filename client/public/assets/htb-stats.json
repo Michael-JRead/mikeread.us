@@ -1,4 +1,23 @@
 {
-  "placeholder": true,
-  "note": "Replaced automatically by .github/workflows/update-htb-stats.yml"
+  "fetchedAt": "2026-07-08T23:21:36.059Z",
+  "userId": 1704613,
+  "profile": {
+    "name": "SojuPunisher",
+    "avatar": "https://htb-sso-prod-public-storage.s3.eu-central-1.amazonaws.com/users/15e9db20-1ef6-4988-a2f1-c2f939561113-avatar.png",
+    "rank": "Script Kiddie",
+    "ranking": 835,
+    "points": 192,
+    "user_owns": 24,
+    "system_owns": 24,
+    "user_bloods": 0,
+    "system_bloods": 0,
+    "respects": 0,
+    "team": null,
+    "current_rank_progress": 92.67,
+    "next_rank": "Hacker",
+    "next_rank_points": 3.78,
+    "rank_ownership": 18.9,
+    "rank_requirement": 5
+  },
+  "activity": []
 }
