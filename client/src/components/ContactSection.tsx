@@ -1,5 +1,6 @@
 import { SITE_META } from "@/data/siteContent";
 import { Mail, MapPin, Linkedin, Github, Send } from "lucide-react";
+import HackTheBoxIcon from "./HackTheBoxIcon";
 import { useState } from "react";
 
 export default function ContactSection() {
@@ -77,7 +78,7 @@ export default function ContactSection() {
                 </div>
                 <h3 className="font-bold text-white">Social</h3>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <a
                   href={SITE_META.social.linkedin}
                   target="_blank"
@@ -95,6 +96,15 @@ export default function ContactSection() {
                 >
                   <Github size={18} />
                   GitHub
+                </a>
+                <a
+                  href={SITE_META.social.hackthebox}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-red-300 hover:text-red-200 font-medium transition-colors px-2 py-1 rounded-md bg-slate-800/60 border border-red-500/30"
+                >
+                  <HackTheBoxIcon size={18} />
+                  Hack The Box
                 </a>
               </div>
             </div>

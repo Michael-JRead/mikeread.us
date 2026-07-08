@@ -69,6 +69,7 @@ export const SITE_META = {
   social: {
     github: "https://github.com/Michael-JRead",
     linkedin: "https://www.linkedin.com/in/michael-j-read99/",
+    hackthebox: "https://app.hackthebox.com/users/1704613",
   },
   requiredPhotoSrc: "/assets/profile-photo.png",
   heroBackgroundSrc: "/assets/hero-bg.jpg",
@@ -265,18 +266,6 @@ export const PROJECTS: ProjectItem[] = [
     githubUrl: "https://github.com/Michael-JRead/AWS-RSS-Feeds",
     impact:
       "Replaces manual feed-watching with a 50-service automated digest tuned for security teams tracking AWS service launches and advisories.",
-  },
-  {
-    title: "mikeread.us — Portfolio Site",
-    summary:
-      "This site. A React + Vite portfolio statically deployed to GitHub Pages with a strict required-asset validator and a custom build pipeline.",
-    description:
-      "A TypeScript/React single-page portfolio styled with Tailwind v4 and a custom red-on-slate theme. Vite handles bundling and a postbuild script generates a Pages-friendly 404.html for client-side routing fallback. A pre-build asset validator hard-fails the build if required imagery is missing so the deployed site never ships broken. Content is data-driven from a single typed module so experience, certifications, and projects can be edited without touching components. CI builds and deploys to GitHub Pages on push to main.",
-    tags: ["React", "TypeScript", "Vite", "Tailwind", "GitHub Pages", "GitHub Actions"],
-    githubUrl: "https://github.com/Michael-JRead/mikeread.us",
-    liveUrl: "https://www.mikeread.us/",
-    impact:
-      "Zero-backend deploy — every commit to main triggers a typed build, asset validation, and Pages publish.",
   },
 ];
 

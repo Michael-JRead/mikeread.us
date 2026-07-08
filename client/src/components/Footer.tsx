@@ -1,5 +1,6 @@
 import { SITE_META } from "@/data/siteContent";
 import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
+import HackTheBoxIcon from "./HackTheBoxIcon";
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -66,6 +67,11 @@ export default function Footer() {
                     LinkedIn Profile
                   </a>
                 </li>
+                <li>
+                  <a href={SITE_META.social.hackthebox} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-400 transition-colors">
+                    Hack The Box Profile
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -97,6 +103,15 @@ export default function Footer() {
                   title="GitHub"
                 >
                   <Github size={18} />
+                </a>
+                <a
+                  href={SITE_META.social.hackthebox}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-slate-800 text-gray-400 rounded-lg hover:bg-red-500 hover:bg-opacity-30 hover:text-red-400 transition-all border border-red-500 border-opacity-20 hover:border-opacity-60"
+                  title="Hack The Box"
+                >
+                  <HackTheBoxIcon size={18} />
                 </a>
               </div>
             </div>
