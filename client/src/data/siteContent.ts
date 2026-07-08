@@ -345,7 +345,7 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     title: "Highly Available Web Application in AWS",
     category: "AWS Architecture",
     format: "Presentation",
-    url: "https://docs.google.com/presentation/d/1z9eAV_quyTLkegRjyY6nXQkUZVYVR4eP/edit?usp=sharing",
+    url: "https://docs.google.com/presentation/d/1vVF7xj0RGlBPyRExCpIZQaEj7STOA9JN/edit?usp=sharing&ouid=117836549247985822423&rtpof=true&sd=true",
   },
   {
     title: "Cloud Migration for Data Analytics Company",
