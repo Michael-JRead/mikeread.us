@@ -22,6 +22,7 @@ interface HtbStats {
   userId: number;
   profile: {
     name: string;
+    avatar?: string | null;
     rank: string;
     ranking: number | null;
     points: number;
@@ -120,11 +121,15 @@ function RankRing({
   progress,
   rank,
   nextRank,
+  avatar,
+  operator,
   active,
 }: {
   progress: number;
   rank: string;
   nextRank: string | null;
+  avatar?: string | null;
+  operator: string;
   active: boolean;
 }) {
   const reduced = useReducedMotion();
@@ -158,13 +163,26 @@ function RankRing({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-white tabular-nums">{shown}%</span>
-          <span className="text-xs text-slate-400">to next rank</span>
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={`${operator} on Hack The Box`}
+              className="w-[6.5rem] h-[6.5rem] rounded-full object-cover border-2 border-slate-700"
+            />
+          ) : (
+            <>
+              <span className="text-3xl font-bold text-white tabular-nums">{shown}%</span>
+              <span className="text-xs text-slate-400">to next rank</span>
+            </>
+          )}
         </div>
       </div>
       <div className="text-center">
         <div className="text-red-300 font-bold text-lg">{rank}</div>
-        {nextRank && <div className="text-slate-400 text-sm">next: {nextRank}</div>}
+        <div className="text-slate-400 text-sm">
+          <span className="text-white font-semibold tabular-nums">{shown}%</span>
+          {nextRank ? ` to ${nextRank}` : " to next rank"}
+        </div>
       </div>
     </div>
   );
@@ -270,6 +288,8 @@ export default function OffensiveSecuritySection() {
                     progress={data.profile.current_rank_progress ?? 0}
                     rank={data.profile.rank}
                     nextRank={data.profile.next_rank}
+                    avatar={data.profile.avatar}
+                    operator={data.profile.name}
                     active={inView}
                   />
                 </div>

@@ -128,12 +128,36 @@ if (Array.isArray(catRows) && catRows.length >= 3) {
   }));
 }
 
+// Mirror the avatar into the site's own assets so the page never hotlinks
+// HTB's storage; fall back to the remote URL if the download fails.
+let avatarSrc = profile.avatar ?? null;
+if (avatarSrc) {
+  try {
+    const remote = avatarSrc.startsWith("/")
+      ? `https://labs.hackthebox.com${avatarSrc}`
+      : avatarSrc;
+    const res = await fetch(remote, {
+      headers: { "User-Agent": "mikeread.us portfolio stats (owner avatar mirror, daily)" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const type = res.headers.get("content-type") ?? "";
+    if (!type.startsWith("image/")) throw new Error(`unexpected content-type ${type}`);
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length < 100) throw new Error("suspiciously small image");
+    writeFileSync(resolve("client/public/assets/htb-avatar.png"), buf);
+    avatarSrc = "/assets/htb-avatar.png";
+    console.log(`Mirrored avatar locally (${buf.length} bytes)`);
+  } catch (err) {
+    console.warn(`Avatar mirror failed, keeping remote URL: ${err.message}`);
+  }
+}
+
 const snapshot = {
   fetchedAt: new Date().toISOString(),
   userId: USER_ID,
   profile: {
     name: profile.name,
-    avatar: profile.avatar ?? null,
+    avatar: avatarSrc,
     rank: profile.rank,
     ranking: profile.ranking ?? null,
     points: profile.points ?? 0,
