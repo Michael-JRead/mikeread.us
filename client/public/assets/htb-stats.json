@@ -1,9 +1,9 @@
 {
-  "fetchedAt": "2026-07-08T23:28:00.242Z",
+  "fetchedAt": "2026-07-08T23:58:02.125Z",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
-    "avatar": "https://htb-sso-prod-public-storage.s3.eu-central-1.amazonaws.com/users/15e9db20-1ef6-4988-a2f1-c2f939561113-avatar.png",
+    "avatar": "/assets/htb-avatar.png",
     "rank": "Script Kiddie",
     "ranking": 835,
     "points": 192,
