@@ -80,6 +80,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Experience", href: "#experience" },
   { label: "Education", href: "#education" },
   { label: "Projects", href: "#portfolio" },
+  { label: "Offensive Security", href: "#offensive-security" },
   { label: "Case Studies", href: "#case-studies" },
   { label: "Certifications", href: "#certifications" },
   { label: "Contact", href: "#contact" },

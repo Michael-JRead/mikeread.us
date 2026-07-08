@@ -1,0 +1,55 @@
+name: Update HTB Stats
+
+on:
+  schedule:
+    # Once daily; low-frequency by design to stay within HTB acceptable use.
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: htb-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Fetch HTB profile snapshot
+        run: node scripts/fetch-htb-stats.mjs
+        env:
+          HTB_APP_TOKEN: ${{ secrets.HTB_APP_TOKEN }}
+
+      - name: Commit and push if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/public/assets/htb-stats.json
+          if git diff --cached --quiet; then
+            echo "No stat changes."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Update Hack The Box stats snapshot"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so kick the
+      # Pages deploy explicitly.
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.pushed == 'true'
+        run: gh workflow run deploy-pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
