@@ -5,6 +5,11 @@ on:
     # Once daily; low-frequency by design to stay within HTB acceptable use.
     - cron: "17 9 * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/fetch-htb-stats.mjs"
+      - ".github/workflows/update-htb-stats.yml"
 
 permissions:
   contents: write
