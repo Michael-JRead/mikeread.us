@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { Crown, Droplet, ExternalLink, Flag, Server, Swords, Trophy, Users } from "lucide-react";
+import { Crosshair, Crown, Droplet, ExternalLink, Flag, Server, Swords, Trophy } from "lucide-react";
 import { SITE_META } from "@/data/siteContent";
 import HackTheBoxIcon from "./HackTheBoxIcon";
+import type { ChallengeCategory } from "./HtbSkillRadar";
+
+const HtbSkillRadar = lazy(() => import("./HtbSkillRadar"));
 
 interface HtbActivityItem {
   name: string;
@@ -32,6 +35,8 @@ interface HtbStats {
     next_rank: string | null;
   };
   activity: HtbActivityItem[];
+  challenges?: { solved: number; total: number };
+  challengeCategories?: ChallengeCategory[];
 }
 
 function useCountUp(target: number, active: boolean, durationMs = 1600) {
@@ -177,7 +182,9 @@ function Terminal({ data, active }: { data: HtbStats; active: boolean }) {
     `[+] rank ......... ${data.profile.rank}`,
     `[+] global ....... #${(data.profile.ranking ?? 0).toLocaleString()}`,
     `[+] owns ......... ${data.profile.user_owns} user / ${data.profile.system_owns} root`,
-    `[+] respect ...... ${data.profile.respects}`,
+    ...(data.challenges
+      ? [`[+] challenges ... ${data.challenges.solved}/${data.challenges.total} solved`]
+      : [`[+] respect ...... ${data.profile.respects}`]),
     `[+] last sync .... ${synced.toISOString().slice(0, 16).replace("T", " ")} UTC`,
   ];
 
@@ -289,12 +296,61 @@ export default function OffensiveSecuritySection() {
                   active={inView}
                 />
                 <StatTile
-                  icon={<Users size={22} />}
-                  label="Respect"
-                  value={data.profile.respects}
+                  icon={<Flag size={22} />}
+                  label="Challenges Solved"
+                  value={data.challenges?.solved ?? data.profile.respects}
                   active={inView}
                 />
               </div>
+
+              {data.challengeCategories && data.challengeCategories.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                  <div className="lg:col-span-2 p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg backdrop-blur-sm">
+                    <h3 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                      <Crosshair size={20} className="text-red-400" />
+                      Skill Radar
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-2">
+                      Challenge category completion
+                    </p>
+                    <Suspense fallback={<div className="h-[300px]" />}>
+                      <HtbSkillRadar categories={data.challengeCategories} />
+                    </Suspense>
+                  </div>
+                  <div className="lg:col-span-3 p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg backdrop-blur-sm">
+                    <h3 className="text-xl font-bold text-white mb-4">Top Categories</h3>
+                    <div className="space-y-4">
+                      {[...data.challengeCategories]
+                        .sort((a, b) => b.solved - a.solved)
+                        .slice(0, 6)
+                        .map((cat) => (
+                          <div key={cat.name}>
+                            <div className="flex justify-between text-sm mb-1">
+                              <span className="text-white font-medium">{cat.name}</span>
+                              <span className="text-slate-400 font-mono">
+                                {cat.solved}/{cat.total}
+                                <span className="text-red-400 ml-2">
+                                  {Math.round(cat.percentage)}%
+                                </span>
+                              </span>
+                            </div>
+                            <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                              <motion.div
+                                className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-400"
+                                initial={reduced ? false : { width: 0 }}
+                                whileInView={{ width: `${Math.max(2, cat.percentage)}%` }}
+                                viewport={{ once: true }}
+                                transition={
+                                  reduced ? { duration: 0 } : { duration: 1.2, ease: "easeOut" }
+                                }
+                              />
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {data.activity.length > 0 && (
                 <div className="p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg backdrop-blur-sm">

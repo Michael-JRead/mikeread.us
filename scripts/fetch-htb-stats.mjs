@@ -72,20 +72,34 @@ if (!profile || !profile.rank) {
   process.exit(1);
 }
 
+// The documented activity path started returning 404 in 2026; probe known
+// variants and use whichever answers with an activity array.
 let activity = [];
-try {
-  const act = await apiGetAnyHost(`user/profile/activity/${USER_ID}`);
-  activity = (act?.profile?.activity ?? []).slice(0, 8).map((a) => ({
-    name: a.name,
-    object_type: a.object_type,
-    type: a.type,
-    date: a.date,
-    date_diff: a.date_diff,
-    points: a.points,
-    first_blood: Boolean(a.first_blood),
-  }));
-} catch (err) {
-  console.warn(`Activity feed unavailable: ${err.message}`);
+const activityPaths = [
+  `user/profile/activity/${USER_ID}`,
+  `user/profile/activity/${USER_ID}?n=20`,
+  `profile/activity/${USER_ID}`,
+];
+for (const path of activityPaths) {
+  try {
+    const act = await apiGetAnyHost(path);
+    const rows = act?.profile?.activity ?? act?.activity;
+    if (Array.isArray(rows)) {
+      activity = rows.slice(0, 8).map((a) => ({
+        name: a.name,
+        object_type: a.object_type,
+        type: a.type,
+        date: a.date,
+        date_diff: a.date_diff,
+        points: a.points,
+        first_blood: Boolean(a.first_blood),
+      }));
+      console.log(`Activity feed served by ${path} (${rows.length} entries)`);
+      break;
+    }
+  } catch (err) {
+    console.warn(`Activity path ${path} unavailable: ${err.message}`);
+  }
 }
 
 // Best-effort extras; shapes are inspected from CI logs before the UI consumes them.
@@ -93,22 +107,25 @@ const challengeProgress = await tryOptional(
   "challenge progress",
   `user/profile/progress/challenges/${USER_ID}`
 );
-const machineProgress = await tryOptional(
-  "machine os progress",
-  `user/profile/progress/machines/os/${USER_ID}`
-);
+await tryOptional("attack chart", `user/profile/chart/machines/attack/${USER_ID}`);
+await tryOptional("graph 1y", `user/profile/graph/1y/${USER_ID}`);
 
+// Observed shape: profile.challenge_owns {solved,total,percentage} plus
+// profile.challenge_categories [{name, owned_flags, total_flags, completion_percentage}].
+let challenges = null;
 let challengeCategories = null;
-const challengeRows = challengeProgress?.profile?.challenge_owns ?? challengeProgress?.profile;
-if (Array.isArray(challengeRows)) {
-  const rows = challengeRows
-    .filter((c) => c && c.name && (c.owned ?? c.solved ?? c.owns) !== undefined)
-    .map((c) => ({
-      name: c.name,
-      solved: Number(c.owned ?? c.solved ?? c.owns ?? 0),
-      total: Number(c.total ?? 0),
-    }));
-  if (rows.length >= 3) challengeCategories = rows;
+const owns = challengeProgress?.profile?.challenge_owns;
+if (owns && typeof owns.solved === "number") {
+  challenges = { solved: owns.solved, total: owns.total ?? 0 };
+}
+const catRows = challengeProgress?.profile?.challenge_categories;
+if (Array.isArray(catRows) && catRows.length >= 3) {
+  challengeCategories = catRows.map((c) => ({
+    name: c.name,
+    solved: Number(c.owned_flags ?? 0),
+    total: Number(c.total_flags ?? 0),
+    percentage: Number(c.completion_percentage ?? 0),
+  }));
 }
 
 const snapshot = {
@@ -133,8 +150,8 @@ const snapshot = {
     rank_requirement: profile.rank_requirement ?? null,
   },
   activity,
+  ...(challenges ? { challenges } : {}),
   ...(challengeCategories ? { challengeCategories } : {}),
-  ...(machineProgress?.profile ? { machineOs: machineProgress.profile } : {}),
 };
 
 writeFileSync(OUT_FILE, JSON.stringify(snapshot, null, 2) + "\n");
