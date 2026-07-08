@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-07-08T23:21:36.059Z",
+  "fetchedAt": "2026-07-08T23:28:00.242Z",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
@@ -19,5 +19,113 @@
     "rank_ownership": 18.9,
     "rank_requirement": 5
   },
-  "activity": []
+  "activity": [],
+  "challenges": {
+    "solved": 210,
+    "total": 837
+  },
+  "challengeCategories": [
+    {
+      "name": "Reversing",
+      "solved": 10,
+      "total": 100,
+      "percentage": 10
+    },
+    {
+      "name": "Crypto",
+      "solved": 82,
+      "total": 131,
+      "percentage": 63
+    },
+    {
+      "name": "Pwn",
+      "solved": 6,
+      "total": 135,
+      "percentage": 4
+    },
+    {
+      "name": "Web",
+      "solved": 16,
+      "total": 169,
+      "percentage": 9
+    },
+    {
+      "name": "Misc",
+      "solved": 31,
+      "total": 59,
+      "percentage": 53
+    },
+    {
+      "name": "Forensics",
+      "solved": 34,
+      "total": 77,
+      "percentage": 44
+    },
+    {
+      "name": "Mobile",
+      "solved": 6,
+      "total": 23,
+      "percentage": 26
+    },
+    {
+      "name": "OSINT",
+      "solved": 6,
+      "total": 11,
+      "percentage": 55
+    },
+    {
+      "name": "Hardware",
+      "solved": 12,
+      "total": 42,
+      "percentage": 29
+    },
+    {
+      "name": "GamePwn",
+      "solved": 1,
+      "total": 13,
+      "percentage": 8
+    },
+    {
+      "name": "Blockchain",
+      "solved": 4,
+      "total": 16,
+      "percentage": 25
+    },
+    {
+      "name": "AI/ML",
+      "solved": 1,
+      "total": 18,
+      "percentage": 6
+    },
+    {
+      "name": "Coding",
+      "solved": 1,
+      "total": 17,
+      "percentage": 6
+    },
+    {
+      "name": "Secure Coding",
+      "solved": 0,
+      "total": 6,
+      "percentage": 0
+    },
+    {
+      "name": "ICS",
+      "solved": 0,
+      "total": 11,
+      "percentage": 0
+    },
+    {
+      "name": "Quantum",
+      "solved": 0,
+      "total": 6,
+      "percentage": 0
+    },
+    {
+      "name": "Satellite",
+      "solved": 0,
+      "total": 3,
+      "percentage": 0
+    }
+  ]
 }
