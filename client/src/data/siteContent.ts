@@ -48,6 +48,7 @@ export interface CaseStudyItem {
   category: string;
   format: CaseStudyFormat;
   url: string;
+  description?: string;
 }
 
 export const SITE_META = {

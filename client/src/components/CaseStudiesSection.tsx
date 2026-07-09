@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { CASE_STUDIES, type CaseStudyFormat } from "@/data/siteContent";
 import { BookOpen, Filter, FileText, Presentation, ShieldCheck, ExternalLink } from "lucide-react";
 
@@ -11,6 +12,7 @@ const FORMAT_ICON: Record<CaseStudyFormat, typeof FileText> = {
 
 export default function CaseStudiesSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const reduced = useReducedMotion();
 
   const filteredStudies = selectedCategory
     ? CASE_STUDIES.filter((study) => study.category === selectedCategory)
@@ -82,16 +84,20 @@ export default function CaseStudiesSection() {
           </div>
 
           {/* Case Studies Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div key={selectedCategory ?? "all"} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredStudies.map((study, index) => {
               const Icon = FORMAT_ICON[study.format];
               return (
-                <a
-                  key={`${study.category}-${index}`}
+                <motion.a
+                  key={`${study.category}-${study.title}`}
                   href={study.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all duration-300 backdrop-blur-sm flex flex-col"
+                  className="group p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 hover:shadow-[0_0_24px_rgba(239,68,68,0.12)] transition-all duration-300 backdrop-blur-sm flex flex-col"
+                  initial={reduced ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ delay: reduced ? 0 : (index % 3) * 0.08, duration: 0.4 }}
                 >
                   {/* Header row: format icon + category chip */}
                   <div className="flex items-start justify-between gap-3 mb-4">
@@ -104,9 +110,16 @@ export default function CaseStudiesSection() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-white text-base leading-snug mb-3 group-hover:text-red-400 transition-colors">
+                  <h3 className="font-bold text-white text-base leading-snug mb-2 group-hover:text-red-400 transition-colors">
                     {study.title}
                   </h3>
+
+                  {/* Description */}
+                  {study.description && (
+                    <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                      {study.description}
+                    </p>
+                  )}
 
                   {/* Format + open affordance */}
                   <div className="mt-auto flex items-center justify-between pt-3 border-t border-red-500 border-opacity-20">
@@ -118,7 +131,7 @@ export default function CaseStudiesSection() {
                       <ExternalLink size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </span>
                   </div>
-                </a>
+                </motion.a>
               );
             })}
           </div>
@@ -139,15 +152,15 @@ export default function CaseStudiesSection() {
             </div>
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
               <div className="text-3xl md:text-4xl font-bold mb-2 text-red-400">
-                {CASE_STUDIES.filter((s) => s.format === "Report").length}
+                {CASE_STUDIES.filter((s) => s.format !== "Presentation").length}
               </div>
-              <div className="text-gray-400 text-sm">Written Reports</div>
+              <div className="text-gray-400 text-sm">Reports & Documents</div>
             </div>
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
               <div className="text-3xl md:text-4xl font-bold mb-2 text-red-400">
                 {CASE_STUDIES.filter((s) => s.format === "Presentation").length}
               </div>
-              <div className="text-gray-400 text-sm">Architecture Decks</div>
+              <div className="text-gray-400 text-sm">Presentations</div>
             </div>
           </div>
         </div>
