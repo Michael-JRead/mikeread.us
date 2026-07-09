@@ -280,6 +280,8 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Threat Modeling",
     format: "Report",
     url: "https://drive.google.com/file/d/13fa8S2QdARld-aRrK2LXDzagzouQzL2w/view?usp=sharing",
+    description:
+      "Threat-models Instagram's mobile app against the OWASP Top 10, mapping attack surfaces across iOS, Android, and AWS backends to MFA, obfuscation, and CI/CD controls.",
   },
 
   // Enterprise Key Management
@@ -288,12 +290,16 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Enterprise Key Management",
     format: "Document",
     url: "https://drive.google.com/file/d/1xdx2bMyKnVHr5_SldNObIlOHSvWpPd8P/view?usp=sharing",
+    description:
+      "Designs an enterprise key management overhaul for a healthcare provider, comparing AWS KMS, CloudHSM, and Certificate Manager against Azure Key Vault for HIPAA workloads.",
   },
   {
     title: "Enterprise Key Management Policy",
     category: "Enterprise Key Management",
     format: "Policy",
     url: "https://drive.google.com/file/d/1KtaZ3n_wIihTexb4HQ39cf9oKGvBiHMg/view?usp=sharing",
+    description:
+      "Establishes a cryptographic key lifecycle policy for a healthcare enterprise, governing AWS Certificate Manager, FIPS 140-2 CloudHSM backups, CRLs, and CloudTrail auditing.",
   },
 
   // Security Assessment Report (SAR)
@@ -302,18 +308,24 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Security Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1r0ZgMN1lbi3BYCQGNbHjDy7p2CucPQ_x/view?usp=sharing",
+    description:
+      "Dissects the 2015 OPM breach of 4.2 million federal personnel records, then applies Nmap, Wireshark, and OpenVAS findings to harden ports, databases, and authentication.",
   },
   {
     title: "APT28 & APT29",
     category: "Security Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1C9N3ELT7SeH1zbRqYEMi47-nPmL6MBWX/view?usp=sharing",
+    description:
+      "Profiles Russian APT28 and APT29 — HAMMERTOSS steganography, spear phishing, and the SolarWinds compromise — mapping CISA-documented TTPs across US critical infrastructure.",
   },
   {
     title: "Hybrid Cloud Implementation",
     category: "Security Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1MubpOqCJ6miXpLU2eqruKwJey7koceG7/view?usp=sharing",
+    description:
+      "Assesses Windows, Linux, and macOS vulnerabilities with OpenVAS under the NIST Cybersecurity Framework, driving port hardening and a shift to hybrid cloud IaaS.",
   },
 
   // After Action Reports (AAR)
@@ -322,6 +334,8 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "After Action",
     format: "Report",
     url: "https://drive.google.com/file/d/1eTBo-e7KhUWYSJT7cnSBJyyjt39uDrBY/view?usp=sharing",
+    description:
+      "Analyzes a simulated APT28/APT29 breach of U.S. financial-sector infrastructure and prescribes DevOps, firewall logging, RBAC, DMZs, and GnuPG/IPsec encryption controls.",
   },
 
   // Risk Assessment Reports (RAR)
@@ -330,18 +344,24 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Risk Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1I4KK98iVWLDzUkL8d0nGl9ckfLB3zFBv/view?usp=sharing",
+    description:
+      "Applies MITRE's Mission Assurance Engineering framework to OpenVAS, Nessus, and Wireshark scans of a simulated network, mapping open-port and weak-cipher risks to a timed POA&M.",
   },
   {
     title: "Nations Behaving Badly",
     category: "Risk Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1oLtP0WJznlf12BBKG66ELdv4-Qsoe2KA/view?usp=drive_link",
+    description:
+      "Responds to nation-state data exfiltration at a multilateral summit with a NIST-based incident response plan for Canada, FVEY threat sharing, and Snort DoS detection rules.",
   },
   {
     title: "Protecting the Homeland",
     category: "Risk Assessment",
     format: "Report",
     url: "https://drive.google.com/file/d/1y4Fxzkw3xdHaTnwDFYLeQbpLJYZBhbYE/view?usp=sharing",
+    description:
+      "Advocates international cyber capacity building through public-private partnerships, the Budapest Convention, and volunteer SMEs to close developing nations' skills gaps.",
   },
 
   // AWS Solutions Architect Case Studies
@@ -350,30 +370,40 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "AWS Architecture",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1vVF7xj0RGlBPyRExCpIZQaEj7STOA9JN/edit?usp=sharing&ouid=117836549247985822423&rtpof=true&sd=true",
+    description:
+      "Presents an AWS proof of concept for a highly available web app, demonstrating EC2 Auto Scaling launch templates and policies with ELB, Route 53, and RDS across AZs.",
   },
   {
     title: "Cloud Migration for Data Analytics Company",
     category: "AWS Architecture",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1gi50cEvxLsh6X96w_38ZfmRSulBPkxLV/edit?usp=sharing",
+    description:
+      "Charts a 40 TB AWS migration for a legal analytics firm using Snowball, DMS, and Kinesis Firehose feeding S3, Glue, Redshift, OpenSearch, Aurora, and SageMaker ML.",
   },
   {
     title: "Security Architecture for AWS Infrastructure",
     category: "AWS Architecture",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1Q3I5oirZgeer08_61nHbUfy-e3XpR8FN/edit?usp=sharing",
+    description:
+      "Architects automated incident response to an EC2 crypto-mining compromise using Security Hub, GuardDuty, Inspector, AWS Config, Lambda, and Slack alerts aligned to CIS benchmarks.",
   },
   {
     title: "Telehealth Platform to AWS",
     category: "AWS Architecture",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1hc_re3RFxUCFiiso6E5yLVVjg4NKBI7C/edit?usp=sharing",
+    description:
+      "Charts a HIPAA-compliant migration of a monolithic Java telehealth platform to AWS microservices on ECS/Fargate, adding Comprehend Medical PII redaction and a 12-month roadmap.",
   },
   {
     title: "On-Prem to AWS Migration",
     category: "AWS Architecture",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1z9eAV_quyTLkegRjyY6nXQkUZVYVR4eP/edit?usp=sharing",
+    description:
+      "Designs a highly available, PCI-DSS-compliant migration to AWS spanning CloudFront, Fargate, ElastiCache, and RDS, plus managed CI/CD, WAF, Shield, and GuardDuty.",
   },
 
   // Advanced Cyber Exploitation & Mitigation Methodologies
@@ -382,18 +412,24 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Exploitation & Mitigation",
     format: "Document",
     url: "https://docs.google.com/document/d/1hqhKzXhclBSX-fgDCY9t8eMg71ySIfMa/edit?usp=sharing",
+    description:
+      "Maps a five-year data loss prevention strategy for a media enterprise via SWOT analysis, IPv6/IoT adoption, tokenization, masking, blockchain, and context-aware security.",
   },
   {
     title: "Secure Video Conferencing Communications",
     category: "Exploitation & Mitigation",
     format: "Document",
     url: "https://docs.google.com/document/d/1yDmfYas6hccSJk46o5Tjs6gj-oC2DLjU/edit?usp=sharing",
+    description:
+      "Compares Zoom, Google Meet, and Microsoft Teams on CVE history, GDPR compliance, encryption, and MFA/SSO, recommending Teams for a 90% remote media workforce.",
   },
   {
     title: "System Security Report",
     category: "Exploitation & Mitigation",
     format: "Document",
     url: "https://docs.google.com/document/d/1PZvayMaVWCp1RncwT3vrRDMfEnz5dsep/edit?usp=sharing",
+    description:
+      "Assesses a media-streaming acquisition through PCI DSS gap analysis, MITRE ATT&CK threat mapping, RTSP/RTP protocol review, and NIST SP 800-161 supply chain mitigations.",
   },
 
   // Digital Forensics
@@ -402,24 +438,32 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Digital Forensics",
     format: "Report",
     url: "https://drive.google.com/file/d/1158WeWxdbQiBsCnubMZGyPnCvGu_RXH5/view?usp=sharing",
+    description:
+      "Explains the NIST four-phase forensic methodology and applies FTK Imager and EnCase to create hash-verified disk images while preserving evidence integrity and chain of custody.",
   },
   {
     title: "Network Intrusion",
     category: "Digital Forensics",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/16Vw_i2JEL427uLxsC4IDrWn7YJfIOdFR/edit?usp=sharing",
+    description:
+      "Recreates a Kali Linux attack using dirb to brute-force a hidden IIS directory of stored credentials on Windows Server 2019, then decodes the Base64 secrets in CyberChef.",
   },
   {
     title: "Data Exfiltration Walkthrough",
     category: "Digital Forensics",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1MtTFtQOvkwqN46zCUIJeKTAV4IO53xV_/edit?usp=sharing",
+    description:
+      "Traces an attack chain — Nmap port scanning, SSH login, a spoofed 'Administrator' account, and scheduled-task persistence — ending in theft of the server's private SSH key.",
   },
   {
     title: "Forensic Analysis of an Intrusion",
     category: "Digital Forensics",
     format: "Presentation",
     url: "https://docs.google.com/presentation/d/1IjwaexTztnmmHZOL943JJE5e0IFb2Xqd/edit?usp=sharing",
+    description:
+      "Reconstructs an intrusion at Mercury USA from IIS logs, Autoruns, Task Scheduler ncat backdoors, and Event Viewer account-creation events, confirming RSA private-key exfiltration.",
   },
 
   // Cryptography
@@ -428,6 +472,8 @@ export const CASE_STUDIES: CaseStudyItem[] = [
     category: "Cryptography",
     format: "Report",
     url: "https://drive.google.com/file/d/1j_IUFM1J6XaDY-vuSiDau5aWWGTUCWfM/view?usp=sharing",
+    description:
+      "Proposes an enterprise crypto architecture comparing Caesar, one-time pad, RSA, and AES, plus steganography, PKI, PGP/GPG email, and CAC smart-card access built on AWS services.",
   },
 ];
 
