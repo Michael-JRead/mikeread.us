@@ -1,4 +1,4 @@
-import { SITE_META } from "@/data/siteContent";
+import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
 import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
 import HackTheBoxIcon from "./HackTheBoxIcon";
 
@@ -29,27 +29,14 @@ export default function Footer() {
             {/* Quick Links */}
             <div>
               <h4 className="font-semibold mb-4 text-white">Quick Links</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="#about" className="text-gray-400 hover:text-red-400 transition-colors">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#experience" className="text-gray-400 hover:text-red-400 transition-colors">
-                    Experience
-                  </a>
-                </li>
-                <li>
-                  <a href="#portfolio" className="text-gray-400 hover:text-red-400 transition-colors">
-                    Projects
-                  </a>
-                </li>
-                <li>
-                  <a href="#certifications" className="text-gray-400 hover:text-red-400 transition-colors">
-                    Certifications
-                  </a>
-                </li>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.href}>
+                    <a href={item.href} className="text-gray-400 hover:text-red-400 transition-colors">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 

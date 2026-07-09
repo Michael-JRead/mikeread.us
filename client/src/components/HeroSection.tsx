@@ -10,7 +10,7 @@ export default function HeroSection() {
       className="relative pt-20 pb-32 overflow-hidden w-full"
     >
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
           backgroundImage: `
             linear-gradient(0deg, transparent 24%, rgba(248, 113, 113, 0.04) 25%, rgba(248, 113, 113, 0.04) 26%, transparent 27%, transparent 74%, rgba(248, 113, 113, 0.04) 75%, rgba(248, 113, 113, 0.04) 76%, transparent 77%, transparent),
@@ -18,7 +18,6 @@ export default function HeroSection() {
           `,
           backgroundSize: "50px 50px",
         }}
-        pointer-events-none
       />
 
       <div className="container mx-auto px-4 relative z-10">

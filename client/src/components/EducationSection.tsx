@@ -1,4 +1,4 @@
-import { EDUCATION } from "@/data/siteContent";
+import { CERTIFICATIONS, EDUCATION } from "@/data/siteContent";
 import { BookOpen, Award } from "lucide-react";
 
 
@@ -59,7 +59,7 @@ export default function EducationSection() {
               <h3 className="text-2xl font-bold text-white">Professional Certifications</h3>
             </div>
             <p className="text-gray-300 mb-4">
-              I hold 15+ active industry certifications across cloud security, penetration testing, compliance, and security management.
+              I hold {CERTIFICATIONS.length} active industry certifications across cloud security, penetration testing, compliance, and security management.
             </p>
             <a
               href="#certifications"
