@@ -13,6 +13,8 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className="page-gradient min-h-screen flex flex-col">
+      <div className="site-grid" aria-hidden="true" />
+      <div className="site-grain" aria-hidden="true" />
       <Navbar />
       <main className="flex-1">
         <HeroSection />

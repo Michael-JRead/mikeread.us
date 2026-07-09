@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CERTIFICATIONS, type CertificationItem } from "@/data/siteContent";
 import { Award, Filter } from "lucide-react";
+import SectionHeader from "./SectionHeader";
 
 const ORGS = CERTIFICATIONS.reduce<string[]>((acc, cert) => {
   if (!acc.includes(cert.issuer)) acc.push(cert.issuer);
@@ -45,22 +46,12 @@ export default function CertificationsSection() {
   const activePct = Math.round((activeCount / CERTIFICATIONS.length) * 100);
 
   return (
-    <section id="certifications" className="py-20 relative">
+    <section id="certifications" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-4">
-              <Award className="text-red-500" size={32} />
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
-                Certifications
-              </h2>
-            </div>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-            <p className="text-lg text-gray-400 mt-4">
-              {CERTIFICATIONS.length} active industry certifications spanning cloud security, penetration testing, incident response, and security management.
-            </p>
-          </div>
+          <SectionHeader index="07" eyebrow="credentials" title="Certifications">
+            {CERTIFICATIONS.length} active industry certifications spanning cloud security, penetration testing, incident response, and security management.
+          </SectionHeader>
 
           {/* Organization Filter */}
           <div className="mb-12">

@@ -24,8 +24,12 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <div className="inline-block px-4 py-2 bg-red-950 bg-opacity-60 text-red-200 rounded-full text-sm font-semibold border border-red-800 border-opacity-70 backdrop-blur-sm">
-                Cybersecurity Professional
+              <div className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.15em] text-slate-300">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
+                  <span className="motion-reduce:hidden absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+                </span>
+                Available for opportunities
               </div>
 
               <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight">

@@ -1,6 +1,7 @@
 import { SITE_META } from "@/data/siteContent";
 import { Mail, MapPin, Linkedin, Github, Send, UserRound } from "lucide-react";
 import HackTheBoxIcon from "./HackTheBoxIcon";
+import SectionHeader from "./SectionHeader";
 import { useState } from "react";
 
 export default function ContactSection() {
@@ -29,19 +30,12 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 relative">
+    <section id="contact" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Let's Connect
-            </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full mx-auto"></div>
-            <p className="text-lg text-gray-400 mt-4">
-              I'm always interested in discussing cybersecurity challenges, opportunities, and collaborations.
-            </p>
-          </div>
+          <SectionHeader index="08" eyebrow="contact" title="Let's Connect">
+            I'm always interested in discussing cybersecurity challenges, opportunities, and collaborations.
+          </SectionHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {/* Contact Info Cards */}

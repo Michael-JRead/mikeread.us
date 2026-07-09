@@ -1,20 +1,16 @@
 import { PROJECTS, SITE_META } from "@/data/siteContent";
 import { Github, ExternalLink, Zap } from "lucide-react";
+import SectionHeader from "./SectionHeader";
 
 
 export default function PortfolioSection() {
   return (
-    <section id="portfolio" className="py-20 relative">
+    <section id="portfolio" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Featured Projects
-            </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-            <p className="text-lg text-gray-400 mt-4">Security-focused projects and tools designed to solve real-world challenges</p>
-          </div>
+          <SectionHeader index="04" eyebrow="build" title="Featured Projects">
+            Security-focused projects and tools designed to solve real-world challenges.
+          </SectionHeader>
 
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

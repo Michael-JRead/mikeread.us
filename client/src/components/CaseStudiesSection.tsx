@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CASE_STUDIES, type CaseStudyFormat } from "@/data/siteContent";
-import { BookOpen, Filter, FileText, Presentation, ShieldCheck, ExternalLink } from "lucide-react";
+import { Filter, FileText, Presentation, ShieldCheck, ExternalLink } from "lucide-react";
+import SectionHeader from "./SectionHeader";
 
 const FORMAT_ICON: Record<CaseStudyFormat, typeof FileText> = {
   Report: FileText,
@@ -30,25 +31,15 @@ export default function CaseStudiesSection() {
   const categoryOrder = Object.keys(studiesByCategory);
 
   return (
-    <section id="case-studies" className="py-20 relative">
+    <section id="case-studies" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-4">
-              <BookOpen className="text-red-500" size={32} />
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
-                Case Studies
-              </h2>
-            </div>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-            <p className="text-lg text-gray-400 mt-4 max-w-3xl">
-              {CASE_STUDIES.length} published artifacts spanning threat modeling,
-              security assessments, risk analysis, AWS architecture, digital
-              forensics, and cryptography — drawn from academic research and
-              professional engagements.
-            </p>
-          </div>
+          <SectionHeader index="06" eyebrow="research" title="Case Studies">
+            {CASE_STUDIES.length} published artifacts spanning threat modeling,
+            security assessments, risk analysis, AWS architecture, digital
+            forensics, and cryptography — drawn from academic research and
+            professional engagements.
+          </SectionHeader>
 
           {/* Filter Buttons */}
           <div className="mb-12">

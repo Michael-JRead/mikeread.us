@@ -1,17 +1,12 @@
 import { ABOUT_PARAGRAPHS, CORE_SKILLS } from "@/data/siteContent";
+import SectionHeader from "./SectionHeader";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-20 relative">
+    <section id="about" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              About Me
-            </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-          </div>
+          <SectionHeader index="01" eyebrow="whoami" title="About Me" />
 
           {/* About Content */}
           <div className="space-y-6 mb-12">

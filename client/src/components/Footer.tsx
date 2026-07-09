@@ -104,6 +104,13 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Colophon */}
+          <p className="text-gray-500 text-sm max-w-md mb-6">
+            Built with React, Vite, and Tailwind CSS; type set in Geist and Geist Mono.
+            Statically deployed to GitHub Pages via GitHub Actions. Live Hack The Box stats
+            sync daily.
+          </p>
+
           {/* Bottom Footer */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
@@ -117,6 +124,11 @@ export default function Footer() {
               <ArrowUp size={16} />
             </button>
           </div>
+
+          {/* Build marginalia — real git SHA + build time from Vite define */}
+          <p className="mt-6 font-mono text-[11px] tracking-wider text-slate-600">
+            BUILD {__BUILD_SHA__} · {__BUILD_TIME__} · {SITE_META.canonicalUrl.replace("https://", "").replace(/\/$/, "")}
+          </p>
         </div>
       </div>
     </footer>

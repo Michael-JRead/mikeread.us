@@ -1,23 +1,20 @@
 import { useState } from "react";
 import { EXPERIENCES } from "@/data/siteContent";
 import { ChevronDown } from "lucide-react";
+import SectionHeader from "./SectionHeader";
 
 
 export default function ExperienceSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
   return (
-    <section id="experience" className="py-20 relative">
+    <section id="experience" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Professional Experience
-            </h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-            <p className="text-lg text-gray-400 mt-4">9 years of expertise in cybersecurity, cloud architecture, and security operations</p>
-          </div>
+          <SectionHeader index="02" eyebrow="career" title="Professional Experience">
+            Nine years across the Marine Corps, AWS, SAIC, and JPMorganChase — securing
+            cloud, DoD, and enterprise systems.
+          </SectionHeader>
 
           {/* Experience Timeline */}
           <div className="space-y-4">

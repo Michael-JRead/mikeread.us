@@ -3,6 +3,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Crosshair, Crown, Droplet, ExternalLink, Flag, Server, Swords, Trophy } from "lucide-react";
 import { SITE_META } from "@/data/siteContent";
 import HackTheBoxIcon from "./HackTheBoxIcon";
+import SectionHeader from "./SectionHeader";
 import type { ChallengeCategory } from "./HtbSkillRadar";
 
 const HtbSkillRadar = lazy(() => import("./HtbSkillRadar"));
@@ -207,12 +208,13 @@ function Terminal({ data, active }: { data: HtbStats; active: boolean }) {
   ];
 
   return (
-    <div className="rounded-lg overflow-hidden border border-red-500 border-opacity-40 bg-slate-950 bg-opacity-80 backdrop-blur-sm shadow-[0_0_30px_rgba(239,68,68,0.15)]">
+    <div className="relative scanlines rounded-lg overflow-hidden border border-red-500 border-opacity-40 bg-slate-950 bg-opacity-80 backdrop-blur-sm shadow-[0_0_30px_rgba(239,68,68,0.15)]">
       <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 bg-opacity-70 border-b border-red-500 border-opacity-20">
-        <span className="w-3 h-3 rounded-full bg-red-500" />
-        <span className="w-3 h-3 rounded-full bg-amber-400" />
-        <span className="w-3 h-3 rounded-full bg-emerald-400" />
-        <span className="ml-3 text-xs text-slate-400 font-mono">mr@mikeread:~/offsec</span>
+        <span className="w-3 h-3 rounded-full bg-slate-600" />
+        <span className="w-3 h-3 rounded-full bg-slate-600" />
+        <span className="w-3 h-3 rounded-full bg-slate-600" />
+        <span className="ml-3 text-xs text-slate-400 font-mono">mr@mikeread:~/offsec — zsh</span>
+        <span className="ml-auto text-[10px] font-mono tracking-widest text-red-400">▣ LIVE</span>
       </div>
       <div className="p-5 font-mono text-sm leading-7">
         <div className="text-emerald-300">
@@ -265,17 +267,13 @@ export default function OffensiveSecuritySection() {
   }, []);
 
   return (
-    <section id="offensive-security" className="py-20 relative">
+    <section id="offensive-security" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto" ref={sectionRef}>
-          <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Offensive Security</h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
-            <p className="text-lg text-gray-400 mt-4">
-              Hands-on adversary tradecraft, sharpened on Hack The Box. Stats sync daily from my
-              live profile.
-            </p>
-          </div>
+          <SectionHeader index="05" eyebrow="offensive security" title="Adversary Tradecraft">
+            Hands-on offensive skills, sharpened on Hack The Box. Stats sync daily from my
+            live profile.
+          </SectionHeader>
 
           {data ? (
             <div className="space-y-8">

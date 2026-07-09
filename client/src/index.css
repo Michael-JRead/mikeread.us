@@ -129,6 +129,27 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans;
   }
+  /* Two-tier red accent: red-600 for fills/borders, red-300 for text on dark. */
+  ::selection {
+    background-color: rgb(248 113 113 / 0.28);
+    color: rgb(254 242 242);
+  }
+  :focus-visible {
+    outline: 2px solid rgb(248 113 113 / 0.7);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -213,6 +234,65 @@
     background-color: rgb(220 38 38 / 0.84);
     border: 1px solid rgb(252 165 165 / 0.6);
     color: rgb(255 255 255);
+  }
+
+  /* Ambient site texture: a faint engineering grid + static film grain that
+     sits behind all content (page-gradient establishes the stacking context). */
+  .site-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 92% 70% at 50% 0%, black 15%, transparent 80%);
+    mask-image: radial-gradient(ellipse 92% 70% at 50% 0%, black 15%, transparent 80%);
+  }
+
+  .site-grain {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Whisper-level scanlines, scoped to terminal-style panels only. */
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: repeating-linear-gradient(
+      0deg,
+      rgb(0 0 0 / 0.09) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  /* Mono eyebrow label used above every section heading. */
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgb(248 113 113);
+  }
+
+  /* Gradient hairline rule that replaces the old rounded nub under headings. */
+  .section-rule {
+    height: 1px;
+    width: 100%;
+    background-image: linear-gradient(
+      to right,
+      rgb(239 68 68 / 0.6),
+      rgb(239 68 68 / 0.15) 45%,
+      transparent
+    );
   }
 
   /**
