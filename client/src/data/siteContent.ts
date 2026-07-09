@@ -452,7 +452,7 @@ export const CERTIFICATIONS: CertificationItem[] = [
   { name: "AWS Certified Security - Specialty", shortName: "Security Specialty", issuer: "AWS", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/aws-scs.png" },
 
   // CompTIA
-  { name: "CompTIA Advanced Security Practitioner", shortName: "CASP+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/comptia-casp.png" },
+  { name: "CompTIA SecurityX (formerly CASP+)", shortName: "SecurityX", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/comptia-casp.png" },
   { name: "CompTIA Cybersecurity Analyst", shortName: "CySA+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/comptia-cysa.png" },
   { name: "CompTIA Security+", shortName: "Security+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/comptia-security.png" },
   { name: "CompTIA Network+", shortName: "Network+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/comptia-network.png" },
