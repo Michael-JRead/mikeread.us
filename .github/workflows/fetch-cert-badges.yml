@@ -1,0 +1,55 @@
+name: Fetch Cert Badges
+
+# Downloads official Credly badge art into client/public/assets/certs/.
+# Runs only when the badge list or this workflow changes; idempotent.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/fetch-cert-badges.mjs"
+      - ".github/workflows/fetch-cert-badges.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: cert-badges
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Download badge images
+        run: node scripts/fetch-cert-badges.mjs
+
+      - name: Commit and push if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/public/assets/certs
+          if git diff --cached --quiet; then
+            echo "No badge changes."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Add official certification badge images"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.pushed == 'true'
+        run: gh workflow run deploy-pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
