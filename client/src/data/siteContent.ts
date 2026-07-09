@@ -33,10 +33,12 @@ export interface ProjectItem {
 
 export interface CertificationItem {
   name: string;
+  shortName: string;
   issuer: string;
   year: string;
   status: "Active" | "In Progress" | "Planned";
   category?: string;
+  badgeSrc?: string;
 }
 
 export type CaseStudyFormat = "Report" | "Policy" | "Presentation" | "Document";
@@ -429,40 +431,32 @@ export const CASE_STUDIES: CaseStudyItem[] = [
 ];
 
 export const CERTIFICATIONS: CertificationItem[] = [
-  // ISACA Certifications
-  { name: "Certified Information Security Manager (CISM)", issuer: "ISACA", year: "Active", status: "Active", category: "Management" },
-  
-  // ISC2 Certifications
-  { name: "Certified Information Systems Security Professional (CISSP)", issuer: "ISC2", year: "Active", status: "Active", category: "Professional" },
-  { name: "Certified Cloud Security Professional (CCSP)", issuer: "ISC2", year: "Active", status: "Active", category: "Cloud" },
-  
-  // SANS/GIAC Certifications
-  { name: "GIAC Defensible Security Architect (GDSA)", issuer: "SANS", year: "Active", status: "Active", category: "Professional" },
-  { name: "GIAC Certified Incident Handler (GCIH)", issuer: "SANS", year: "Active", status: "Active", category: "Incident Response" },
-  { name: "GIAC Penetration Tester (GPEN)", issuer: "SANS", year: "Active", status: "Active", category: "Offensive" },
-  { name: "GIAC Cloud Penetration Tester (GCPN)", issuer: "SANS", year: "Active", status: "Active", category: "Cloud" },
-  { name: "GIAC Web Application Penetration Tester (GWAPT)", issuer: "SANS", year: "Active", status: "Active", category: "Offensive" },
-  { name: "GIAC Security Essentials (GSEC)", issuer: "SANS", year: "Active", status: "Active", category: "Fundamentals" },
-  
-  // AWS Certifications
-  { name: "AWS Certified Solutions Architect - Professional", issuer: "AWS", year: "Active", status: "Active", category: "Cloud" },
-  { name: "AWS Advanced Networking - Specialty", issuer: "AWS", year: "Active", status: "Active", category: "Cloud" },
-  { name: "AWS Security - Specialty", issuer: "AWS", year: "Active", status: "Active", category: "Cloud" },
-  
-  // CompTIA Certifications
-  { name: "CompTIA CASP+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional" },
-  { name: "CompTIA CySA+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional" },
-  { name: "CompTIA Security+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals" },
-  { name: "CompTIA Network+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals" },
-  { name: "CompTIA Linux+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals" },
+  // ISACA
+  { name: "Certified Information Security Manager", shortName: "CISM", issuer: "ISACA", year: "Active", status: "Active", category: "Management", badgeSrc: "/assets/certs/cism.png" },
+
+  // ISC2
+  { name: "Certified Information Systems Security Professional", shortName: "CISSP", issuer: "ISC2", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/cissp.png" },
+  { name: "Certified Cloud Security Professional", shortName: "CCSP", issuer: "ISC2", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/ccsp.png" },
+
+  // GIAC (SANS)
+  { name: "GIAC Defensible Security Architect", shortName: "GDSA", issuer: "GIAC", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/gdsa.png" },
+  { name: "GIAC Certified Incident Handler", shortName: "GCIH", issuer: "GIAC", year: "Active", status: "Active", category: "Incident Response", badgeSrc: "/assets/certs/gcih.png" },
+  { name: "GIAC Penetration Tester", shortName: "GPEN", issuer: "GIAC", year: "Active", status: "Active", category: "Offensive", badgeSrc: "/assets/certs/gpen.png" },
+  { name: "GIAC Cloud Penetration Tester", shortName: "GCPN", issuer: "GIAC", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/gcpn.png" },
+  { name: "GIAC Web Application Penetration Tester", shortName: "GWAPT", issuer: "GIAC", year: "Active", status: "Active", category: "Offensive", badgeSrc: "/assets/certs/gwapt.png" },
+  { name: "GIAC Security Essentials", shortName: "GSEC", issuer: "GIAC", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/gsec.png" },
+
+  // AWS
+  { name: "AWS Certified Solutions Architect - Professional", shortName: "Solutions Architect Pro", issuer: "AWS", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/aws-sap.png" },
+  { name: "AWS Certified Advanced Networking - Specialty", shortName: "Advanced Networking", issuer: "AWS", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/aws-ans.png" },
+  { name: "AWS Certified Security - Specialty", shortName: "Security Specialty", issuer: "AWS", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/aws-scs.png" },
+
+  // CompTIA
+  { name: "CompTIA Advanced Security Practitioner", shortName: "CASP+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/comptia-casp.png" },
+  { name: "CompTIA Cybersecurity Analyst", shortName: "CySA+", issuer: "CompTIA", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/comptia-cysa.png" },
+  { name: "CompTIA Security+", shortName: "Security+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/comptia-security.png" },
+  { name: "CompTIA Network+", shortName: "Network+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/comptia-network.png" },
+  { name: "CompTIA Linux+", shortName: "Linux+", issuer: "CompTIA", year: "Active", status: "Active", category: "Fundamentals", badgeSrc: "/assets/certs/comptia-linux.png" },
 ];
 
-export const CERTIFICATION_CATEGORIES = [
-  { name: "Management", color: "bg-red-900/30 text-red-200", count: 1 },
-  { name: "Professional", color: "bg-rose-900/30 text-rose-200", count: 3 },
-  { name: "Cloud", color: "bg-orange-900/30 text-orange-200", count: 5 },
-  { name: "Incident Response", color: "bg-red-900/30 text-red-200", count: 1 },
-  { name: "Offensive", color: "bg-amber-900/30 text-amber-200", count: 3 },
-  { name: "Fundamentals", color: "bg-slate-800 text-slate-200", count: 5 },
-];
 

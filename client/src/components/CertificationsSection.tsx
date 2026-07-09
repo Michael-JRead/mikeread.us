@@ -1,25 +1,48 @@
 import { useState } from "react";
-import { CERTIFICATIONS, CERTIFICATION_CATEGORIES } from "@/data/siteContent";
+import { motion, useReducedMotion } from "framer-motion";
+import { CERTIFICATIONS, type CertificationItem } from "@/data/siteContent";
 import { Award, Filter } from "lucide-react";
 
+const ORGS = CERTIFICATIONS.reduce<string[]>((acc, cert) => {
+  if (!acc.includes(cert.issuer)) acc.push(cert.issuer);
+  return acc;
+}, []);
+
+function CertBadge({ cert }: { cert: CertificationItem }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = cert.badgeSrc && !imageFailed;
+
+  return (
+    <div className="flex items-center justify-center h-32 mb-4">
+      {showImage ? (
+        <img
+          src={cert.badgeSrc}
+          alt={`${cert.name} badge`}
+          width={120}
+          height={120}
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+          className="max-h-32 w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
+        />
+      ) : (
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-500/30 to-rose-500/15 border border-red-400/50 flex items-center justify-center">
+          <Award size={40} className="text-red-300" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CertificationsSection() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
+  const reduced = useReducedMotion();
 
-  const filteredCerts = selectedCategory
-    ? CERTIFICATIONS.filter((cert) => cert.category === selectedCategory)
+  const filteredCerts = selectedOrg
+    ? CERTIFICATIONS.filter((cert) => cert.issuer === selectedOrg)
     : CERTIFICATIONS;
 
-  // Group certifications by category
-  const certsByCategory = CERTIFICATIONS.reduce(
-    (acc, cert) => {
-      const category = cert.category || "Other";
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(cert);
-      return acc;
-    },
-    {} as Record<string, typeof CERTIFICATIONS>
-  );
+  const activeCount = CERTIFICATIONS.filter((c) => c.status === "Active").length;
+  const activePct = Math.round((activeCount / CERTIFICATIONS.length) * 100);
 
   return (
     <section id="certifications" className="py-20 relative">
@@ -35,82 +58,69 @@ export default function CertificationsSection() {
             </div>
             <div className="w-16 h-1 bg-gradient-to-r from-red-500 to-red-700 rounded-full"></div>
             <p className="text-lg text-gray-400 mt-4">
-              15+ active industry certifications demonstrating expertise across cloud security, penetration testing, compliance, and security management.
+              {CERTIFICATIONS.length} active industry certifications spanning cloud security, penetration testing, incident response, and security management.
             </p>
           </div>
 
-          {/* Filter Buttons */}
+          {/* Organization Filter */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
               <Filter size={20} className="text-red-500" />
-              <span className="text-gray-300 font-semibold">Filter by Category:</span>
+              <span className="text-gray-300 font-semibold">Filter by Organization:</span>
             </div>
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={() => setSelectedCategory(null)}
+                onClick={() => setSelectedOrg(null)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  selectedCategory === null
+                  selectedOrg === null
                     ? "bg-red-700 bg-opacity-60 text-red-100 border border-red-300 border-opacity-60"
                     : "bg-slate-800 bg-opacity-70 text-gray-200 hover:bg-slate-700 border border-red-500 border-opacity-30 hover:border-opacity-50"
                 }`}
               >
                 All ({CERTIFICATIONS.length})
               </button>
-              {Object.keys(certsByCategory).map((category) => (
+              {ORGS.map((org) => (
                 <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
+                  key={org}
+                  onClick={() => setSelectedOrg(org)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                    selectedCategory === category
+                    selectedOrg === org
                       ? "bg-red-700 bg-opacity-60 text-red-100 border border-red-300 border-opacity-60"
                       : "bg-slate-800 bg-opacity-70 text-gray-200 hover:bg-slate-700 border border-red-500 border-opacity-30 hover:border-opacity-50"
                   }`}
                 >
-                  {category} ({certsByCategory[category].length})
+                  {org} ({CERTIFICATIONS.filter((c) => c.issuer === org).length})
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Certifications Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCerts.map((cert, index) => {
-              const categoryInfo = CERTIFICATION_CATEGORIES.find((c) => c.name === cert.category);
-              return (
-                <div
-                  key={index}
-                  className="group p-6 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 transition-all duration-300 backdrop-blur-sm"
-                >
-                  {/* Badge */}
-                  {categoryInfo && (
-                    <div className="glass-readable-chip inline-block px-3 py-1 rounded-full text-xs font-bold mb-3">
-                      {cert.category}
-                    </div>
-                  )}
-
-                  {/* Content */}
-                  <h3 className="font-bold text-white text-sm leading-tight mb-2 group-hover:text-red-400 transition-colors">
-                    {cert.name}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-3">{cert.issuer}</p>
-
-                  {/* Status Badge */}
-                  <div className="flex items-center justify-end">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-bold ${
-                        cert.status === "Active"
-                          ? "bg-emerald-400 bg-opacity-20 text-emerald-100 border border-emerald-300 border-opacity-60 shadow-[0_0_14px_rgba(16,185,129,0.18)]"
-                          : cert.status === "In Progress"
-                            ? "bg-amber-400 bg-opacity-20 text-amber-100 border border-amber-300 border-opacity-55"
-                            : "bg-slate-700 text-gray-400 border border-slate-600"
-                      }`}
-                    >
-                      {cert.status}
-                    </span>
-                  </div>
+          {/* Badge Grid */}
+          <div key={selectedOrg ?? "all"} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filteredCerts.map((cert, index) => (
+              <motion.div
+                key={cert.shortName}
+                className="group p-5 bg-slate-900 bg-opacity-40 border border-red-500 border-opacity-30 rounded-lg hover:border-opacity-60 hover:bg-opacity-60 hover:shadow-[0_0_24px_rgba(239,68,68,0.15)] transition-all duration-300 backdrop-blur-sm text-center flex flex-col"
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: reduced ? 0 : (index % 4) * 0.08, duration: 0.4 }}
+              >
+                <CertBadge cert={cert} />
+                <h3 className="font-bold text-white leading-tight group-hover:text-red-400 transition-colors">
+                  {cert.shortName}
+                </h3>
+                <p className="text-gray-400 text-xs leading-snug mt-1 flex-grow">{cert.name}</p>
+                <div className="flex items-center justify-center gap-2 mt-3 text-xs">
+                  <span className="text-slate-400 font-medium">{cert.issuer}</span>
+                  <span className="text-slate-600">•</span>
+                  <span className="inline-flex items-center gap-1 text-emerald-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                    {cert.status}
+                  </span>
                 </div>
-              );
-            })}
+              </motion.div>
+            ))}
           </div>
 
           {/* Summary Stats */}
@@ -120,11 +130,11 @@ export default function CertificationsSection() {
               <div className="text-gray-400">Active Certifications</div>
             </div>
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-red-400">{Object.keys(certsByCategory).length}</div>
-              <div className="text-gray-400">Certification Categories</div>
+              <div className="text-4xl font-bold mb-2 text-red-400">{ORGS.length}</div>
+              <div className="text-gray-400">Issuing Organizations</div>
             </div>
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-red-400">100%</div>
+              <div className="text-4xl font-bold mb-2 text-red-400">{activePct}%</div>
               <div className="text-gray-400">Current & Maintained</div>
             </div>
           </div>
