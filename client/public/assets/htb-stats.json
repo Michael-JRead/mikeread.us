@@ -1,11 +1,11 @@
 {
-  "fetchedAt": "2026-07-10T12:08:07.836Z",
+  "fetchedAt": "2026-07-11T10:33:38.088Z",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Script Kiddie",
-    "ranking": 844,
+    "ranking": 851,
     "points": 192,
     "user_owns": 24,
     "system_owns": 24,
@@ -22,13 +22,13 @@
   "activity": [],
   "challenges": {
     "solved": 210,
-    "total": 837
+    "total": 838
   },
   "challengeCategories": [
     {
       "name": "Reversing",
       "solved": 10,
-      "total": 100,
+      "total": 101,
       "percentage": 10
     },
     {
