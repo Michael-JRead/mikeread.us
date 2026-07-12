@@ -29,6 +29,8 @@ export interface ProjectItem {
   githubUrl?: string;
   liveUrl?: string;
   impact?: string;
+  /** Optional extra labeled links (e.g. individual PRs) rendered as buttons. */
+  links?: { label: string; url: string }[];
 }
 
 export interface CertificationItem {
@@ -250,26 +252,30 @@ export const EDUCATION: EducationItem[] = [
 
 export const PROJECTS: ProjectItem[] = [
   {
-    title: "Threataform",
+    title: "Quarkus Security Contributions",
     summary:
-      "A 100% client-side threat modeling and IaC analysis platform with a custom in-browser language model — zero data ever leaves the user's machine.",
+      "Source-level security review and vulnerability research contributed to Quarkus, the Red Hat–backed Supersonic Subatomic Java framework used across enterprise cloud-native workloads.",
     description:
-      "Threataform ingests Terraform, CloudFormation, and 15+ document formats (PDF, DOCX, spreadsheets, OCR'd images) and produces an end-to-end threat model in the browser. A custom HCL parser walks cross-file dependencies, module hierarchies, and PAVE architectural layers (L0 organization controls through L4 service workloads), then runs 30+ automated misconfiguration checks. Findings map to STRIDE categories, MITRE ATT&CK techniques, and CWE weaknesses, and trust boundaries are inferred across network, IAM, storage, compute, and organizational layers. The platform exports drawio/Lucidchart-compatible Data Flow Diagrams as mxGraphModel XML with threat annotations baked in. A custom 200M-parameter causal transformer (ThreataformLM) ships entirely in JavaScript with RoPE+YaRN positional scaling, Grouped Query Attention, SwiGLU activations, and Q4/Q8 quantization for a ~50MB footprint, and supports in-browser LoRA fine-tuning on uploaded documents. A hybrid RAG pipeline fuses BM25, dense HNSW vector search, and ColBERT late interaction via Reciprocal Rank Fusion, with HyDE and SELF-RAG control tokens for retrieval quality. Inference and ingestion run on Web Workers; state lives in localStorage and IndexedDB so the entire workspace works offline as a PWA.",
-    tags: ["Threat Modeling", "STRIDE", "MITRE ATT&CK", "Terraform", "RAG", "LLM", "React", "PWA", "Privacy"],
-    githubUrl: "https://github.com/Michael-JRead/threataform",
+      "Reviewing Quarkus at the source level, I identified and drove two merged hardening fixes to the framework's defaults — improvements that ship to every downstream application. I found that Dev MCP endpoints were exposed without the localhost, CORS, and Host-header checks that guard the framework's other development-mode endpoints; the fix that locks them down landed with credit to me (PR #55353, milestone 3.27.5). I also flagged an unauthenticated memory-exhaustion denial of service in the SmallRye GraphQL extension, where deeply nested queries against cyclic schemas could balloon into multi-gigabyte heap allocation from a single request, which was resolved by shipping a sensible default query-depth limit (PR #55361). Separately, I discovered and responsibly disclosed an unauthenticated denial-of-service vulnerability in Quarkus that the Quarkus and Red Hat security team has confirmed and fixed — a CVE advisory is pending publication, and I am honoring the coordinated-disclosure window before releasing details.",
+    tags: ["Java", "Quarkus", "Vulnerability Research", "Secure Code Review", "CVE", "Denial of Service", "Responsible Disclosure"],
+    githubUrl: "https://github.com/quarkusio/quarkus",
+    links: [
+      { label: "PR #55353", url: "https://github.com/quarkusio/quarkus/pull/55353" },
+      { label: "PR #55361", url: "https://github.com/quarkusio/quarkus/pull/55361" },
+    ],
     impact:
-      "Air-gap-ready threat modeling with zero telemetry — covers HIPAA, FedRAMP, PCI DSS v4, NIST 800-53 r5, CMMC L2, and ISO 27001 out of the box.",
+      "Two merged fixes hardening Quarkus defaults for every downstream app, plus a confirmed, responsibly disclosed CVE (advisory pending).",
   },
   {
-    title: "AWS RSS Feed Digest",
+    title: "SecretHound",
     summary:
-      "Streamlit application that subscribes to 50+ official AWS service feeds and delivers branded HTML email digests on a daily or weekly schedule.",
+      "An offline credential and secret analyzer for offensive-security engagements — pure local analysis with no network calls, no scanning, and no exploitation.",
     description:
-      "A self-hosted security and operations awareness tool that consolidates the AWS What's New feed and per-topic AWS Blog feeds (security, database, ML, DevOps, analytics, and more) into a single subscriber-friendly digest. Users select services through a searchable multi-select UI, add categories in bulk, or paste arbitrary RSS URLs. The scraper deduplicates and filters by per-service keyword registries, the email builder renders an AWS-branded HTML digest grouped by service with titles, dates, summaries, and links, and APScheduler runs the delivery loop in the background. SMTP supports Gmail App Passwords, Microsoft 365, and any standard SMTP provider, and credentials stay local in a gitignored config.json — nothing is sent to a third-party service.",
-    tags: ["Python", "Streamlit", "AWS", "Threat Intelligence", "Automation", "RSS", "SMTP"],
-    githubUrl: "https://github.com/Michael-JRead/AWS-RSS-Feeds",
+      "SecretHound triages the loot you already hold during a pentest or OSCP-style engagement — other tools' output files, your own notes, Hashcat and John potfiles, SSH material, configs, databases, archives, and RDP session files — entirely offline. Fourteen analyzers (Shannon entropy, regex pattern matching, credential-pair extraction, encoded-secret decoding, SQLite triage, keyword and inventory sweeps, and more) classify every finding by severity, from CRITICAL decoded credentials and user/password pairs down to low-entropy leads, then assemble an ATTACK PATH panel that points you at the highest-value next move. It is deliberately air-gapped by design: it reads files you already have, never opens a network connection, and never attempts exploitation — making it safe to run against sensitive engagement data.",
+    tags: ["Python", "Offensive Security", "OSCP", "Credential Analysis", "DFIR", "CLI"],
+    githubUrl: "https://github.com/Michael-JRead/Secrethound",
     impact:
-      "Replaces manual feed-watching with a 50-service automated digest tuned for security teams tracking AWS service launches and advisories.",
+      "Turns scattered engagement loot into a ranked, offline attack path in a single pass — zero network exposure of sensitive data.",
   },
 ];
 

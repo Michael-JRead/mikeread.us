@@ -81,6 +81,18 @@ export default function PortfolioSection() {
                         Live Demo
                       </a>
                     )}
+                    {project.links?.map((link) => (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-red-400 rounded hover:bg-slate-700 hover:text-red-300 transition-all font-medium text-sm border border-red-500 border-opacity-30 hover:border-opacity-60"
+                      >
+                        <ExternalLink size={16} />
+                        {link.label}
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>
