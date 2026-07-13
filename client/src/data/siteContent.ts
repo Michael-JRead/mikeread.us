@@ -256,15 +256,17 @@ export const PROJECTS: ProjectItem[] = [
     summary:
       "Source-level security review and vulnerability research contributed to Quarkus, the Red Hat–backed Supersonic Subatomic Java framework used across enterprise cloud-native workloads.",
     description:
-      "Reviewing Quarkus at the source level, I identified and drove two merged hardening fixes to the framework's defaults — improvements that ship to every downstream application. I found that Dev MCP endpoints were exposed without the localhost, CORS, and Host-header checks that guard the framework's other development-mode endpoints; the fix that locks them down landed with credit to me (PR #55353, milestone 3.27.5). I also flagged an unauthenticated memory-exhaustion denial of service in the SmallRye GraphQL extension, where deeply nested queries against cyclic schemas could balloon into multi-gigabyte heap allocation from a single request, which was resolved by shipping a sensible default query-depth limit (PR #55361). Separately, I discovered and responsibly disclosed an unauthenticated denial-of-service vulnerability in Quarkus that the Quarkus and Red Hat security team has confirmed and fixed — a CVE advisory is pending publication, and I am honoring the coordinated-disclosure window before releasing details.",
-    tags: ["Java", "Quarkus", "Vulnerability Research", "Secure Code Review", "CVE", "Denial of Service", "Responsible Disclosure"],
+      "Reviewing Quarkus at the source level, I discovered and reported four security weaknesses that were fixed upstream and now ship to every downstream application. I found Dev MCP endpoints exposed without the localhost, CORS, and Host-header checks that guard the framework's other development-mode endpoints — the lockdown fix landed with credit to me (PR #55353, milestone 3.27.5). I reported an unauthenticated memory-exhaustion denial of service in the SmallRye GraphQL extension, where deeply nested queries against cyclic schemas could balloon into multi-gigabyte heap allocation from a single request, resolved with a sensible default query-depth limit (PR #55361). I found the Pulsar extension silently skipping TLS hostname verification even when it was explicitly configured — a man-in-the-middle exposure — fixed by properly enabling verification and honoring the trust-all setting (PR #55308). And I reported two flaws in remote dev mode: a path-traversal escape from the application root via unnormalized path resolution, and unsafe deserialization of network input through a raw ObjectInputStream with no filter — both hardened in one backported fix (PR #55380). Separately, I discovered and responsibly disclosed an unauthenticated denial-of-service vulnerability in Quarkus that the Quarkus and Red Hat security team has confirmed and fixed — a CVE advisory is pending publication, and I am honoring the coordinated-disclosure window before releasing details.",
+    tags: ["Java", "Quarkus", "Vulnerability Research", "Secure Code Review", "CVE", "Denial of Service", "TLS", "Deserialization", "Responsible Disclosure"],
     githubUrl: "https://github.com/quarkusio/quarkus",
     links: [
+      { label: "PR #55308", url: "https://github.com/quarkusio/quarkus/pull/55308" },
       { label: "PR #55353", url: "https://github.com/quarkusio/quarkus/pull/55353" },
       { label: "PR #55361", url: "https://github.com/quarkusio/quarkus/pull/55361" },
+      { label: "PR #55380", url: "https://github.com/quarkusio/quarkus/pull/55380" },
     ],
     impact:
-      "Two merged fixes hardening Quarkus defaults for every downstream app, plus a confirmed, responsibly disclosed CVE (advisory pending).",
+      "Four merged fixes hardening Quarkus defaults for every downstream app, plus a confirmed, responsibly disclosed CVE (advisory pending).",
   },
   {
     title: "SecretHound",
