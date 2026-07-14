@@ -152,8 +152,18 @@ if (avatarSrc) {
   }
 }
 
+const now = new Date().toISOString();
+const sha = process.env.GITHUB_SHA ? process.env.GITHUB_SHA.slice(0, 7) : undefined;
+const runUrl =
+  process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
+    ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+    : undefined;
+
 const snapshot = {
-  fetchedAt: new Date().toISOString(),
+  fetchedAt: now,
+  generatedAt: now,
+  ...(sha ? { commit: sha } : {}),
+  ...(runUrl ? { runUrl } : {}),
   userId: USER_ID,
   profile: {
     name: profile.name,

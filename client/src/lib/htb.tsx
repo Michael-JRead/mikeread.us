@@ -21,6 +21,9 @@ export interface HtbActivityItem {
 
 export interface HtbStats {
   fetchedAt: string;
+  generatedAt?: string;
+  commit?: string;
+  runUrl?: string;
   userId: number;
   profile: {
     name: string;
@@ -264,6 +267,40 @@ export function Terminal({
             </motion.div>
           ))}
       </div>
+    </div>
+  );
+}
+
+/** Provenance strip: how fresh the data is and where it came from. */
+export function FreshnessStamp({ data }: { data: HtbStats }) {
+  const iso = data.generatedAt ?? data.fetchedAt;
+  const ts = new Date(iso).getTime();
+  const ageH = (Date.now() - ts) / 3_600_000;
+  const rel =
+    ageH < 1 ? "under an hour ago" : ageH < 48 ? `${Math.round(ageH)}h ago` : `${Math.round(ageH / 24)}d ago`;
+  const fresh = ageH < 48;
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] text-slate-500">
+      <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+        {fresh && <span className="motion-reduce:hidden absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />}
+        <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${fresh ? "bg-emerald-400" : "bg-amber-400"}`} />
+      </span>
+      <span>synced {rel}</span>
+      <span className="text-slate-700">·</span>
+      <span>source: HTB v4 API</span>
+      {data.commit && (
+        <>
+          <span className="text-slate-700">·</span>
+          {data.runUrl ? (
+            <a href={data.runUrl} target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition-colors">
+              build {data.commit}
+            </a>
+          ) : (
+            <span>build {data.commit}</span>
+          )}
+        </>
+      )}
     </div>
   );
 }

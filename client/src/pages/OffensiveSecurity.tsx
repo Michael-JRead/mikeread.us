@@ -3,18 +3,25 @@ import { Link } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
+  Boxes,
   Crosshair,
   Crown,
   ExternalLink,
   Flag,
+  GitPullRequest,
+  Hammer,
   Server,
+  ShieldAlert,
   Star,
   Target,
   Trophy,
+  Wrench,
   Zap,
 } from "lucide-react";
 import { CERTIFICATIONS, SITE_META, WALKTHROUGHS } from "@/data/siteContent";
-import { CategoryBars, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
+import { DISCLOSURES } from "@/data/offsec";
+import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
+import AttackMatrix from "@/components/AttackMatrix";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -51,20 +58,24 @@ const CAPABILITIES: { area: string; cert: string; desc: string }[] = [
   },
 ];
 
-const PHASES: { n: string; name: string; desc: string }[] = [
-  { n: "01", name: "Reconnaissance", desc: "Map the external footprint — passive OSINT, DNS and subdomain discovery, and attack-surface enumeration before a single packet is sent in anger." },
-  { n: "02", name: "Enumeration", desc: "Fingerprint every exposed service, pull versions and misconfigurations, and build the target model that drives the rest of the engagement." },
-  { n: "03", name: "Exploitation", desc: "Turn findings into access — web, network, and service exploitation, chained deliberately and validated with working proof, not theory." },
-  { n: "04", name: "Privilege Escalation", desc: "Move from foothold to full control through kernel, service, credential, and misconfiguration paths on Linux and Windows." },
-  { n: "05", name: "Lateral Movement", desc: "Pivot through the environment — credential reuse, Active Directory abuse, and trust relationships to reach the objective." },
-  { n: "06", name: "Post-Exploitation & Reporting", desc: "Triage loot with SecretHound, document the full attack chain, and translate it into prioritized, business-aware remediation." },
+const PHASES: { n: string; name: string; desc: string; tactics: string[] }[] = [
+  { n: "01", name: "Reconnaissance", desc: "Map the external footprint — passive OSINT, DNS and subdomain discovery, and attack-surface enumeration before a single packet is sent in anger.", tactics: ["Reconnaissance", "Discovery"] },
+  { n: "02", name: "Enumeration", desc: "Fingerprint every exposed service, pull versions and misconfigurations, and build the target model that drives the rest of the engagement.", tactics: ["Discovery"] },
+  { n: "03", name: "Exploitation", desc: "Turn findings into access — web, network, and service exploitation, chained deliberately and validated with working proof, not theory.", tactics: ["Initial Access", "Execution"] },
+  { n: "04", name: "Privilege Escalation", desc: "Move from foothold to full control through kernel, service, credential, and misconfiguration paths on Linux and Windows.", tactics: ["Privilege Escalation", "Credential Access"] },
+  { n: "05", name: "Lateral Movement", desc: "Pivot through the environment — credential reuse, Active Directory abuse, and trust relationships to reach the objective.", tactics: ["Lateral Movement"] },
+  { n: "06", name: "Post-Exploitation & Reporting", desc: "Triage loot with SecretHound, document the full attack chain, and translate it into prioritized, business-aware remediation.", tactics: ["Collection", "Impact"] },
 ];
 
-const ARSENAL: { group: string; tools: string[] }[] = [
+// Tools split into what was BUILT vs OPERATED — an honest use/build distinction.
+const AUTHORED: { name: string; desc: string; url: string }[] = [
+  { name: "SecretHound", desc: "Offline credential & secret analyzer for engagement loot", url: "https://github.com/Michael-JRead/Secrethound" },
+];
+const OPERATED: { group: string; tools: string[] }[] = [
   { group: "recon", tools: ["nmap", "ffuf", "gobuster", "amass", "nuclei"] },
   { group: "web", tools: ["burp suite", "sqlmap", "wfuzz"] },
   { group: "ad-network", tools: ["bloodhound", "impacket", "netexec", "responder"] },
-  { group: "loot", tools: ["hashcat", "john", "secrethound"] },
+  { group: "loot", tools: ["hashcat", "john"] },
   { group: "exploit", tools: ["metasploit", "pwntools", "sliver"] },
 ];
 
@@ -119,10 +130,17 @@ export default function OffensiveSecurity() {
                   Offensive Security
                 </h1>
                 <div className="section-rule mt-5" />
-                <p className="mt-5 text-lg text-gray-400 max-w-2xl">
-                  A live look at how I break things to make them stronger — hands-on
-                  offensive work sharpened on Hack The Box, mapped to the certifications and
-                  methodology behind it. Stats sync daily from my live profile.
+                <p className="mt-5 text-xl text-gray-200 max-w-3xl leading-relaxed">
+                  Offensive security engineer working{" "}
+                  <span className="text-red-300 font-semibold">web-app and Active Directory attack paths</span> — backed by
+                  six offensive GIAC certifications, a live Hack The Box{" "}
+                  <span className="text-red-300 font-semibold">Hacker</span> rank, and{" "}
+                  <span className="text-red-300 font-semibold">real upstream security research</span> including a
+                  vendor-confirmed CVE and merged hardening fixes to Quarkus.
+                </p>
+                <p className="mt-3 text-base text-gray-400 max-w-2xl">
+                  Everything below is verifiable — stats sync daily from my live profile and
+                  every finding links to its source.
                 </p>
               </div>
 
@@ -139,6 +157,18 @@ export default function OffensiveSecurity() {
                           ...(rankOwnership != null ? [`[+] ownership .... ${rankOwnership}% rank owns`] : []),
                         ]}
                       />
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <FreshnessStamp data={data} />
+                        <a
+                          href={SITE_META.social.hackthebox}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          verify on HTB
+                          <ExternalLink size={12} />
+                        </a>
+                      </div>
                     </div>
                     <div className="lg:col-span-2 p-6 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm flex justify-center">
                       <RankRing
@@ -231,10 +261,95 @@ export default function OffensiveSecurity() {
                 </div>
               )}
 
+              {/* ATT&CK matrix */}
+              <div className="mt-16">
+                <p className="section-eyebrow mb-3">
+                  <span className="text-slate-500">02 /</span> att&amp;ck
+                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Techniques Exercised</h2>
+                <p className="text-gray-400 mb-6 max-w-3xl">
+                  MITRE ATT&amp;CK techniques demonstrated across Hack The Box labs, GIAC training,
+                  and responsible disclosure — cells shade by how much evidence backs each. A
+                  record of techniques exercised, not of client engagements. Hover a cell for its
+                  evidence.
+                </p>
+                <AttackMatrix />
+                <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-[11px] text-slate-500">
+                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-900/40 border border-red-500/30" /> 1 source</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-600/45 border border-red-500/50" /> 2 sources</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-500/80 border border-red-400/70" /> 3+ sources</span>
+                </div>
+              </div>
+
+              {/* Disclosure ledger */}
+              <div className="mt-16">
+                <p className="section-eyebrow mb-3">
+                  <span className="text-slate-500">03 /</span> disclosure
+                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                  <ShieldAlert size={26} className="text-red-500" />
+                  Responsible Disclosure &amp; Research
+                </h2>
+                <p className="text-gray-400 mb-6 max-w-3xl">
+                  Original vulnerability research and merged upstream security fixes — every row
+                  links to its public record. One CVE advisory is pending coordinated disclosure.
+                </p>
+                <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
+                  <table className="w-full min-w-[680px] text-sm">
+                    <thead>
+                      <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-slate-400 border-b border-red-500/20">
+                        <th className="px-4 py-3">Finding</th>
+                        <th className="px-4 py-3">Vendor</th>
+                        <th className="px-4 py-3">Class</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3 text-right">Ref</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {DISCLOSURES.map((d) => (
+                        <tr key={d.title} className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              {d.status === "Merged" ? (
+                                <GitPullRequest size={15} className="text-emerald-400 shrink-0" />
+                              ) : (
+                                <ShieldAlert size={15} className="text-amber-400 shrink-0" />
+                              )}
+                              <span className="text-white font-medium">{d.title}</span>
+                            </div>
+                            {d.note && <div className="text-slate-400 text-xs mt-1 max-w-md leading-relaxed">{d.note}</div>}
+                            {d.credited && <span className="inline-block mt-1 text-[11px] font-mono text-emerald-300">✓ credited in the fix</span>}
+                          </td>
+                          <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{d.vendor}</td>
+                          <td className="px-4 py-3">
+                            <span className="text-slate-300">{d.type}</span>
+                            {d.cwe && <span className="block font-mono text-[11px] text-red-400 mt-0.5">{d.cwe}</span>}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${d.status === "Merged" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40" : "bg-amber-500/15 text-amber-300 border border-amber-400/40"}`}>
+                              {d.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-right whitespace-nowrap">
+                            {d.url ? (
+                              <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
+                                {d.ref ?? "link"} <ExternalLink size={12} />
+                              </a>
+                            ) : (
+                              <span className="font-mono text-xs text-slate-500">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
               {/* Capabilities */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">02 /</span> capabilities
+                  <span className="text-slate-500">04 /</span> capabilities
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Credentialed Capabilities</h2>
                 <p className="text-gray-400 mb-6 max-w-2xl">Each focus area is backed by a certification held, not just claimed.</p>
@@ -272,9 +387,14 @@ export default function OffensiveSecurity() {
               {/* Methodology */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">03 /</span> methodology
+                  <span className="text-slate-500">05 /</span> methodology
                 </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">How I Work an Engagement</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">How I Work an Engagement</h2>
+                <p className="text-gray-400 mb-6 max-w-2xl">
+                  Aligned to <span className="text-red-300">PTES</span>, the{" "}
+                  <span className="text-red-300">Unified Kill Chain</span>, and{" "}
+                  <span className="text-red-300">MITRE ATT&amp;CK</span> tactics.
+                </p>
                 <div className="space-y-px">
                   {PHASES.map((p) => (
                     <div
@@ -285,6 +405,13 @@ export default function OffensiveSecurity() {
                       <div>
                         <h3 className="font-bold text-white group-hover:text-red-300 transition-colors">{p.name}</h3>
                         <p className="text-sm text-gray-400 mt-1 leading-relaxed">{p.desc}</p>
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {p.tactics.map((t) => (
+                            <span key={t} className="font-mono text-[10px] uppercase tracking-wider rounded bg-red-500/10 text-red-300 border border-red-500/20 px-2 py-0.5">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -294,24 +421,58 @@ export default function OffensiveSecurity() {
               {/* Toolchain */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">04 /</span> toolchain
+                  <span className="text-slate-500">06 /</span> toolchain
                 </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Primary Arsenal</h2>
-                <div className="relative scanlines rounded-lg overflow-hidden border border-red-500/40 bg-slate-950/80 backdrop-blur-sm p-6 font-mono text-sm">
-                  {ARSENAL.map((row, i) => (
-                    <div key={row.group} className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-1">
-                      <span className="text-slate-600">{i === ARSENAL.length - 1 ? "└──" : "├──"}</span>
-                      <span className="text-red-400 w-28">{row.group}/</span>
-                      <span className="text-slate-300">{row.tools.join("  ·  ")}</span>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Arsenal</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                  {/* Authored */}
+                  <div className="lg:col-span-2">
+                    <div className="flex items-center gap-2 mb-3 text-red-300">
+                      <Hammer size={16} />
+                      <span className="font-mono text-xs uppercase tracking-widest">authored</span>
                     </div>
-                  ))}
+                    <div className="space-y-3">
+                      {AUTHORED.map((tool) => (
+                        <a
+                          key={tool.name}
+                          href={tool.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group block p-4 rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Boxes size={16} className="text-red-400" />
+                            <span className="font-mono font-semibold text-white group-hover:text-red-300 transition-colors">{tool.name}</span>
+                            <ExternalLink size={12} className="text-slate-500 ml-auto" />
+                          </div>
+                          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{tool.desc}</p>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Operated */}
+                  <div className="lg:col-span-3">
+                    <div className="flex items-center gap-2 mb-3 text-slate-300">
+                      <Wrench size={16} />
+                      <span className="font-mono text-xs uppercase tracking-widest">operated</span>
+                    </div>
+                    <div className="relative scanlines rounded-lg overflow-hidden border border-red-500/40 bg-slate-950/80 backdrop-blur-sm p-6 font-mono text-sm">
+                      {OPERATED.map((row, i) => (
+                        <div key={row.group} className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-1">
+                          <span className="text-slate-600">{i === OPERATED.length - 1 ? "└──" : "├──"}</span>
+                          <span className="text-red-400 w-28">{row.group}/</span>
+                          <span className="text-slate-300">{row.tools.join("  ·  ")}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Walkthroughs */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">05 /</span> walkthroughs
+                  <span className="text-slate-500">07 /</span> walkthroughs
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Machine & Challenge Write-ups</h2>
                 <p className="text-gray-400 mb-6 max-w-2xl">
