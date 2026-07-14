@@ -76,7 +76,8 @@ export const DISCLOSURES: Disclosure[] = [
     vendor: "Quarkus / Red Hat",
     type: "Unauthenticated DoS",
     status: "Advisory pending",
-    note: "Discovered and responsibly disclosed; confirmed and fixed by the Quarkus security team. Details withheld pending the coordinated-disclosure window.",
+    credited: true,
+    note: "Discovered and responsibly disclosed; confirmed and fixed by the Quarkus security team, which credited me as the reporter in the pending advisory. Details withheld pending the coordinated-disclosure window.",
   },
   {
     title: "Remote dev mode: path traversal + unsafe deserialization",
