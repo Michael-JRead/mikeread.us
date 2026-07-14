@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
 
@@ -30,7 +31,13 @@ function useActiveSection() {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const active = useActiveSection();
+  const [location] = useLocation();
+  const onHome = location === "/";
+  const activeSection = useActiveSection();
+  // Scrollspy only applies on the single-page home; elsewhere nothing is active.
+  const active = onHome ? activeSection : "";
+  // Hash links must jump home first when viewed from another route.
+  const to = (href: string) => (onHome ? href : `/${href}`);
 
   const handleNavClick = () => setIsOpen(false);
 
@@ -38,7 +45,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-red-900/50 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="flex items-center gap-2 font-bold text-xl text-white hover:text-red-300 transition-colors">
+        <a href={onHome ? "#hero" : "/"} className="flex items-center gap-2 font-bold text-xl text-white hover:text-red-300 transition-colors">
           <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center text-white font-bold text-sm">
             {SITE_META.initials}
           </div>
@@ -53,7 +60,7 @@ export default function Navbar() {
             return (
               <a
                 key={item.href}
-                href={item.href}
+                href={to(item.href)}
                 aria-current={isActive ? "true" : undefined}
                 className={`whitespace-nowrap font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
                   isActive ? "text-red-300" : "text-slate-400 hover:text-red-300"
@@ -97,7 +104,7 @@ export default function Navbar() {
               return (
                 <a
                   key={item.href}
-                  href={item.href}
+                  href={to(item.href)}
                   onClick={handleNavClick}
                   aria-current={isActive ? "true" : undefined}
                   className={`font-mono text-sm uppercase tracking-widest py-1 transition-colors ${

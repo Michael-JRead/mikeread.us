@@ -53,6 +53,18 @@ export interface CaseStudyItem {
   description?: string;
 }
 
+export interface Walkthrough {
+  name: string;
+  platform: string; // e.g. "Hack The Box"
+  kind: "Machine" | "Challenge" | "Sherlock" | "Fortress";
+  os?: string; // "Linux" | "Windows" | ...
+  difficulty?: "Easy" | "Medium" | "Hard" | "Insane";
+  date?: string; // e.g. "Mar 2025"
+  tags: string[];
+  summary: string;
+  url?: string; // link to the full write-up
+}
+
 export const SITE_META = {
   canonicalUrl: "https://www.mikeread.us/",
   shareTitle: "Michael Read | Cybersecurity Leader",
@@ -516,3 +528,8 @@ export const CERTIFICATIONS: CertificationItem[] = [
 ];
 
 
+
+// Retired-machine / challenge write-ups for the Offensive Security dossier page.
+// Per Hack The Box policy, only retired content is documented publicly.
+// Add entries as write-ups are published.
+export const WALKTHROUGHS: Walkthrough[] = [];

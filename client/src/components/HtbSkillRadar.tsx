@@ -7,17 +7,21 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import type { ChallengeCategory } from "@/lib/htb";
 
-export interface ChallengeCategory {
-  name: string;
-  solved: number;
-  total: number;
-  percentage: number;
-}
+export type { ChallengeCategory };
 
 // Lazy-loaded so recharts ships in its own chunk instead of the main bundle.
-export default function HtbSkillRadar({ categories }: { categories: ChallengeCategory[] }) {
-  const top = [...categories].sort((a, b) => b.solved - a.solved).slice(0, 8);
+export default function HtbSkillRadar({
+  categories,
+  limit = 8,
+  height = 300,
+}: {
+  categories: ChallengeCategory[];
+  limit?: number;
+  height?: number;
+}) {
+  const top = [...categories].sort((a, b) => b.solved - a.solved).slice(0, limit);
   const data = top.map((c) => ({
     subject: c.name,
     value: c.percentage,
@@ -26,7 +30,7 @@ export default function HtbSkillRadar({ categories }: { categories: ChallengeCat
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={height}>
       <RadarChart data={data} cx="50%" cy="50%" outerRadius="72%">
         <PolarGrid stroke="rgba(148, 163, 184, 0.25)" />
         <PolarAngleAxis dataKey="subject" tick={{ fill: "rgb(148 163 184)", fontSize: 11 }} />

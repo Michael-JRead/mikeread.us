@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
+import OffensiveSecurity from "./pages/OffensiveSecurity";
 import NotFound from "./pages/NotFound";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/offensive-security" component={OffensiveSecurity} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
