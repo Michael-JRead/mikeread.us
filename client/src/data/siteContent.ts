@@ -494,6 +494,7 @@ export const CERTIFICATIONS: CertificationItem[] = [
   { name: "Certified Cloud Security Professional", shortName: "CCSP", issuer: "ISC2", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/ccsp.png" },
 
   // GIAC (SANS)
+  { name: "GIAC Strategic Planning, Policy, and Leadership", shortName: "GSTRT", issuer: "GIAC", year: "Active", status: "Active", category: "Management", badgeSrc: "/assets/certs/gstrt.png" },
   { name: "GIAC Defensible Security Architect", shortName: "GDSA", issuer: "GIAC", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/gdsa.png" },
   { name: "GIAC Certified Incident Handler", shortName: "GCIH", issuer: "GIAC", year: "Active", status: "Active", category: "Incident Response", badgeSrc: "/assets/certs/gcih.png" },
   { name: "GIAC Penetration Tester", shortName: "GPEN", issuer: "GIAC", year: "Active", status: "Active", category: "Offensive", badgeSrc: "/assets/certs/gpen.png" },

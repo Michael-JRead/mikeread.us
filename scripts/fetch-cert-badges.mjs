@@ -48,22 +48,40 @@ const BADGES = {
     "https://images.credly.com/images/6edb32c5-37d8-4fd4-98cd-2811932f0185/CompTIA_Linux_2Bce.png",
     "https://images.credly.com/images/c8ba8fa6-ab8b-4df7-879f-4ae7b98b2765/blob",
   ],
+  // GIAC leadership — resolved from the official Credly badge-template page at
+  // build time (the CI runner can reach credly.com; the sandbox cannot).
+  gstrt: [
+    "https://www.credly.com/org/global-information-assurance-certification-giac/badge/giac-strategic-planning-policy-and-leadership-gstrt",
+  ],
 };
+
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+
+// A Credly badge-template page (not a direct image): pull the badge image URL
+// out of its og:image / twitter:image meta tag.
+async function resolveCredlyPage(url) {
+  const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html" } });
+  if (!res.ok) throw new Error(`page HTTP ${res.status}`);
+  const html = await res.text();
+  const meta =
+    html.match(/<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)["'][^>]+content=["']([^"']+)["']/i) ||
+    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:image|twitter:image)["']/i);
+  const direct = html.match(/https:\/\/images\.credly\.com\/[^"'&\s]+/);
+  const imageUrl = (meta && meta[1]) || (direct && direct[0]);
+  if (!imageUrl) throw new Error("no images.credly.com URL in page");
+  return imageUrl;
+}
 
 mkdirSync(OUT_DIR, { recursive: true });
 
 const failures = [];
 for (const [slug, urls] of Object.entries(BADGES)) {
   let saved = false;
-  for (const url of urls) {
+  for (const entry of urls) {
     try {
-      const res = await fetch(url, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-          Accept: "image/*",
-        },
-      });
+      const url = entry.includes("/org/") ? await resolveCredlyPage(entry) : entry;
+      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "image/*" } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const type = res.headers.get("content-type") ?? "";
       if (!type.startsWith("image/")) throw new Error(`unexpected content-type ${type}`);
@@ -74,7 +92,7 @@ for (const [slug, urls] of Object.entries(BADGES)) {
       saved = true;
       break;
     } catch (err) {
-      console.warn(`fail ${slug}: ${err.message} (${url})`);
+      console.warn(`fail ${slug}: ${err.message} (${entry})`);
     }
   }
   if (!saved) failures.push(slug);
