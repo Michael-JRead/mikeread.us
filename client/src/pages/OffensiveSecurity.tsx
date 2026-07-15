@@ -18,46 +18,15 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { CERTIFICATIONS, SITE_META } from "@/data/siteContent";
+import { SITE_META } from "@/data/siteContent";
 import { WALKTHROUGHS } from "@/data/walkthroughs";
 import { DISCLOSURES } from "@/data/offsec";
 import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
-import AttackMatrix from "@/components/AttackMatrix";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const HtbSkillRadar = lazy(() => import("@/components/HtbSkillRadar"));
-
-// Capability areas, each anchored to a certification actually held (badge + name
-// resolved from the certifications data — nothing here is claimed without a credential).
-const CAPABILITIES: { area: string; cert: string; desc: string }[] = [
-  {
-    area: "Network Penetration Testing",
-    cert: "GPEN",
-    desc: "End-to-end network penetration testing — scoping, host and service enumeration, exploitation, and password attacks against Windows and Active Directory estates.",
-  },
-  {
-    area: "Web Application Security",
-    cert: "GWAPT",
-    desc: "Web assessment across the OWASP Top 10 — injection, authentication and session flaws, access-control bypasses, and business-logic abuse, exploited hands-on.",
-  },
-  {
-    area: "Cloud Penetration Testing",
-    cert: "GCPN",
-    desc: "Cloud-native attack paths — identity and metadata abuse, misconfigured storage and functions, and CI/CD and container-escape techniques across AWS and Azure.",
-  },
-  {
-    area: "Incident Handling & Response",
-    cert: "GCIH",
-    desc: "The attacker's playbook from the defender's chair — detecting, containing, and eradicating intrusions across the full incident-handling lifecycle.",
-  },
-  {
-    area: "Defensible Security Architecture",
-    cert: "GDSA",
-    desc: "Designing networks that resist the very techniques above — segmentation, zero-trust controls, and detection engineering built in from the start.",
-  },
-];
 
 const PHASES: { n: string; name: string; desc: string; tactics: string[] }[] = [
   { n: "01", name: "Reconnaissance", desc: "Map the external footprint — passive OSINT, DNS and subdomain discovery, and attack-surface enumeration before a single packet is sent in anger.", tactics: ["Reconnaissance", "Discovery"] },
@@ -79,10 +48,6 @@ const OPERATED: { group: string; tools: string[] }[] = [
   { group: "loot", tools: ["hashcat", "john"] },
   { group: "exploit", tools: ["metasploit", "pwntools", "sliver"] },
 ];
-
-function certBy(shortName: string) {
-  return CERTIFICATIONS.find((c) => c.shortName === shortName);
-}
 
 export default function OffensiveSecurity() {
   const data = useHtbStats();
@@ -262,30 +227,10 @@ export default function OffensiveSecurity() {
                 </div>
               )}
 
-              {/* ATT&CK matrix */}
-              <div className="mt-16">
-                <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">02 /</span> att&amp;ck
-                </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Techniques Exercised</h2>
-                <p className="text-gray-400 mb-6 max-w-3xl">
-                  MITRE ATT&amp;CK techniques demonstrated across Hack The Box labs, GIAC training,
-                  and responsible disclosure — cells shade by how much evidence backs each. A
-                  record of techniques exercised, not of client engagements. Hover a cell for its
-                  evidence.
-                </p>
-                <AttackMatrix />
-                <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-[11px] text-slate-500">
-                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-900/40 border border-red-500/30" /> 1 source</span>
-                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-600/45 border border-red-500/50" /> 2 sources</span>
-                  <span className="inline-flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-sm bg-red-500/80 border border-red-400/70" /> 3+ sources</span>
-                </div>
-              </div>
-
               {/* Disclosure ledger */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">03 /</span> disclosure
+                  <span className="text-slate-500">02 /</span> disclosure
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
                   <ShieldAlert size={26} className="text-red-500" />
@@ -347,48 +292,10 @@ export default function OffensiveSecurity() {
                 </div>
               </div>
 
-              {/* Capabilities */}
-              <div className="mt-16">
-                <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">04 /</span> capabilities
-                </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Credentialed Capabilities</h2>
-                <p className="text-gray-400 mb-6 max-w-2xl">Each focus area is backed by a certification held, not just claimed.</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {CAPABILITIES.map((cap) => {
-                    const cert = certBy(cap.cert);
-                    return (
-                      <div
-                        key={cap.cert}
-                        className="flex gap-4 p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 transition-all"
-                      >
-                        {cert?.badgeSrc && (
-                          <img
-                            src={cert.badgeSrc}
-                            alt={`${cert.name} badge`}
-                            width={56}
-                            height={56}
-                            loading="lazy"
-                            className="w-14 h-14 object-contain flex-shrink-0"
-                          />
-                        )}
-                        <div>
-                          <div className="flex items-baseline gap-2">
-                            <h3 className="font-bold text-white">{cap.area}</h3>
-                            <span className="font-mono text-[11px] text-red-400">{cap.cert}</span>
-                          </div>
-                          <p className="text-sm text-gray-400 mt-1 leading-relaxed">{cap.desc}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* Methodology */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">05 /</span> methodology
+                  <span className="text-slate-500">03 /</span> methodology
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">How I Work an Engagement</h2>
                 <p className="text-gray-400 mb-6 max-w-2xl">
@@ -422,7 +329,7 @@ export default function OffensiveSecurity() {
               {/* Toolchain */}
               <div className="mt-16">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">06 /</span> toolchain
+                  <span className="text-slate-500">04 /</span> toolchain
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Arsenal</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -473,7 +380,7 @@ export default function OffensiveSecurity() {
               {/* Walkthroughs */}
               <div id="walkthroughs" className="mt-16 scroll-mt-24">
                 <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">07 /</span> walkthroughs
+                  <span className="text-slate-500">05 /</span> walkthroughs
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Machine & Challenge Write-ups</h2>
                 <p className="text-gray-400 mb-6 max-w-2xl">

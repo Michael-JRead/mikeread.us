@@ -2,6 +2,7 @@
 // static snapshot consumed by OffensiveSecuritySection. Intentionally overwrites
 // one file (no history) and only touches the owner's own profile, keeping the
 // integration inside HTB's acceptable-use guidance.
+// Manual live-sync trigger: 2026-07-15.
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
