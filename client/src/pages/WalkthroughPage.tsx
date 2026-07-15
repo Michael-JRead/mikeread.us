@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import NotFound from "@/pages/NotFound";
 import { SITE_META } from "@/data/siteContent";
-import { WALKTHROUGH_DOCS } from "@/data/walkthroughs";
+import { WALKTHROUGH_LOADERS, type WalkthroughDoc } from "@/data/walkthroughs";
 import { Blocks } from "@/components/walkthrough/blocks";
 import RichText from "@/components/walkthrough/RichText";
 
@@ -25,9 +25,36 @@ function plainText(t: string): string {
 export default function WalkthroughPage() {
   const params = useParams();
   const slug = params.slug ?? "";
-  const doc = WALKTHROUGH_DOCS[slug];
-  const [active, setActive] = useState<string>(doc?.sections[0]?.id ?? "");
+  const [doc, setDoc] = useState<WalkthroughDoc | null>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
+  const [active, setActive] = useState<string>("");
   const [progress, setProgress] = useState(0);
+
+  // Lazy-load the box's full write-up chunk only when its route is opened.
+  useEffect(() => {
+    const loader = WALKTHROUGH_LOADERS[slug];
+    if (!loader) {
+      setStatus("missing");
+      return;
+    }
+    let cancelled = false;
+    setStatus("loading");
+    setDoc(null);
+    window.scrollTo(0, 0);
+    loader()
+      .then((d) => {
+        if (cancelled) return;
+        setDoc(d);
+        setActive(d.sections[0]?.id ?? "");
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("missing");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   useEffect(() => {
     if (!doc) return;
@@ -66,7 +93,24 @@ export default function WalkthroughPage() {
     };
   }, [doc]);
 
-  if (!doc) return <NotFound />;
+  if (status === "missing") return <NotFound />;
+
+  if (status === "loading" || !doc) {
+    return (
+      <div className="page-gradient min-h-screen flex flex-col">
+        <div className="site-grid" aria-hidden="true" />
+        <div className="site-grain" aria-hidden="true" />
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex items-center gap-3 font-mono text-sm text-slate-400">
+            <Loader2 size={18} className="animate-spin text-red-400" />
+            loading walkthrough…
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="page-gradient min-h-screen flex flex-col">
