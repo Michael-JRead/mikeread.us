@@ -8,11 +8,22 @@
 import type { Walkthrough } from "@/data/siteContent";
 import type { WalkthroughDoc } from "./types";
 
-// Order shown on the dossier (newest / most impressive first is fine).
-// Only RETIRED, compliance-verified boxes appear here. Docs are appended as
-// each retired box is transcribed into a typed WalkthroughDoc (./<slug>.ts):
-//   whiterabbit, sorcery, zero, mist, ghost, cobblestone (all verified retired).
-export const WALKTHROUGH_LIST: WalkthroughDoc[] = [];
+import { whiterabbit } from "./whiterabbit";
+import { sorcery } from "./sorcery";
+import { zero } from "./zero";
+import { ghost } from "./ghost";
+import { mist } from "./mist";
+
+// Order shown on the dossier: most-recently-retired first. Only RETIRED,
+// compliance-verified boxes appear here. (Cobblestone is verified retired too
+// but its transcription is pending, and Odyssey/Nimbus/PingPong remain active.)
+export const WALKTHROUGH_LIST: WalkthroughDoc[] = [
+  sorcery, // retired Apr 2026
+  whiterabbit, // retired Dec 2025
+  zero, // retired Aug 2025
+  ghost, // retired Apr 2025
+  mist, // retired Oct 2024
+];
 
 export const WALKTHROUGH_DOCS: Record<string, WalkthroughDoc> = Object.fromEntries(
   WALKTHROUGH_LIST.map((d) => [d.slug, d])

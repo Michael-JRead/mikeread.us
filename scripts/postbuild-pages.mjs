@@ -20,7 +20,7 @@ const ROUTES = ["offensive-security"];
 
 // Retired-machine walkthrough routes. Keep in sync with WALKTHROUGH_LIST slugs
 // in client/src/data/walkthroughs/index.ts (appended as each box is transcribed).
-const WALKTHROUGH_SLUGS = [];
+const WALKTHROUGH_SLUGS = ["sorcery", "whiterabbit", "zero", "ghost", "mist"];
 for (const slug of WALKTHROUGH_SLUGS) {
   ROUTES.push(`offensive-security/walkthroughs/${slug}`);
 }
