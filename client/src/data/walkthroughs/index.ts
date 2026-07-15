@@ -13,12 +13,14 @@ import { sorcery } from "./sorcery";
 import { zero } from "./zero";
 import { ghost } from "./ghost";
 import { mist } from "./mist";
+import { cobblestone } from "./cobblestone";
 
 // Order shown on the dossier: most-recently-retired first. Only RETIRED,
-// compliance-verified boxes appear here. (Cobblestone is verified retired too
-// but its transcription is pending, and Odyssey/Nimbus/PingPong remain active.)
+// compliance-verified boxes appear here. (Odyssey/Nimbus/PingPong remain active
+// and are intentionally withheld, as is the embargoed Floci write-up.)
 export const WALKTHROUGH_LIST: WalkthroughDoc[] = [
   sorcery, // retired Apr 2026
+  cobblestone, // retired ~2026
   whiterabbit, // retired Dec 2025
   zero, // retired Aug 2025
   ghost, // retired Apr 2025
