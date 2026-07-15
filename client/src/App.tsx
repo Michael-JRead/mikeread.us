@@ -3,6 +3,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
 import OffensiveSecurity from "./pages/OffensiveSecurity";
+import WalkthroughPage from "./pages/WalkthroughPage";
 import NotFound from "./pages/NotFound";
 
 function Router() {
@@ -10,6 +11,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/offensive-security" component={OffensiveSecurity} />
+      <Route path="/offensive-security/walkthroughs/:slug" component={WalkthroughPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

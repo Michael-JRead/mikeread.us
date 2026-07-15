@@ -529,7 +529,8 @@ export const CERTIFICATIONS: CertificationItem[] = [
 
 
 
-// Retired-machine / challenge write-ups for the Offensive Security dossier page.
-// Per Hack The Box policy, only retired content is documented publicly.
-// Add entries as write-ups are published.
-export const WALKTHROUGHS: Walkthrough[] = [];
+// Retired-machine / challenge write-ups are defined as typed WalkthroughDocs in
+// client/src/data/walkthroughs/ and surfaced via the WALKTHROUGHS summary array
+// exported from @/data/walkthroughs. Per Hack The Box policy, only retired
+// content is documented publicly. The `Walkthrough` interface above is the card
+// shape consumed by the dossier.

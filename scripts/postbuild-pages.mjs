@@ -17,6 +17,14 @@ console.log("Generated dist/public/404.html for GitHub Pages routing fallback.")
 // Emit a real index.html for each client-side route so deep links resolve with
 // HTTP 200 (and correct SPA boot) instead of relying on the 404 fallback.
 const ROUTES = ["offensive-security"];
+
+// Retired-machine walkthrough routes. Keep in sync with WALKTHROUGH_LIST slugs
+// in client/src/data/walkthroughs/index.ts (appended as each box is transcribed).
+const WALKTHROUGH_SLUGS = [];
+for (const slug of WALKTHROUGH_SLUGS) {
+  ROUTES.push(`offensive-security/walkthroughs/${slug}`);
+}
+
 for (const route of ROUTES) {
   const dir = path.join(outDir, route);
   fs.mkdirSync(dir, { recursive: true });

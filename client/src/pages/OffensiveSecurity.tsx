@@ -18,7 +18,8 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { CERTIFICATIONS, SITE_META, WALKTHROUGHS } from "@/data/siteContent";
+import { CERTIFICATIONS, SITE_META } from "@/data/siteContent";
+import { WALKTHROUGHS } from "@/data/walkthroughs";
 import { DISCLOSURES } from "@/data/offsec";
 import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
 import AttackMatrix from "@/components/AttackMatrix";
@@ -470,7 +471,7 @@ export default function OffensiveSecurity() {
               </div>
 
               {/* Walkthroughs */}
-              <div className="mt-16">
+              <div id="walkthroughs" className="mt-16 scroll-mt-24">
                 <p className="section-eyebrow mb-3">
                   <span className="text-slate-500">07 /</span> walkthroughs
                 </p>
@@ -501,15 +502,13 @@ export default function OffensiveSecurity() {
                         </>
                       );
                       return w.url ? (
-                        <a
+                        <Link
                           key={w.name}
                           href={w.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all"
                         >
                           {card}
-                        </a>
+                        </Link>
                       ) : (
                         <div key={w.name} className="group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm">
                           {card}
