@@ -12,6 +12,16 @@ import RichText from "@/components/walkthrough/RichText";
 
 const OS_ICON: Record<string, string> = { Linux: "🐧", Windows: "🪟", Other: "🎯" };
 
+// Section titles may carry inline-markdown tokens from transcription; headings and
+// the TOC render as plain text, so strip them there.
+function plainText(t: string): string {
+  return t
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+}
+
 export default function WalkthroughPage() {
   const params = useParams();
   const slug = params.slug ?? "";
@@ -144,7 +154,7 @@ export default function WalkthroughPage() {
                         }`}
                       >
                         <span className="font-mono text-[0.78rem] text-slate-600 mr-2">{s.num}</span>
-                        {s.title}
+                        {plainText(s.title)}
                       </a>
                     ))}
                   </nav>
@@ -163,7 +173,7 @@ export default function WalkthroughPage() {
                       <span className="font-mono text-base text-red-400 border border-slate-700 rounded-lg px-2.5 py-0.5 bg-slate-900">
                         {s.num}
                       </span>
-                      {s.title}
+                      {plainText(s.title)}
                     </h2>
                     <Blocks blocks={s.blocks} />
                   </section>
