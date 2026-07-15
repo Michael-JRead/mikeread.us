@@ -97,7 +97,7 @@ export default function Navbar() {
       {/* Mobile Navigation */}
       {isOpen && (
         <div id="mobile-nav" className="lg:hidden border-t border-red-900/50 bg-slate-950/95">
-          <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
+          <div className="container mx-auto px-4 py-3 flex flex-col">
             {NAV_ITEMS.map((item, i) => {
               const id = item.href.replace("#", "");
               const isActive = active === id;
@@ -107,7 +107,7 @@ export default function Navbar() {
                   href={to(item.href)}
                   onClick={handleNavClick}
                   aria-current={isActive ? "true" : undefined}
-                  className={`font-mono text-sm uppercase tracking-widest py-1 transition-colors ${
+                  className={`font-mono text-sm uppercase tracking-widest py-3 border-b border-red-900/20 transition-colors ${
                     isActive ? "text-red-300" : "text-slate-300 hover:text-red-300"
                   }`}
                 >

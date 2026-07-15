@@ -52,7 +52,7 @@ function CodeBlock({ block }: { block: Extract<Block, { kind: "code" }> }) {
         </span>
         <button
           onClick={copy}
-          className="ml-auto inline-flex items-center gap-1.5 font-mono text-[0.7rem] text-slate-400 bg-slate-800/70 border border-slate-700 rounded px-2.5 py-1 hover:text-red-300 hover:border-red-500/60 transition-colors"
+          className="ml-auto inline-flex items-center gap-1.5 font-mono text-[0.7rem] text-slate-400 bg-slate-800/70 border border-slate-700 rounded px-3 py-1.5 min-h-[34px] hover:text-red-300 hover:border-red-500/60 transition-colors"
         >
           {copied ? <Check size={12} /> : <Copy size={12} />}
           {copied ? "copied" : "copy"}
