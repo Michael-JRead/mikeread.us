@@ -8,6 +8,13 @@
 
 import type { Walkthrough } from "@/data/siteContent";
 
+// Shared SHA-256 digest of the site-wide "master unlock" password used for
+// every active-box walkthrough. Rotating the raw password only requires
+// swapping this constant (SHA-256 is one-way, so publishing the digest
+// reveals nothing). Compute a new digest with:
+//   printf '%s' 'YourNewPassword' | sha256sum
+export const ACTIVE_GATE_SHA256 = "a1543b64980579340eb0a4151e2fa8ee6f2c5277b055505f2f862bb1c446ab6b";
+
 export interface WalkthroughSummary {
   slug: string;
   name: string;
@@ -83,8 +90,9 @@ export const WALKTHROUGH_SUMMARIES: WalkthroughSummary[] = [
     tags: ["boolean-blind SQLi", "MySQL FILE read", "stored XSS", "Twig SSTI", "rbash jail", "Cobbler XML-RPC", "Cheetah RCE"],
     summary:
       "A seven-link web kill-chain: blind SQLi to LOAD_FILE source disclosure, stored-XSS-driven Twig SSTI, a cracked hash, an rbash jail, and a localhost Cobbler XML-RPC bypass into Cheetah RCE as root.",
-    // Active box — walkthrough gated on user.txt SHA-256. Delete gateHash on retirement.
-    gateHash: "PENDING_USER_TXT_SHA256",
+    // Active box — walkthrough gated on the site-wide master password.
+    // Delete `gateHash` on retirement to unlock for everyone.
+    gateHash: ACTIVE_GATE_SHA256,
   },
   {
     slug: "whiterabbit",

@@ -71,7 +71,7 @@ export default function WalkthroughPage() {
     try {
       const provided = flagInput.trim();
       if (!provided) {
-        setGateError("Enter the box's user.txt flag to continue.");
+        setGateError("Enter the access password to continue.");
         return;
       }
       const digest = await sha256Hex(provided);
@@ -84,7 +84,7 @@ export default function WalkthroughPage() {
         setUnlocked(true);
         setFlagInput("");
       } else {
-        setGateError("Flag mismatch — that isn't user.txt for this box.");
+        setGateError("Incorrect password.");
       }
     } finally {
       setChecking(false);
@@ -201,13 +201,12 @@ export default function WalkthroughPage() {
               </div>
               <p className="text-sm text-slate-300 leading-relaxed mb-5">
                 Following Hack The Box's disclosure policy, walkthroughs for machines
-                that haven't retired yet are gated behind proof of ownership. Enter the
-                box's <code className="font-mono text-red-300 bg-slate-800/70 border border-slate-700/70 rounded px-1.5 py-0.5">user.txt</code> flag
+                that haven't retired yet are gated behind an access password. Enter it
                 below to unlock the full write-up.
               </p>
               <form onSubmit={submitFlag} className="space-y-3">
                 <label htmlFor="flag" className="sr-only">
-                  user.txt flag
+                  access password
                 </label>
                 <input
                   id="flag"
@@ -219,7 +218,7 @@ export default function WalkthroughPage() {
                     setFlagInput(e.target.value);
                     if (gateError) setGateError(null);
                   }}
-                  placeholder="user.txt (32 hex chars)"
+                  placeholder="access password"
                   className="w-full min-h-[44px] font-mono text-sm bg-slate-950/70 text-slate-100 border border-slate-700 rounded-lg px-4 py-2.5 focus:outline-none focus:border-amber-400/60 focus:ring-2 focus:ring-amber-500/20"
                 />
                 {gateError && (
