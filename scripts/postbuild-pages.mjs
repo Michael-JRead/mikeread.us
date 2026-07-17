@@ -22,7 +22,7 @@ const ROUTES = ["offensive-security"];
 // in client/src/data/walkthroughs/summaries.ts. Kept in sync manually — grep
 // that file for slugs when adding a new box.
 const WALKTHROUGH_SLUGS = [
-  "orion", "nexus", "odyssey", "sorcery", "cobblestone",
+  "orion", "nexus", "odyssey", "sorcery",
   "whiterabbit", "thefrizz", "zero", "escapetwo", "ghost",
   "certified", "cicada", "magicgardens", "sea", "mist",
   "skyfall", "ouija", "twomillion", "flight", "response",

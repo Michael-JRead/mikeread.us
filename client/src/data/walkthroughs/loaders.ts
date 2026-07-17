@@ -9,7 +9,6 @@ export const WALKTHROUGH_LOADERS: Record<string, () => Promise<WalkthroughDoc>> 
   nexus: () => import("./nexus").then((m) => m.nexus),
   odyssey: () => import("./odyssey").then((m) => m.odyssey),
   sorcery: () => import("./sorcery").then((m) => m.sorcery),
-  cobblestone: () => import("./cobblestone").then((m) => m.cobblestone),
   // 2025
   whiterabbit: () => import("./whiterabbit").then((m) => m.whiterabbit),
   thefrizz: () => import("./thefrizz").then((m) => m.thefrizz),

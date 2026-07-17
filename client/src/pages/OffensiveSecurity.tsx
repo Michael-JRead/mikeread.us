@@ -10,7 +10,6 @@ import {
   Flag,
   GitPullRequest,
   Hammer,
-  Lock,
   Server,
   ShieldAlert,
   Star,
@@ -52,11 +51,9 @@ const OPERATED: { group: string; tools: string[] }[] = [
 
 type DifficultyFilter = "all" | "Easy" | "Medium" | "Hard" | "Insane";
 type OsFilter = "all" | "Linux" | "Windows";
-type StatusFilter = "all" | "retired" | "active";
 
 const DIFFICULTY_OPTIONS: DifficultyFilter[] = ["all", "Easy", "Medium", "Hard", "Insane"];
 const OS_OPTIONS: OsFilter[] = ["all", "Linux", "Windows"];
-const STATUS_OPTIONS: StatusFilter[] = ["all", "retired", "active"];
 
 export default function OffensiveSecurity() {
   const data = useHtbStats();
@@ -64,7 +61,6 @@ export default function OffensiveSecurity() {
   const [active, setActive] = useState(false);
   const [diffFilter, setDiffFilter] = useState<DifficultyFilter>("all");
   const [osFilter, setOsFilter] = useState<OsFilter>("all");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   useEffect(() => {
     setActive(true);
@@ -79,8 +75,6 @@ export default function OffensiveSecurity() {
   const filteredWalkthroughs = WALKTHROUGHS.filter((w) => {
     if (diffFilter !== "all" && w.difficulty !== diffFilter) return false;
     if (osFilter !== "all" && w.os !== osFilter) return false;
-    if (statusFilter === "retired" && w.locked) return false;
-    if (statusFilter === "active" && !w.locked) return false;
     return true;
   });
 
@@ -457,39 +451,8 @@ export default function OffensiveSecurity() {
                         );
                       })}
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 mr-1">
-                        Status
-                      </span>
-                      {STATUS_OPTIONS.map((s) => {
-                        const isActive = statusFilter === s;
-                        const label = s === "all" ? "All" : s === "retired" ? "Retired" : "Active";
-                        const accent =
-                          s === "active"
-                            ? {
-                                on: "bg-amber-500/20 border-amber-400/60 text-amber-200 shadow-[0_0_16px_rgba(251,191,36,0.2)]",
-                                off: "bg-slate-900/50 border-slate-700 text-slate-400 hover:border-amber-400/40 hover:text-amber-300",
-                              }
-                            : {
-                                on: "bg-emerald-500/20 border-emerald-400/60 text-emerald-200 shadow-[0_0_16px_rgba(52,211,153,0.2)]",
-                                off: "bg-slate-900/50 border-slate-700 text-slate-400 hover:border-emerald-400/40 hover:text-emerald-300",
-                              };
-                        return (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setStatusFilter(s)}
-                            aria-pressed={isActive}
-                            className={`min-h-[36px] px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all border inline-flex items-center gap-1.5 ${
-                              isActive ? accent.on : accent.off
-                            }`}
-                          >
-                            {s === "active" && <Lock size={11} aria-hidden="true" />}
-                            {label}
-                          </button>
-                        );
-                      })}
-                      <span className="ml-auto font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500">
+                    <div className="flex justify-end">
+                      <span className="font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500">
                         {filteredWalkthroughs.length} of {WALKTHROUGHS.length}
                       </span>
                     </div>
@@ -500,30 +463,7 @@ export default function OffensiveSecurity() {
                   filteredWalkthroughs.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {filteredWalkthroughs.map((w) => {
-                      const card = w.locked ? (
-                        <>
-                          <div className="flex items-start justify-between gap-3 mb-3">
-                            <h3 className="font-bold text-white group-hover:text-amber-300 transition-colors flex items-center gap-2">
-                              <Lock size={15} className="text-amber-400" />
-                              {w.name}
-                            </h3>
-                            {w.difficulty && (
-                              <span className="glass-readable-chip px-2.5 py-0.5 rounded-full text-xs font-bold">{w.difficulty}</span>
-                            )}
-                          </div>
-                          <p className="text-sm text-slate-400 italic leading-relaxed mb-4">
-                            Active box — full write-up locked until retirement. Password required to unlock.
-                          </p>
-                          <div className="flex flex-wrap items-center gap-2 text-xs">
-                            <span className="font-mono text-slate-500">{w.platform}</span>
-                            {w.os && <span className="rounded bg-slate-800 px-2 py-0.5 text-red-300 border border-red-500/20">{w.os}</span>}
-                            <span className="rounded-full bg-amber-500/10 border border-amber-500/40 px-2.5 py-0.5 text-amber-300 font-mono uppercase tracking-wider text-[0.65rem]">
-                              Active · locked
-                            </span>
-                            <span className="ml-auto font-mono text-slate-500">{w.date}</span>
-                          </div>
-                        </>
-                      ) : (
+                      const card = (
                         <>
                           <div className="flex items-start justify-between gap-3 mb-3">
                             <h3 className="font-bold text-white group-hover:text-red-400 transition-colors">{w.name}</h3>
@@ -542,9 +482,7 @@ export default function OffensiveSecurity() {
                           </div>
                         </>
                       );
-                      const cardClass = w.locked
-                        ? "group p-5 bg-slate-900/40 border border-amber-500/30 rounded-lg backdrop-blur-sm hover:border-amber-500/60 hover:bg-slate-900/60 transition-all"
-                        : "group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all";
+                      const cardClass = "group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all";
                       return w.url ? (
                         <Link
                           key={w.name}
@@ -571,7 +509,6 @@ export default function OffensiveSecurity() {
                         onClick={() => {
                           setDiffFilter("all");
                           setOsFilter("all");
-                          setStatusFilter("all");
                         }}
                         className="mt-4 inline-flex items-center gap-2 min-h-[36px] px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider border border-red-500/40 text-red-300 hover:bg-red-500/10 transition-colors"
                       >
