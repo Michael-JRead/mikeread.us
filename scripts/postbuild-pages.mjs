@@ -18,9 +18,17 @@ console.log("Generated dist/public/404.html for GitHub Pages routing fallback.")
 // HTTP 200 (and correct SPA boot) instead of relying on the 404 fallback.
 const ROUTES = ["offensive-security"];
 
-// Retired-machine walkthrough routes. Keep in sync with WALKTHROUGH_LIST slugs
-// in client/src/data/walkthroughs/index.ts (appended as each box is transcribed).
-const WALKTHROUGH_SLUGS = ["sorcery", "cobblestone", "whiterabbit", "zero", "ghost", "mist"];
+// Retired-machine walkthrough routes. Source of truth: WALKTHROUGH_SUMMARIES
+// in client/src/data/walkthroughs/summaries.ts. Kept in sync manually — grep
+// that file for slugs when adding a new box.
+const WALKTHROUGH_SLUGS = [
+  "orion", "nexus", "odyssey", "sorcery", "cobblestone",
+  "whiterabbit", "thefrizz", "zero", "escapetwo", "ghost",
+  "certified", "cicada", "magicgardens", "sea", "mist",
+  "skyfall", "ouija", "twomillion", "flight", "response",
+  "scanned", "timelapse", "cap", "sauna", "forest",
+  "bastion", "rope", "active", "nibbles", "legacy", "lame",
+];
 for (const slug of WALKTHROUGH_SLUGS) {
   ROUTES.push(`offensive-security/walkthroughs/${slug}`);
 }

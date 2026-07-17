@@ -49,10 +49,18 @@ const OPERATED: { group: string; tools: string[] }[] = [
   { group: "exploit", tools: ["metasploit", "pwntools", "sliver"] },
 ];
 
+type DifficultyFilter = "all" | "Easy" | "Medium" | "Hard" | "Insane";
+type OsFilter = "all" | "Linux" | "Windows";
+
+const DIFFICULTY_OPTIONS: DifficultyFilter[] = ["all", "Easy", "Medium", "Hard", "Insane"];
+const OS_OPTIONS: OsFilter[] = ["all", "Linux", "Windows"];
+
 export default function OffensiveSecurity() {
   const data = useHtbStats();
   const reduced = useReducedMotion();
   const [active, setActive] = useState(false);
+  const [diffFilter, setDiffFilter] = useState<DifficultyFilter>("all");
+  const [osFilter, setOsFilter] = useState<OsFilter>("all");
 
   useEffect(() => {
     setActive(true);
@@ -63,6 +71,12 @@ export default function OffensiveSecurity() {
       document.title = prev;
     };
   }, []);
+
+  const filteredWalkthroughs = WALKTHROUGHS.filter((w) => {
+    if (diffFilter !== "all" && w.difficulty !== diffFilter) return false;
+    if (osFilter !== "all" && w.os !== osFilter) return false;
+    return true;
+  });
 
   const rankOwnership = data?.profile.rank_ownership;
   const nextPoints = data?.profile.next_rank_points;
@@ -386,9 +400,67 @@ export default function OffensiveSecurity() {
                 <p className="text-gray-400 mb-6 max-w-2xl">
                   Detailed, reproducible attack chains from retired boxes and challenges.
                 </p>
+
+                {WALKTHROUGHS.length > 0 && (
+                  <div className="mb-6 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 mr-1">
+                        Difficulty
+                      </span>
+                      {DIFFICULTY_OPTIONS.map((d) => {
+                        const isActive = diffFilter === d;
+                        const label = d === "all" ? "All" : d;
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setDiffFilter(d)}
+                            aria-pressed={isActive}
+                            className={`min-h-[36px] px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all border ${
+                              isActive
+                                ? "bg-red-500/20 border-red-500/60 text-red-200 shadow-[0_0_16px_rgba(239,68,68,0.25)]"
+                                : "bg-slate-900/50 border-slate-700 text-slate-400 hover:border-red-500/40 hover:text-red-300"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 mr-1">OS</span>
+                      {OS_OPTIONS.map((o) => {
+                        const isActive = osFilter === o;
+                        const label = o === "all" ? "All" : o;
+                        return (
+                          <button
+                            key={o}
+                            type="button"
+                            onClick={() => setOsFilter(o)}
+                            aria-pressed={isActive}
+                            className={`min-h-[36px] px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all border inline-flex items-center gap-1.5 ${
+                              isActive
+                                ? "bg-sky-500/20 border-sky-400/60 text-sky-200 shadow-[0_0_16px_rgba(56,189,248,0.2)]"
+                                : "bg-slate-900/50 border-slate-700 text-slate-400 hover:border-sky-400/40 hover:text-sky-300"
+                            }`}
+                          >
+                            {o === "Linux" && <span aria-hidden="true">🐧</span>}
+                            {o === "Windows" && <span aria-hidden="true">🪟</span>}
+                            {label}
+                          </button>
+                        );
+                      })}
+                      <span className="ml-auto font-mono text-[0.7rem] uppercase tracking-[0.15em] text-slate-500">
+                        {filteredWalkthroughs.length} of {WALKTHROUGHS.length}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {WALKTHROUGHS.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {WALKTHROUGHS.map((w) => {
+                  filteredWalkthroughs.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredWalkthroughs.map((w) => {
                       const card = (
                         <>
                           <div className="flex items-start justify-between gap-3 mb-3">
@@ -421,8 +493,26 @@ export default function OffensiveSecurity() {
                           {card}
                         </div>
                       );
-                    })}
-                  </div>
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-8 bg-slate-900/40 border border-dashed border-slate-700 rounded-lg backdrop-blur-sm text-center">
+                      <p className="text-gray-300 font-medium">No walkthroughs match these filters.</p>
+                      <p className="text-sm text-slate-400 mt-2">
+                        Try widening the difficulty or OS selection.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDiffFilter("all");
+                          setOsFilter("all");
+                        }}
+                        className="mt-4 inline-flex items-center gap-2 min-h-[36px] px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider border border-red-500/40 text-red-300 hover:bg-red-500/10 transition-colors"
+                      >
+                        Reset filters
+                      </button>
+                    </div>
+                  )
                 ) : (
                   <div className="p-8 bg-slate-900/40 border border-dashed border-red-500/30 rounded-lg backdrop-blur-sm text-center">
                     <div className="flex justify-center text-red-400 mb-3">
