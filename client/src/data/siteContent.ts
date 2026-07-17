@@ -63,6 +63,13 @@ export interface Walkthrough {
   tags: string[];
   summary: string;
   url?: string; // link to the full write-up
+  /**
+   * If true, the walkthrough is for a box that has not yet retired on HTB.
+   * The dossier card renders a lock badge and hides the summary/tags, and the
+   * walkthrough page gates the content behind a SHA-256 flag prompt (the raw
+   * flag never lives in the repo — only its digest, in WalkthroughSummary.gateHash).
+   */
+  locked?: boolean;
 }
 
 export const SITE_META = {
