@@ -17,6 +17,14 @@ export interface WalkthroughSummary {
   retired: string;
   tags: string[];
   summary: string;
+  /**
+   * SHA-256 hex digest of the box's user.txt flag. Presence of this field
+   * marks the walkthrough as ACTIVE (not yet retired) and gates the full
+   * content behind a client-side flag check. The raw flag never lives in the
+   * repo — only its digest ships in the bundle. When the box eventually
+   * retires, delete this field to unlock the walkthrough for everyone.
+   */
+  gateHash?: string;
 }
 
 // Order shown on the dossier: most-recently-retired first.
@@ -71,10 +79,12 @@ export const WALKTHROUGH_SUMMARIES: WalkthroughSummary[] = [
     platform: "Hack The Box",
     os: "Linux",
     difficulty: "Insane",
-    retired: "2026",
+    retired: "Active",
     tags: ["boolean-blind SQLi", "MySQL FILE read", "stored XSS", "Twig SSTI", "rbash jail", "Cobbler XML-RPC", "Cheetah RCE"],
     summary:
       "A seven-link web kill-chain: blind SQLi to LOAD_FILE source disclosure, stored-XSS-driven Twig SSTI, a cracked hash, an rbash jail, and a localhost Cobbler XML-RPC bypass into Cheetah RCE as root.",
+    // Active box — walkthrough gated on user.txt SHA-256. Delete gateHash on retirement.
+    gateHash: "PENDING_USER_TXT_SHA256",
   },
   {
     slug: "whiterabbit",
@@ -377,4 +387,5 @@ export const WALKTHROUGHS: Walkthrough[] = WALKTHROUGH_SUMMARIES.map((s) => ({
   tags: s.tags,
   summary: s.summary,
   url: `/offensive-security/walkthroughs/${s.slug}`,
+  locked: Boolean(s.gateHash),
 }));

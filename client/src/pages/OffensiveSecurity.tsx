@@ -10,6 +10,7 @@ import {
   Flag,
   GitPullRequest,
   Hammer,
+  Lock,
   Server,
   ShieldAlert,
   Star,
@@ -461,7 +462,30 @@ export default function OffensiveSecurity() {
                   filteredWalkthroughs.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {filteredWalkthroughs.map((w) => {
-                      const card = (
+                      const card = w.locked ? (
+                        <>
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <h3 className="font-bold text-white group-hover:text-amber-300 transition-colors flex items-center gap-2">
+                              <Lock size={15} className="text-amber-400" />
+                              {w.name}
+                            </h3>
+                            {w.difficulty && (
+                              <span className="glass-readable-chip px-2.5 py-0.5 rounded-full text-xs font-bold">{w.difficulty}</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-slate-400 italic leading-relaxed mb-4">
+                            Active box — full write-up locked until retirement. Click to unlock with the box's user.txt flag.
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className="font-mono text-slate-500">{w.platform}</span>
+                            {w.os && <span className="rounded bg-slate-800 px-2 py-0.5 text-red-300 border border-red-500/20">{w.os}</span>}
+                            <span className="rounded-full bg-amber-500/10 border border-amber-500/40 px-2.5 py-0.5 text-amber-300 font-mono uppercase tracking-wider text-[0.65rem]">
+                              Active · locked
+                            </span>
+                            <span className="ml-auto font-mono text-slate-500">{w.date}</span>
+                          </div>
+                        </>
+                      ) : (
                         <>
                           <div className="flex items-start justify-between gap-3 mb-3">
                             <h3 className="font-bold text-white group-hover:text-red-400 transition-colors">{w.name}</h3>
@@ -480,16 +504,19 @@ export default function OffensiveSecurity() {
                           </div>
                         </>
                       );
+                      const cardClass = w.locked
+                        ? "group p-5 bg-slate-900/40 border border-amber-500/30 rounded-lg backdrop-blur-sm hover:border-amber-500/60 hover:bg-slate-900/60 transition-all"
+                        : "group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all";
                       return w.url ? (
                         <Link
                           key={w.name}
                           href={w.url}
-                          className="group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm hover:border-red-500/60 hover:bg-slate-900/60 transition-all"
+                          className={cardClass}
                         >
                           {card}
                         </Link>
                       ) : (
-                        <div key={w.name} className="group p-5 bg-slate-900/40 border border-red-500/30 rounded-lg backdrop-blur-sm">
+                        <div key={w.name} className={cardClass}>
                           {card}
                         </div>
                       );

@@ -1,14 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
-import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, Lock, ShieldAlert } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import NotFound from "@/pages/NotFound";
 import { SITE_META } from "@/data/siteContent";
-import { WALKTHROUGH_LOADERS, type WalkthroughDoc } from "@/data/walkthroughs";
+import { WALKTHROUGH_LOADERS, WALKTHROUGH_SUMMARIES, type WalkthroughDoc } from "@/data/walkthroughs";
 import { Blocks } from "@/components/walkthrough/blocks";
 import RichText from "@/components/walkthrough/RichText";
+
+// Compute SHA-256 of the input string as a lowercase hex digest using the
+// browser-native Web Crypto API — no external deps. Used to validate the
+// user-provided flag against the gateHash baked into WalkthroughSummary.
+async function sha256Hex(input: string): Promise<string> {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 const OS_ICON: Record<string, string> = { Linux: "🐧", Windows: "🪟", Other: "🎯" };
 
@@ -30,11 +41,67 @@ export default function WalkthroughPage() {
   const [active, setActive] = useState<string>("");
   const [progress, setProgress] = useState(0);
 
-  // Lazy-load the box's full write-up chunk only when its route is opened.
+  // Locked-box gate state. When a box hasn't retired yet, its summary carries a
+  // gateHash and the full doc is withheld until the visitor enters the matching
+  // flag. Once unlocked in a tab, sessionStorage remembers so re-navigation
+  // inside the same tab doesn't re-prompt.
+  const summary = useMemo(
+    () => WALKTHROUGH_SUMMARIES.find((s) => s.slug === slug),
+    [slug]
+  );
+  const locked = Boolean(summary?.gateHash);
+  const sessionKey = `walkthrough_unlock_${slug}`;
+  const [unlocked, setUnlocked] = useState<boolean>(() => {
+    if (!locked) return true;
+    try {
+      return sessionStorage.getItem(sessionKey) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [flagInput, setFlagInput] = useState("");
+  const [gateError, setGateError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+
+  const submitFlag = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!summary?.gateHash) return;
+    setChecking(true);
+    setGateError(null);
+    try {
+      const provided = flagInput.trim();
+      if (!provided) {
+        setGateError("Enter the box's user.txt flag to continue.");
+        return;
+      }
+      const digest = await sha256Hex(provided);
+      if (digest === summary.gateHash.toLowerCase()) {
+        try {
+          sessionStorage.setItem(sessionKey, "1");
+        } catch {
+          /* private-mode fallback: session-only unlock */
+        }
+        setUnlocked(true);
+        setFlagInput("");
+      } else {
+        setGateError("Flag mismatch — that isn't user.txt for this box.");
+      }
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  // Lazy-load the box's full write-up chunk only once the visitor has cleared
+  // the gate (or the box was never gated).
   useEffect(() => {
     const loader = WALKTHROUGH_LOADERS[slug];
     if (!loader) {
       setStatus("missing");
+      return;
+    }
+    if (!unlocked) {
+      setStatus("loading");
+      setDoc(null);
       return;
     }
     let cancelled = false;
@@ -54,7 +121,7 @@ export default function WalkthroughPage() {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, unlocked]);
 
   useEffect(() => {
     if (!doc) return;
@@ -94,6 +161,97 @@ export default function WalkthroughPage() {
   }, [doc]);
 
   if (status === "missing") return <NotFound />;
+
+  // Locked-box flag gate — rendered in place of the doc when the visitor has
+  // not yet cleared the box's user.txt check.
+  if (locked && !unlocked && summary) {
+    return (
+      <div className="page-gradient min-h-screen flex flex-col">
+        <div className="site-grid" aria-hidden="true" />
+        <div className="site-grain" aria-hidden="true" />
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center px-4 py-16">
+          <div className="w-full max-w-lg">
+            <Link
+              href="/offensive-security#walkthroughs"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-slate-400 hover:text-red-300 transition-colors mb-8"
+            >
+              <ArrowLeft size={14} />
+              cd ~/offensive-security/walkthroughs
+            </Link>
+            <div className="rounded-2xl border border-amber-500/30 bg-slate-900/70 backdrop-blur-sm p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-11 h-11 rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center justify-center">
+                  <Lock size={20} className="text-amber-300" />
+                </div>
+                <div>
+                  <p className="font-mono text-[0.7rem] tracking-[0.15em] uppercase text-amber-300">
+                    Active box · locked
+                  </p>
+                  <h1 className="text-2xl font-bold text-white">{summary.name}</h1>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-5 text-xs font-mono">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-slate-900/60 px-3 py-1 text-sky-300">
+                  {OS_ICON[summary.os]} {summary.os}
+                </span>
+                <span className="rounded-full border border-red-500/50 bg-slate-900/60 px-3 py-1 text-red-300">
+                  🔥 {summary.difficulty}
+                </span>
+              </div>
+              <p className="text-sm text-slate-300 leading-relaxed mb-5">
+                Following Hack The Box's disclosure policy, walkthroughs for machines
+                that haven't retired yet are gated behind proof of ownership. Enter the
+                box's <code className="font-mono text-red-300 bg-slate-800/70 border border-slate-700/70 rounded px-1.5 py-0.5">user.txt</code> flag
+                below to unlock the full write-up.
+              </p>
+              <form onSubmit={submitFlag} className="space-y-3">
+                <label htmlFor="flag" className="sr-only">
+                  user.txt flag
+                </label>
+                <input
+                  id="flag"
+                  type="password"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={flagInput}
+                  onChange={(e) => {
+                    setFlagInput(e.target.value);
+                    if (gateError) setGateError(null);
+                  }}
+                  placeholder="user.txt (32 hex chars)"
+                  className="w-full min-h-[44px] font-mono text-sm bg-slate-950/70 text-slate-100 border border-slate-700 rounded-lg px-4 py-2.5 focus:outline-none focus:border-amber-400/60 focus:ring-2 focus:ring-amber-500/20"
+                />
+                {gateError && (
+                  <div className="flex items-start gap-2 text-sm text-red-300">
+                    <ShieldAlert size={16} className="mt-0.5 shrink-0" />
+                    <span>{gateError}</span>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={checking || flagInput.trim().length === 0}
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-lg bg-amber-500/90 text-slate-950 font-semibold transition-all hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {checking ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Lock size={16} />
+                  )}
+                  {checking ? "Verifying…" : "Unlock walkthrough"}
+                </button>
+              </form>
+              <p className="mt-4 text-[0.72rem] leading-snug text-slate-500">
+                Verification runs entirely in your browser via SHA-256 — the flag never
+                leaves this device. Access persists for this browser tab only.
+              </p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (status === "loading" || !doc) {
     return (
