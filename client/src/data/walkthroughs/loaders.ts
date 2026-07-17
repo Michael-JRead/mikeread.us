@@ -4,10 +4,45 @@ import type { WalkthroughDoc } from "./types";
 // separate chunk that only downloads when that walkthrough route is opened —
 // keeping the main and offensive-security bundles lean.
 export const WALKTHROUGH_LOADERS: Record<string, () => Promise<WalkthroughDoc>> = {
-  whiterabbit: () => import("./whiterabbit").then((m) => m.whiterabbit),
+  // 2026
+  orion: () => import("./orion").then((m) => m.orion),
+  nexus: () => import("./nexus").then((m) => m.nexus),
+  odyssey: () => import("./odyssey").then((m) => m.odyssey),
   sorcery: () => import("./sorcery").then((m) => m.sorcery),
-  zero: () => import("./zero").then((m) => m.zero),
-  mist: () => import("./mist").then((m) => m.mist),
-  ghost: () => import("./ghost").then((m) => m.ghost),
   cobblestone: () => import("./cobblestone").then((m) => m.cobblestone),
+  // 2025
+  whiterabbit: () => import("./whiterabbit").then((m) => m.whiterabbit),
+  thefrizz: () => import("./thefrizz").then((m) => m.thefrizz),
+  zero: () => import("./zero").then((m) => m.zero),
+  escapetwo: () => import("./escapetwo").then((m) => m.escapetwo),
+  ghost: () => import("./ghost").then((m) => m.ghost),
+  certified: () => import("./certified").then((m) => m.certified),
+  cicada: () => import("./cicada").then((m) => m.cicada),
+  magicgardens: () => import("./magicgardens").then((m) => m.magicgardens),
+  // 2024
+  sea: () => import("./sea").then((m) => m.sea),
+  mist: () => import("./mist").then((m) => m.mist),
+  skyfall: () => import("./skyfall").then((m) => m.skyfall),
+  ouija: () => import("./ouija").then((m) => m.ouija),
+  // 2023
+  twomillion: () => import("./twomillion").then((m) => m.twomillion),
+  flight: () => import("./flight").then((m) => m.flight),
+  response: () => import("./response").then((m) => m.response),
+  // 2022
+  scanned: () => import("./scanned").then((m) => m.scanned),
+  timelapse: () => import("./timelapse").then((m) => m.timelapse),
+  // 2021
+  cap: () => import("./cap").then((m) => m.cap),
+  // 2020
+  sauna: () => import("./sauna").then((m) => m.sauna),
+  forest: () => import("./forest").then((m) => m.forest),
+  // 2019
+  bastion: () => import("./bastion").then((m) => m.bastion),
+  rope: () => import("./rope").then((m) => m.rope),
+  // 2018
+  active: () => import("./active").then((m) => m.active),
+  nibbles: () => import("./nibbles").then((m) => m.nibbles),
+  // 2017
+  legacy: () => import("./legacy").then((m) => m.legacy),
+  lame: () => import("./lame").then((m) => m.lame),
 };
