@@ -116,4 +116,22 @@ export const DISCLOSURES: Disclosure[] = [
     url: "https://github.com/quarkusio/quarkus/pull/55353",
     credited: true,
   },
+  {
+    title: "Dev-mode Host validation missing on sibling routes",
+    vendor: "Quarkus",
+    cwe: "CWE-346 / CWE-668",
+    type: "Missing Origin / Host Validation",
+    status: "Merged",
+    ref: "PR #55431",
+    url: "https://github.com/quarkusio/quarkus/pull/55431",
+  },
+  {
+    title: "Micrometer HTTP method tag — unbounded meter leak",
+    vendor: "Quarkus",
+    cwe: "CWE-770",
+    type: "Uncontrolled Resource Consumption (DoS)",
+    status: "Merged",
+    ref: "PR #55030",
+    url: "https://github.com/quarkusio/quarkus/pull/55030",
+  },
 ];
