@@ -1,31 +1,31 @@
 {
-  "fetchedAt": "2026-07-17T10:57:52.620Z",
-  "generatedAt": "2026-07-17T10:57:52.620Z",
-  "commit": "99a2311",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/29575218911",
+  "fetchedAt": "2026-07-18T10:39:57.442Z",
+  "generatedAt": "2026-07-18T10:39:57.442Z",
+  "commit": "2c1e514",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/29641212632",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
-    "rank": "Hacker",
-    "ranking": 702,
-    "points": 336,
-    "user_owns": 38,
-    "system_owns": 38,
+    "rank": "Pro Hacker",
+    "ranking": 322,
+    "points": 877,
+    "user_owns": 47,
+    "system_owns": 47,
     "user_bloods": 0,
     "system_bloods": 0,
     "respects": 0,
     "team": null,
-    "current_rank_progress": 32.2,
-    "next_rank": "Pro Hacker",
-    "next_rank_points": 12.6225,
-    "rank_ownership": 28.05,
-    "rank_requirement": 20
+    "current_rank_progress": 44.4,
+    "next_rank": "Elite Hacker",
+    "next_rank_points": 39.27,
+    "rank_ownership": 56.1,
+    "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
-    "solved": 210,
-    "total": 838
+    "solved": 213,
+    "total": 839
   },
   "challengeCategories": [
     {
@@ -49,7 +49,7 @@
     {
       "name": "Web",
       "solved": 16,
-      "total": 169,
+      "total": 170,
       "percentage": 9
     },
     {
@@ -102,9 +102,9 @@
     },
     {
       "name": "Coding",
-      "solved": 1,
+      "solved": 2,
       "total": 17,
-      "percentage": 6
+      "percentage": 12
     },
     {
       "name": "Secure Coding",
@@ -126,9 +126,9 @@
     },
     {
       "name": "Satellite",
-      "solved": 0,
+      "solved": 2,
       "total": 3,
-      "percentage": 0
+      "percentage": 67
     }
   ]
 }
