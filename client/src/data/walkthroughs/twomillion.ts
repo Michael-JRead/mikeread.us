@@ -7,7 +7,7 @@ export const twomillion: WalkthroughDoc = {
   os: "Linux",
   difficulty: "Easy",
   retired: "Jun 2023",
-  ip: "10.10.11.x",
+  ip: "10.10.11.221",
   tags: [
     "Invite Code",
     "JS Deobfuscation",

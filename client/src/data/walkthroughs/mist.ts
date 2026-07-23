@@ -361,14 +361,14 @@ export const mist: WalkthroughDoc = {
             "mist\\brandon.keywarp",
             "",
             "PS C:\\Users\\brandon.keywarp\\Desktop> type user.txt",
-            "7b3e9a1c5f8d2604e7b1a4c8d5f2e9b6",
+            "7b3e9a1c····························",
           ],
         },
         {
           kind: "callout",
           variant: "key",
           title: "user.txt",
-          text: "`7b3e9a1c5f8d2604e7b1a4c8d5f2e9b6`",
+          text: "`7b3e9a1c····························`",
         },
         {
           kind: "callout",
@@ -1019,14 +1019,14 @@ export const mist: WalkthroughDoc = {
             "MIST\\Domain Admins                         Group            S-1-5-21-...-512  Enabled by default, Enabled group, Group owner",
             "",
             "*Evil-WinRM* PS C:\\Users\\Administrator\\Desktop> type root.txt",
-            "4f8c1a6e9b3d0725c8a1e4b7d0f3a6c9",
+            "4f8c1a6e····························",
           ],
         },
         {
           kind: "callout",
           variant: "key",
           title: "root.txt",
-          text: "`4f8c1a6e9b3d0725c8a1e4b7d0f3a6c9`",
+          text: "`4f8c1a6e····························`",
         },
         {
           kind: "callout",

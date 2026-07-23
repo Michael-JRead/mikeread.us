@@ -24,27 +24,35 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center min-h-screen p-8 bg-background">
-          <div className="flex flex-col items-center w-full max-w-2xl p-8">
+        <div className="page-gradient flex items-center justify-center min-h-screen p-8 text-slate-100">
+          <div className="flex flex-col items-center w-full max-w-2xl p-8 text-center">
             <AlertTriangle
               size={48}
-              className="text-destructive mb-6 flex-shrink-0"
+              className="text-red-400 mb-6 flex-shrink-0"
             />
 
-            <h2 className="text-xl mb-4">An unexpected error occurred.</h2>
+            <h2 className="text-2xl font-bold text-white mb-3">
+              Something went wrong.
+            </h2>
+            <p className="text-slate-300 mb-6 max-w-md">
+              An unexpected error interrupted this page. Reloading usually
+              clears it — if it keeps happening, please let me know.
+            </p>
 
-            <div className="p-4 w-full rounded bg-muted overflow-auto mb-6">
-              <pre className="text-sm text-muted-foreground whitespace-break-spaces">
-                {this.state.error?.stack}
-              </pre>
-            </div>
+            {import.meta.env.DEV && this.state.error?.stack && (
+              <div className="p-4 w-full rounded bg-slate-900/70 border border-red-500/30 overflow-auto mb-6 text-left">
+                <pre className="text-xs text-slate-400 whitespace-break-spaces">
+                  {this.state.error.stack}
+                </pre>
+              </div>
+            )}
 
             <button
               onClick={() => window.location.reload()}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg",
-                "bg-primary text-primary-foreground",
-                "hover:opacity-90 cursor-pointer"
+                "flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold",
+                "bg-red-600 text-white",
+                "hover:bg-red-500 transition-colors cursor-pointer"
               )}
             >
               <RotateCcw size={16} />

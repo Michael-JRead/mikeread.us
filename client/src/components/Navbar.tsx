@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
@@ -34,12 +34,31 @@ export default function Navbar() {
   const [location] = useLocation();
   const onHome = location === "/";
   const activeSection = useActiveSection();
+  const toggleRef = useRef<HTMLButtonElement>(null);
   // Scrollspy only applies on the single-page home; elsewhere nothing is active.
   const active = onHome ? activeSection : "";
   // Hash links must jump home first when viewed from another route.
   const to = (href: string) => (onHome ? href : `/${href}`);
 
   const handleNavClick = () => setIsOpen(false);
+
+  // Close the mobile panel when the route changes (e.g. navigating to a subpage).
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
+
+  // Escape closes the open mobile panel and returns focus to the toggle button.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
 
   return (
     <nav className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-red-900/50 shadow-sm">
@@ -84,6 +103,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
+          ref={toggleRef}
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isOpen}

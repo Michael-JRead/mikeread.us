@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import SkipLink from "@/components/SkipLink";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ExperienceSection from "@/components/ExperienceSection";
@@ -13,10 +14,15 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className="page-gradient min-h-screen flex flex-col">
+      <SkipLink />
       <div className="site-grid" aria-hidden="true" />
       <div className="site-grain" aria-hidden="true" />
       <Navbar />
-      <main className="flex-1">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 focus:outline-none"
+      >
         <HeroSection />
         <AboutSection />
         <ExperienceSection />

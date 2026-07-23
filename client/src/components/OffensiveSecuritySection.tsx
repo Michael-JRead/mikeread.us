@@ -56,7 +56,7 @@ export default function OffensiveSecuritySection() {
                 <StatTile icon={<Server size={22} />} label="User Owns" value={data.profile.user_owns} active={active} />
                 <StatTile icon={<Crown size={22} />} label="System Owns" value={data.profile.system_owns} active={active} />
                 <StatTile icon={<Trophy size={22} />} label="Global Ranking" value={data.profile.ranking ?? 0} prefix="#" active={active} />
-                <StatTile icon={<Flag size={22} />} label="Challenges Solved" value={data.challenges?.solved ?? data.profile.respects} active={active} />
+                <StatTile icon={<Flag size={22} />} label="Challenges Solved" value={data.challenges?.solved ?? 0} active={active} />
               </div>
 
               {data.challengeCategories && data.challengeCategories.length > 0 && (

@@ -24,6 +24,7 @@ import { DISCLOSURES } from "@/data/offsec";
 import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import Navbar from "@/components/Navbar";
+import SkipLink from "@/components/SkipLink";
 import Footer from "@/components/Footer";
 
 const HtbSkillRadar = lazy(() => import("@/components/HtbSkillRadar"));
@@ -84,11 +85,12 @@ export default function OffensiveSecurity() {
 
   return (
     <div className="page-gradient min-h-screen flex flex-col">
+      <SkipLink />
       <div className="site-grid" aria-hidden="true" />
       <div className="site-grain" aria-hidden="true" />
       <Navbar />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <section className="pt-16 pb-20 relative">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">

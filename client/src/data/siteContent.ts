@@ -65,22 +65,17 @@ export interface Walkthrough {
   url?: string; // link to the full write-up
 }
 
+// Social/OG share metadata lives in client/index.html (home page defaults) and is
+// rewritten per route by scripts/postbuild-pages.mjs — it is intentionally not
+// duplicated here, so there is nothing to keep in sync.
 export const SITE_META = {
   canonicalUrl: "https://www.mikeread.us/",
-  shareTitle: "Michael Read | Cybersecurity Leader",
-  shareDescription:
-    "Information Security Manager and Security Engineer focused on AWS, compliance, and measurable risk reduction.",
-  shareImageUrl: "https://www.mikeread.us/assets/og-preview-v4.jpg",
-  shareImageAlt:
-    "Michael Read cybersecurity portfolio preview with headshot and security engineering title.",
   fullName: "Michael Read",
   initials: "MR",
   role: "Information Security Manager | Security Engineer",
   location: "Dallas, TX",
   availability: "Open to remote, hybrid, and cleared opportunities",
   email: "public.michaelread@gmail.com",
-  headline:
-    "Marine Corps veteran with 9 years of cybersecurity and cloud security engineering experience.",
   summary:
     "I secure cloud deployments and sensitive data by aligning technical controls with business goals, leading cross-functional execution, and driving measurable risk reduction in regulated environments.",
   social: {
@@ -88,8 +83,7 @@ export const SITE_META = {
     linkedin: "https://www.linkedin.com/in/michael-j-read99/",
     hackthebox: "https://app.hackthebox.com/users/1704613",
   },
-  requiredPhotoSrc: "/assets/profile-photo.png",
-  heroBackgroundSrc: "/assets/hero-bg.jpg",
+  requiredPhotoSrc: "/assets/profile-photo.webp",
 } as const;
 
 export const NAV_ITEMS: NavItem[] = [

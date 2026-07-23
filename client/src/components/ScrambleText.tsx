@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 
 interface ScrambleTextProps {
   children: string;
@@ -11,27 +12,28 @@ interface ScrambleTextProps {
 
 /**
  * ScrambleText Component - Cyclic Animation
- * 
+ *
  * Creates an algorithm-style text scrambling animation with cyclic behavior:
  * - 1.5 seconds: Active character scrambling
  * - 5 seconds: Hold steady (display final text)
  * - Repeat infinitely
- * 
- * Design Philosophy: Cybersecurity threat defender aesthetic
- * - Conveys active monitoring and continuous threat detection
- * - Character set includes tech symbols for authenticity
- * - Smooth animation that feels purposeful and professional
+ *
+ * Accessibility: the real text is always exposed to assistive tech via
+ * `aria-label`, and the scrambled glyphs are `aria-hidden`, so screen readers
+ * announce the name — never the randomized characters. When the visitor prefers
+ * reduced motion, the effect is skipped entirely and the text renders static.
  */
 export default function ScrambleText({
   children,
   className = "",
   trigger = "mount",
-  speed = 0.03,
   characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*!",
-  onAnimationComplete,
 }: ScrambleTextProps) {
+  const reduced = useReducedMotion();
   const [displayText, setDisplayText] = useState(children);
-  const [isScrambling, setIsScrambling] = useState(trigger === "mount" || trigger === "always");
+  const [isScrambling, setIsScrambling] = useState(
+    trigger === "mount" || trigger === "always"
+  );
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const cycleIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -42,7 +44,7 @@ export default function ScrambleText({
 
   // Clear all timeouts
   const clearAllTimeouts = () => {
-    timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     timeoutsRef.current = [];
   };
 
@@ -68,32 +70,42 @@ export default function ScrambleText({
 
       // Scramble phase: randomly change character multiple times
       for (let i = 0; i < scrambleCount; i++) {
-        const timeout = setTimeout(() => {
-          setDisplayText((prev) => {
-            const arr = prev.split("");
-            arr[index] = getRandomChar();
-            return arr.join("");
-          });
-        }, index * 50 + i * scrambleInterval);
+        const timeout = setTimeout(
+          () => {
+            setDisplayText(prev => {
+              const arr = prev.split("");
+              arr[index] = getRandomChar();
+              return arr.join("");
+            });
+          },
+          index * 50 + i * scrambleInterval
+        );
 
         timeoutsRef.current.push(timeout);
       }
 
       // Reveal phase: show final character
-      const revealTimeout = setTimeout(() => {
-        setDisplayText((prev) => {
-          const arr = prev.split("");
-          arr[index] = char;
-          return arr.join("");
-        });
-      }, index * 50 + scrambleDuration);
+      const revealTimeout = setTimeout(
+        () => {
+          setDisplayText(prev => {
+            const arr = prev.split("");
+            arr[index] = char;
+            return arr.join("");
+          });
+        },
+        index * 50 + scrambleDuration
+      );
 
       timeoutsRef.current.push(revealTimeout);
     });
   };
 
-  // Setup cyclic animation
+  // Setup cyclic animation. Motion-sensitive visitors get the static text.
   useEffect(() => {
+    if (reduced) {
+      setDisplayText(children);
+      return;
+    }
     if (trigger === "always" || (trigger === "mount" && isScrambling)) {
       // Perform initial scramble
       performScrambleAnimation();
@@ -108,10 +120,12 @@ export default function ScrambleText({
         clearCycleInterval();
       };
     }
-  }, [trigger, isScrambling, children, characterSet]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger, isScrambling, children, characterSet, reduced]);
 
   // Handle trigger modes for hover
   const handleHover = () => {
+    if (reduced) return;
     if (trigger === "hover" && !isScrambling) {
       setIsScrambling(true);
       performScrambleAnimation();
@@ -135,6 +149,7 @@ export default function ScrambleText({
   return (
     <span
       className={className}
+      aria-label={children}
       onMouseEnter={handleHover}
       onMouseLeave={handleHoverEnd}
       style={{
@@ -146,7 +161,7 @@ export default function ScrambleText({
         letterSpacing: "inherit",
       }}
     >
-      {displayText}
+      <span aria-hidden="true">{reduced ? children : displayText}</span>
     </span>
   );
 }

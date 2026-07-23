@@ -501,14 +501,14 @@ export const ghost: WalkthroughDoc = {
             "root@intranet-6f9c:/app# id",
             "uid=0(root) gid=0(root) groups=0(root)",
             "root@intranet-6f9c:/app# cat /root/user.txt",
-            "2f8a91c6de3b4471a6c9058f0d1e7ab3",
+            "2f8a91c6····························",
           ],
         },
         {
           kind: "callout",
           variant: "key",
           title: "user.txt",
-          text: "2f8a91c6de3b4471a6c9058f0d1e7ab3",
+          text: "2f8a91c6····························",
         },
         {
           kind: "callout",
@@ -1042,14 +1042,14 @@ export const ghost: WalkthroughDoc = {
             "GHOST\\Enterprise Admins                   Group            S-1-5-21-4084500788-938703357-3654145966-519  Enabled by default, Enabled group",
             "",
             "C:\\Windows\\system32> type C:\\Users\\Administrator\\Desktop\\root.txt",
-            "9b7a4e2c1d6f8035ab29c04d7e158f6c",
+            "9b7a4e2c····························",
           ],
         },
         {
           kind: "callout",
           variant: "key",
           title: "root.txt",
-          text: "9b7a4e2c1d6f8035ab29c04d7e158f6c",
+          text: "9b7a4e2c····························",
         },
         {
           kind: "callout",

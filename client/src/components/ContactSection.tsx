@@ -25,8 +25,9 @@ export default function ContactSection() {
       formData.subject
     )}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`)}`;
     window.location.href = mailtoLink;
+    setFormData({ name: "", email: "", subject: "", message: "" });
     setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setTimeout(() => setSubmitted(false), 6000);
   };
 
   return (
@@ -183,8 +184,9 @@ export default function ContactSection() {
               </button>
 
               {submitted && (
-                <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 border-opacity-40 text-green-300 rounded-lg">
-                  Message sent! Your default email client will open.
+                <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 border-opacity-40 text-green-300 rounded-lg" role="status">
+                  Opening your email client with this message ready to send. If nothing
+                  happens, email me directly at {SITE_META.email}.
                 </div>
               )}
             </form>

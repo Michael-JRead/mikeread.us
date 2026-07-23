@@ -4,7 +4,7 @@ import path from "node:path";
 const root = process.cwd();
 
 const requiredAssets = [
-  path.join(root, "client", "public", "assets", "profile-photo.png"),
+  path.join(root, "client", "public", "assets", "profile-photo.webp"),
 ];
 
 const missing = requiredAssets.filter((assetPath) => !fs.existsSync(assetPath));

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import SkipLink from "@/components/SkipLink";
 import Footer from "@/components/Footer";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import NotFound from "@/pages/NotFound";
@@ -98,10 +99,11 @@ export default function WalkthroughPage() {
   if (status === "loading" || !doc) {
     return (
       <div className="page-gradient min-h-screen flex flex-col">
+        <SkipLink />
         <div className="site-grid" aria-hidden="true" />
         <div className="site-grain" aria-hidden="true" />
         <Navbar />
-        <main className="flex-1 flex items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="flex-1 flex items-center justify-center focus:outline-none">
           <div className="flex items-center gap-3 font-mono text-sm text-slate-400">
             <Loader2 size={18} className="animate-spin text-red-400" />
             loading walkthrough…
@@ -114,6 +116,7 @@ export default function WalkthroughPage() {
 
   return (
     <div className="page-gradient min-h-screen flex flex-col">
+      <SkipLink />
       <div className="site-grid" aria-hidden="true" />
       <div className="site-grain" aria-hidden="true" />
 
@@ -126,7 +129,7 @@ export default function WalkthroughPage() {
 
       <Navbar />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* Hero */}
         <section className="pt-16 pb-10 relative">
           <div className="container mx-auto px-4">

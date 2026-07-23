@@ -50,7 +50,7 @@ export default function CertificationsSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <SectionHeader index="07" eyebrow="credentials" title="Certifications">
-            {CERTIFICATIONS.length} active industry certifications spanning cloud security, penetration testing, incident response, and security management.
+            {activeCount} active industry certifications spanning cloud security, penetration testing, incident response, and security management.
           </SectionHeader>
 
           {/* Organization Filter */}
@@ -117,7 +117,7 @@ export default function CertificationsSection() {
           {/* Summary Stats */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-              <div className="text-4xl font-bold mb-2 text-red-400">{CERTIFICATIONS.length}</div>
+              <div className="text-4xl font-bold mb-2 text-red-400">{activeCount}</div>
               <div className="text-gray-400">Active Certifications</div>
             </div>
             <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg border border-red-500 border-opacity-40 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">

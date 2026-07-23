@@ -113,13 +113,20 @@ Current design direction:
 
 ## Required assets
 
-Build will fail if these are missing:
+Build will fail if these are missing (checked at the start of `build:pages`):
 
-- `client/public/assets/profile-photo.png`
+- `client/public/assets/profile-photo.webp`
 
 Validation script:
 
 - `scripts/validate-required-assets.mjs`
+
+To replace the portrait, drop in a new source image and regenerate the WebP
+(the site serves WebP only — ~52 KB vs the old 1.9 MB PNG):
+
+```bash
+corepack pnpm dlx sharp-cli -i <source>.png -o client/public/assets -f webp -q 86 --chromaSubsampling "4:4:4" resize 1000
+```
 
 ## Link preview (text-message popup) guide
 
@@ -131,9 +138,12 @@ Current social preview image:
 
 Metadata source:
 
-- `client/index.html`
-- `index.html` (keep in sync to avoid stale previews from root-served contexts)
-- `client/src/data/siteContent.ts` (`shareTitle`, `shareDescription`, `shareImageUrl`)
+- `client/index.html` (the home page's default OG/Twitter tags and canonical)
+- `scripts/postbuild-pages.mjs` (rewrites `title`, `description`, `canonical`,
+  and OG/Twitter tags **per route** for `/offensive-security` and every
+  walkthrough, and emits `sitemap.xml` + `robots.txt`)
+- `client/src/data/walkthroughs/summaries.ts` (single source of truth for the
+  walkthrough route list and per-page descriptions — no hardcoded slug list)
 
 ### Required tags for rich preview
 
@@ -191,8 +201,12 @@ Artifact path:
 - `dist/public/index.html`
 - `dist/public/404.html`
 - `dist/public/CNAME`
-- `dist/public/assets/profile-photo.png`
+- `dist/public/robots.txt`
+- `dist/public/sitemap.xml`
+- `dist/public/assets/profile-photo.webp`
 - `dist/public/assets/og-preview-v4.jpg`
+- `dist/public/offensive-security/index.html` and one `index.html` per
+  walkthrough slug (each with per-route metadata)
 
 ## Troubleshooting
 
