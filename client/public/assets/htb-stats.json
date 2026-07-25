@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-07-24T11:10:18.094Z",
-  "generatedAt": "2026-07-24T11:10:18.094Z",
-  "commit": "6635708",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/30088633625",
+  "fetchedAt": "2026-07-25T10:42:37.812Z",
+  "generatedAt": "2026-07-25T10:42:37.812Z",
+  "commit": "cd5b9c5",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/30154938480",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 288,
+    "ranking": 292,
     "points": 960,
     "user_owns": 49,
     "system_owns": 49,
@@ -25,7 +25,7 @@
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 839
+    "total": 840
   },
   "challengeCategories": [
     {
@@ -43,7 +43,7 @@
     {
       "name": "Pwn",
       "solved": 6,
-      "total": 135,
+      "total": 136,
       "percentage": 4
     },
     {
