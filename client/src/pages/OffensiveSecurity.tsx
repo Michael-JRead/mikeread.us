@@ -253,8 +253,8 @@ export default function OffensiveSecurity() {
                   Responsible Disclosure &amp; Research
                 </h2>
                 <p className="text-gray-400 mb-6 max-w-3xl">
-                  Original vulnerability research and merged upstream security fixes — every row
-                  links to its public record. One CVE advisory is pending coordinated disclosure.
+                  Original vulnerability research, merged upstream security fixes, and a
+                  published CVE — every row links to its public record.
                 </p>
                 <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
                   <table className="w-full min-w-[680px] text-sm">
@@ -275,7 +275,10 @@ export default function OffensiveSecurity() {
                               {d.status === "Merged" ? (
                                 <GitPullRequest size={15} className="text-emerald-400 shrink-0" />
                               ) : (
-                                <ShieldAlert size={15} className="text-amber-400 shrink-0" />
+                                <ShieldAlert
+                                  size={15}
+                                  className={`shrink-0 ${d.status === "CVE published" ? "text-rose-400" : "text-amber-400"}`}
+                                />
                               )}
                               <span className="text-white font-medium">{d.title}</span>
                             </div>
@@ -288,12 +291,23 @@ export default function OffensiveSecurity() {
                             {d.cwe && <span className="block font-mono text-[11px] text-red-400 mt-0.5">{d.cwe}</span>}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${d.status === "Merged" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40" : "bg-amber-500/15 text-amber-300 border border-amber-400/40"}`}>
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${d.status === "Merged" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40" : d.status === "CVE published" ? "bg-rose-500/15 text-rose-200 border border-rose-400/40" : "bg-amber-500/15 text-amber-300 border border-amber-400/40"}`}>
                               {d.status}
                             </span>
+                            {d.severity && (
+                              <span className="block font-mono text-[11px] text-rose-300 mt-1">{d.severity}</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap">
-                            {d.url ? (
+                            {d.links ? (
+                              <div className="flex flex-col items-end gap-0.5">
+                                {d.links.map((l) => (
+                                  <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
+                                    {l.label} <ExternalLink size={12} />
+                                  </a>
+                                ))}
+                              </div>
+                            ) : d.url ? (
                               <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
                                 {d.ref ?? "link"} <ExternalLink size={12} />
                               </a>

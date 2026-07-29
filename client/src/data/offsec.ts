@@ -1,7 +1,7 @@
 // Offensive-security disclosure data. Every row is the owner's real, externally
 // verifiable upstream security work.
 
-export type DisclosureStatus = "Merged" | "Advisory pending";
+export type DisclosureStatus = "Merged" | "Advisory pending" | "CVE published";
 
 export interface Disclosure {
   title: string;
@@ -9,23 +9,41 @@ export interface Disclosure {
   cwe?: string;
   type: string; // vulnerability class in plain language
   status: DisclosureStatus;
-  ref?: string; // PR number label
+  severity?: string; // e.g. "Important · CVSS 7.5"
+  ref?: string; // short label for the single-link case (PR number, CVE id)
   url?: string;
+  /** Multiple labeled public records (CVE, NVD, vendor advisory, errata). */
+  links?: { label: string; url: string }[];
   credited?: boolean;
   note?: string;
 }
 
 // All rows are the owner's real, externally verifiable upstream security work.
-// The CVE row is intentionally minimal — details are withheld pending the
-// coordinated-disclosure window agreed with the Quarkus/Red Hat security team.
 export const DISCLOSURES: Disclosure[] = [
   {
-    title: "Unauthenticated denial-of-service vulnerability",
+    title: "Quarkus REST multipart part-header memory-exhaustion DoS",
     vendor: "Quarkus / Red Hat",
-    type: "Unauthenticated DoS",
-    status: "Advisory pending",
-    credited: true,
-    note: "Discovered and responsibly disclosed; confirmed and fixed by the Quarkus security team, which credited me as the reporter in the pending advisory. Details withheld pending the coordinated-disclosure window.",
+    cwe: "CWE-770",
+    type: "Uncontrolled Resource Consumption (unauthenticated DoS)",
+    status: "CVE published",
+    severity: "Important · CVSS 7.5",
+    ref: "CVE-2026-16308",
+    links: [
+      {
+        label: "CVE-2026-16308",
+        url: "https://www.cve.org/CVERecord?id=CVE-2026-16308",
+      },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-16308" },
+      {
+        label: "Red Hat",
+        url: "https://access.redhat.com/security/cve/CVE-2026-16308",
+      },
+      {
+        label: "RHSA-2026:47189",
+        url: "https://access.redhat.com/errata/RHSA-2026:47189",
+      },
+    ],
+    note: "Discovered and responsibly disclosed to the Quarkus / Red Hat security team. An unauthenticated multipart/form-data request with an oversized part-header section exhausts the JVM heap in RESTEasy Reactive's MultipartParser (OutOfMemoryError). Rated Important; fixed in Red Hat build of Quarkus 3.27.4.SP3.",
   },
   {
     title: "Remote dev mode: path traversal + unsafe deserialization",
