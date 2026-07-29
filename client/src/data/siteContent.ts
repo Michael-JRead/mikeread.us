@@ -103,6 +103,22 @@ export const HERO_STATS = [
   { value: "Secret", label: "Active security clearance" },
 ];
 
+export interface CveEntry {
+  id: string;
+  url: string;
+  label?: string; // short descriptor shown next to the id, e.g. "CVSS 7.5"
+}
+
+// Published CVEs credited to the owner, surfaced as hero chips.
+// To add another, drop in a new { id, url, label } row.
+export const CVES: CveEntry[] = [
+  {
+    id: "CVE-2026-16308",
+    url: "https://www.cve.org/CVERecord?id=CVE-2026-16308",
+    label: "CVSS 7.5",
+  },
+];
+
 export const ABOUT_PARAGRAPHS = [
   "I am a cybersecurity engineer with a background spanning AWS, DoD programs, and high-impact cloud modernization efforts. My focus is securing enterprise-scale systems without slowing delivery. I bring a unique combination of military discipline, technical depth, and strategic thinking to every engagement.",
   "I have led security architecture, incident response, compliance hardening, and automation initiatives across organizations where reliability, audit readiness, and mission continuity are non-negotiable. My expertise spans cloud security, risk management, security governance, and threat intelligence, with a proven track record of translating complex security requirements into actionable, scalable solutions.",

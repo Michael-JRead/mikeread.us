@@ -1,5 +1,5 @@
-import { SITE_META, HERO_STATS } from "@/data/siteContent";
-import { ArrowRight } from "lucide-react";
+import { SITE_META, HERO_STATS, CVES } from "@/data/siteContent";
+import { ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 import HackTheBoxIcon from "./HackTheBoxIcon";
 import ScrambleText from "./ScrambleText";
 
@@ -92,6 +92,32 @@ export default function HeroSection() {
                 <HackTheBoxIcon size={24} className="w-6 h-6" />
               </a>
             </div>
+
+            {CVES.length > 0 && (
+              <div>
+                <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-slate-300 mb-3">
+                  <ShieldCheck size={14} className="text-red-400" aria-hidden="true" />
+                  CVE Discovered
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {CVES.map((cve) => (
+                    <a
+                      key={cve.id}
+                      href={cve.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${cve.id} — view record (opens in a new tab)`}
+                      className="group inline-flex items-center gap-2 rounded-lg border border-red-500/40 bg-slate-900/50 px-3 py-1.5 font-mono text-sm text-red-300 hover:border-red-400/70 hover:text-red-200 hover:bg-slate-900/70 transition-colors backdrop-blur-sm"
+                    >
+                      <span>{cve.id}</span>
+                      {cve.label && <span className="text-red-500/50" aria-hidden="true">·</span>}
+                      {cve.label && <span className="text-slate-400 text-xs">{cve.label}</span>}
+                      <ExternalLink size={13} className="opacity-70 group-hover:opacity-100" aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-center md:justify-end">
