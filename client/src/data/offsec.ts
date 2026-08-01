@@ -42,8 +42,12 @@ export const DISCLOSURES: Disclosure[] = [
         label: "RHSA-2026:47189",
         url: "https://access.redhat.com/errata/RHSA-2026:47189",
       },
+      {
+        label: "IBM",
+        url: "https://www.ibm.com/support/pages/security-bulletin-ibm-enterprise-build-quarkus-affected-dos-vulnerability",
+      },
     ],
-    note: "Discovered and responsibly disclosed to the Quarkus / Red Hat security team. An unauthenticated multipart/form-data request with an oversized part-header section exhausts the JVM heap in RESTEasy Reactive's MultipartParser (OutOfMemoryError). Rated Important; fixed in Red Hat build of Quarkus 3.27.4.SP3.",
+    note: "Discovered and responsibly disclosed to the Quarkus / Red Hat security team. An unauthenticated multipart/form-data request with an oversized part-header section exhausts the JVM heap in RESTEasy Reactive's MultipartParser (OutOfMemoryError). Rated Important; fixed in Red Hat build of Quarkus 3.27.4.SP3, with downstream advisories from vendors including IBM.",
   },
   {
     title: "Remote dev mode: path traversal + unsafe deserialization",
