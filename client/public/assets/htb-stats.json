@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-08-05T11:27:44.459Z",
-  "generatedAt": "2026-08-05T11:27:44.459Z",
-  "commit": "1b66b76",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/31001534610",
+  "fetchedAt": "2026-08-06T11:32:05.008Z",
+  "generatedAt": "2026-08-06T11:32:05.008Z",
+  "commit": "2e535d1",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/31097615235",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 340,
+    "ranking": 349,
     "points": 839,
     "user_owns": 49,
     "system_owns": 49,
@@ -16,16 +16,16 @@
     "system_bloods": 0,
     "respects": 0,
     "team": "ISP1337Hackers",
-    "current_rank_progress": 32.2,
+    "current_rank_progress": 29.64,
     "next_rank": "Elite Hacker",
-    "next_rank_points": 37.135,
-    "rank_ownership": 53.05,
+    "next_rank_points": 36.687,
+    "rank_ownership": 52.41,
     "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 841
+    "total": 847
   },
   "challengeCategories": [
     {
@@ -127,8 +127,8 @@
     {
       "name": "Satellite",
       "solved": 2,
-      "total": 3,
-      "percentage": 67
+      "total": 9,
+      "percentage": 22
     }
   ]
 }
