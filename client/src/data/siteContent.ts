@@ -61,7 +61,10 @@ export interface Walkthrough {
   difficulty?: "Easy" | "Medium" | "Hard" | "Insane";
   date?: string; // e.g. "Mar 2025"
   tags: string[];
+  /** Single-sentence attack chain (used for meta descriptions). */
   summary: string;
+  /** Scannable bullet takeaways rendered on the card. */
+  bullets?: string[];
   url?: string; // link to the full write-up
 }
 
@@ -86,12 +89,15 @@ export const SITE_META = {
   requiredPhotoSrc: "/assets/profile-photo.webp",
 } as const;
 
+// NavItem.href starting with "#" is a same-page anchor (scrolls on home,
+// jumps home + scrolls elsewhere). Starting with "/" is a route.
 export const NAV_ITEMS: NavItem[] = [
   { label: "About", href: "#about" },
   { label: "Experience", href: "#experience" },
   { label: "Education", href: "#education" },
   { label: "Projects", href: "#portfolio" },
-  { label: "Offensive Security", href: "#offensive-security" },
+  { label: "Offensive Security", href: "/offensive-security" },
+  { label: "Hack The Box", href: "/hackthebox" },
   { label: "Case Studies", href: "#case-studies" },
   { label: "Certifications", href: "#certifications" },
   { label: "Contact", href: "#contact" },

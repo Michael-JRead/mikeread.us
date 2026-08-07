@@ -73,7 +73,7 @@ export default function HackTheBox() {
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <section className="pt-16 pb-20 relative">
           <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               {/* Breadcrumb / back */}
               <Link
                 href="/"
@@ -348,9 +348,25 @@ export default function HackTheBox() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                              {w.summary}
-                            </p>
+                            {w.bullets && w.bullets.length > 0 ? (
+                              <ul className="space-y-1.5 mb-4">
+                                {w.bullets.map((b, i) => (
+                                  <li
+                                    key={i}
+                                    className="flex items-start gap-2 text-[13px] text-gray-300 leading-relaxed"
+                                  >
+                                    <span className="text-red-400 mt-1 shrink-0" aria-hidden="true">
+                                      •
+                                    </span>
+                                    <span>{b}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                                {w.summary}
+                              </p>
+                            )}
                             <div className="flex flex-wrap items-center gap-2 text-xs">
                               <span className="font-mono text-slate-500">{w.platform}</span>
                               {w.os && (

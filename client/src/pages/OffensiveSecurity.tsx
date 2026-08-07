@@ -62,7 +62,7 @@ const LEDGER_GROUPS: { key: DisclosureStatus; label: string }[] = [
 function SummaryBullets({ items }: { items?: string[] }) {
   if (!items || items.length === 0) return null;
   return (
-    <ul className="space-y-1 max-w-md">
+    <ul className="space-y-1.5">
       {items.map((b, i) => (
         <li key={i} className="flex items-start gap-2 text-slate-300 text-[13px] leading-relaxed">
           <span className="text-red-400 mt-1 shrink-0" aria-hidden="true">•</span>
@@ -232,13 +232,17 @@ function DisclosureLedger() {
 
       {/* Grouped table with intra-body subheaders */}
       <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
-        <table className="w-full min-w-[860px] text-sm">
+        <table className="w-full min-w-[720px] text-sm table-fixed">
+          <colgroup>
+            <col className="w-[32%]" />
+            <col className="w-[42%]" />
+            <col className="w-[14%]" />
+            <col className="w-[12%]" />
+          </colgroup>
           <thead>
             <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-slate-400 border-b border-red-500/20">
               <th className="px-4 py-3">Finding</th>
               <th className="px-4 py-3">Summary</th>
-              <th className="px-4 py-3">Class</th>
-              <th className="px-4 py-3">Vendor</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Ref</th>
             </tr>
@@ -248,7 +252,7 @@ function DisclosureLedger() {
               <Fragment key={group.key}>
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={4}
                     className={`px-4 ${gi === 0 ? "pt-4" : "pt-8"} pb-2`}
                   >
                     <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-500 border-b border-red-500/10 pb-2">
@@ -262,32 +266,28 @@ function DisclosureLedger() {
                     key={d.title}
                     className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top"
                   >
-                    <td className="px-4 py-3 max-w-xs">
+                    <td className="px-4 py-3 align-top">
                       <div className="flex items-start gap-2">
                         <span className="mt-0.5">{statusIcon(d.status)}</span>
                         <div className="min-w-0">
-                          <span className="text-white font-medium">{d.title}</span>
-                          {d.credited && (
-                            <span className="ml-2 align-middle inline-block">
-                              <CreditedChip />
-                            </span>
-                          )}
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="text-white font-medium leading-tight">{d.title}</span>
+                            {d.credited && <CreditedChip />}
+                          </div>
+                          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                            <VendorChip vendor={d.vendor} />
+                            <span className="text-slate-400 break-words">{d.type}</span>
+                            {d.cwe && (
+                              <span className="text-slate-500 font-mono text-[11px]">· {d.cwe}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 align-top">
                       <SummaryBullets items={d.summary} />
                     </td>
-                    <td className="px-4 py-3 min-w-[10rem]">
-                      <span className="text-slate-300">{d.type}</span>
-                      {d.cwe && (
-                        <span className="text-slate-500 font-mono text-[11px]"> · {d.cwe}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <VendorChip vendor={d.vendor} />
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="px-4 py-3 align-top">
                       <span
                         className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(d.status)}`}
                       >
@@ -299,7 +299,7 @@ function DisclosureLedger() {
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                    <td className="px-4 py-3 text-right align-top">
                       <DisclosureRefLinks d={d} />
                     </td>
                   </tr>
@@ -354,7 +354,7 @@ export default function OffensiveSecurity() {
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <section className="pt-16 pb-20 relative">
           <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               {/* Breadcrumb / back */}
               <Link
                 href="/"

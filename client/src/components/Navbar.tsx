@@ -3,7 +3,12 @@ import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
 
-const SECTION_IDS = NAV_ITEMS.map((item) => item.href.replace("#", ""));
+// Only anchor items (#foo) participate in scrollspy; route items (/foo) don't.
+const isAnchor = (href: string) => href.startsWith("#");
+const isRoute = (href: string) => href.startsWith("/");
+const SECTION_IDS = NAV_ITEMS.filter((item) => isAnchor(item.href)).map((item) =>
+  item.href.replace("#", "")
+);
 
 function useActiveSection() {
   const [active, setActive] = useState<string>(SECTION_IDS[0]);
@@ -37,8 +42,16 @@ export default function Navbar() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   // Scrollspy only applies on the single-page home; elsewhere nothing is active.
   const active = onHome ? activeSection : "";
-  // Hash links must jump home first when viewed from another route.
-  const to = (href: string) => (onHome ? href : `/${href}`);
+  // Anchor items (#foo) jump home first when viewed from another route; route
+  // items (/foo) are used verbatim.
+  const to = (href: string) => {
+    if (isRoute(href)) return href;
+    return onHome ? href : `/${href}`;
+  };
+  // An item is "active" when its anchor matches the observed section, OR when
+  // its route matches the current location.
+  const isItemActive = (href: string) =>
+    isRoute(href) ? location === href : active === href.replace("#", "");
 
   const handleNavClick = () => setIsOpen(false);
 
@@ -74,8 +87,7 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-5">
           {NAV_ITEMS.map((item) => {
-            const id = item.href.replace("#", "");
-            const isActive = active === id;
+            const isActive = isItemActive(item.href);
             return (
               <a
                 key={item.href}
@@ -119,8 +131,7 @@ export default function Navbar() {
         <div id="mobile-nav" className="lg:hidden border-t border-red-900/50 bg-slate-950/95">
           <div className="container mx-auto px-4 py-3 flex flex-col">
             {NAV_ITEMS.map((item, i) => {
-              const id = item.href.replace("#", "");
-              const isActive = active === id;
+              const isActive = isItemActive(item.href);
               return (
                 <a
                   key={item.href}
