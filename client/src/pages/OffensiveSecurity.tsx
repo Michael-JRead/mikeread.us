@@ -12,15 +12,48 @@ import {
   Hammer,
   Server,
   ShieldAlert,
+  ShieldCheck,
   Star,
   Target,
   Trophy,
   Wrench,
   Zap,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { SITE_META } from "@/data/siteContent";
 import { WALKTHROUGHS } from "@/data/walkthroughs";
-import { DISCLOSURES } from "@/data/offsec";
+import { DISCLOSURES, type DisclosureStatus } from "@/data/offsec";
+
+// Disclosure-row status → leading icon. "Merged" (fix landed) + "Vendor hardening"
+// (vendor-declined-CVE-but-credited) are green wins; "CVE published" is high-severity
+// rose; "Fix in progress" is amber (work-in-flight); "Advisory pending" is amber
+// (embargo). Kept close to the ledger so future status values fail typecheck if unhandled.
+function statusIcon(status: DisclosureStatus): ReactNode {
+  switch (status) {
+    case "Merged":
+      return <GitPullRequest size={15} className="text-emerald-400 shrink-0" />;
+    case "Vendor hardening":
+      return <ShieldCheck size={15} className="text-emerald-400 shrink-0" />;
+    case "CVE published":
+      return <ShieldAlert size={15} className="text-rose-400 shrink-0" />;
+    case "Fix in progress":
+    case "Advisory pending":
+      return <ShieldAlert size={15} className="text-amber-400 shrink-0" />;
+  }
+}
+
+function statusBadgeClass(status: DisclosureStatus): string {
+  switch (status) {
+    case "Merged":
+    case "Vendor hardening":
+      return "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40";
+    case "CVE published":
+      return "bg-rose-500/15 text-rose-200 border border-rose-400/40";
+    case "Fix in progress":
+    case "Advisory pending":
+      return "bg-amber-500/15 text-amber-300 border border-amber-400/40";
+  }
+}
 import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import Navbar from "@/components/Navbar";
@@ -272,14 +305,7 @@ export default function OffensiveSecurity() {
                         <tr key={d.title} className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              {d.status === "Merged" ? (
-                                <GitPullRequest size={15} className="text-emerald-400 shrink-0" />
-                              ) : (
-                                <ShieldAlert
-                                  size={15}
-                                  className={`shrink-0 ${d.status === "CVE published" ? "text-rose-400" : "text-amber-400"}`}
-                                />
-                              )}
+                              {statusIcon(d.status)}
                               <span className="text-white font-medium">{d.title}</span>
                             </div>
                             {d.note && <div className="text-slate-400 text-xs mt-1 max-w-md leading-relaxed">{d.note}</div>}
@@ -291,7 +317,7 @@ export default function OffensiveSecurity() {
                             {d.cwe && <span className="block font-mono text-[11px] text-red-400 mt-0.5">{d.cwe}</span>}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${d.status === "Merged" ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40" : d.status === "CVE published" ? "bg-rose-500/15 text-rose-200 border border-rose-400/40" : "bg-amber-500/15 text-amber-300 border border-amber-400/40"}`}>
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(d.status)}`}>
                               {d.status}
                             </span>
                             {d.severity && (

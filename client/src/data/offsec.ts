@@ -1,7 +1,12 @@
 // Offensive-security disclosure data. Every row is the owner's real, externally
 // verifiable upstream security work.
 
-export type DisclosureStatus = "Merged" | "Advisory pending" | "CVE published";
+export type DisclosureStatus =
+  | "Merged"
+  | "Advisory pending"
+  | "CVE published"
+  | "Fix in progress"
+  | "Vendor hardening";
 
 export interface Disclosure {
   title: string;
@@ -48,6 +53,50 @@ export const DISCLOSURES: Disclosure[] = [
       },
     ],
     note: "Discovered and responsibly disclosed to the Quarkus / Red Hat security team. An unauthenticated multipart/form-data request with an oversized part-header section exhausts the JVM heap in RESTEasy Reactive's MultipartParser (OutOfMemoryError). Rated Important; fixed in Red Hat build of Quarkus 3.27.4.SP3, with downstream advisories from vendors including IBM.",
+  },
+  {
+    title:
+      "Quarkus 3.38.0: reintroduced CVE-2026-50559 path-normalization authorization bypass",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-863",
+    type: "Authorization bypass (path normalization) — regression report",
+    status: "Merged",
+    ref: "GHSA-qcxp-gm7m-4j5v",
+    url: "https://github.com/quarkusio/quarkus/security/advisories/GHSA-qcxp-gm7m-4j5v",
+    note: "Reported that the fix for CVE-2026-50559 was reintroduced in Quarkus 3.38.0 GA. Vendor confirmed the regression, updated the advisory metadata to mark 3.38.0 affected, and refixed in Quarkus 3.38.1 (also 3.33.3.1 / 3.27.5.1).",
+  },
+  {
+    title:
+      "Apache Kafka: CIDR ACL bypass in Authorizer.authorizeByResourceType() default impl",
+    vendor: "Apache Kafka",
+    cwe: "CWE-863",
+    type: "Authorization bypass (ACL)",
+    status: "Fix in progress",
+    ref: "PR #22883",
+    url: "https://github.com/apache/kafka/pull/22883",
+    note: "Reported to Apache Kafka security; maintainers confirmed and pointed to an already-open fix PR. Issue is not yet in a shipped release.",
+  },
+  {
+    title:
+      "Quarkus OIDC DPoP: no iat window / no jti replay cache (RFC 9449 conformance)",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-294",
+    type: "Auth bypass by capture-replay — vendor treated as hardening (no CVE)",
+    status: "Vendor hardening",
+    ref: "issue #55916",
+    url: "https://github.com/quarkusio/quarkus/issues/55916",
+    links: [
+      {
+        label: "issue #55916",
+        url: "https://github.com/quarkusio/quarkus/issues/55916",
+      },
+      {
+        label: "issue #55917",
+        url: "https://github.com/quarkusio/quarkus/issues/55917",
+      },
+    ],
+    credited: true,
+    note: 'Vendor declined a CVE (nonce checks are SHOULD/optional per RFC 9449) but opened two enhancement issues (#55916 and #55917) crediting me as "Mike Read".',
   },
   {
     title: "Remote dev mode: path traversal + unsafe deserialization",
