@@ -120,15 +120,21 @@ console.log(
 const routes = [
   {
     route: "offensive-security",
-    title: "Offensive Security — HTB Walkthroughs & Research | Michael Read",
+    title: "Offensive Security Research — CVEs & Disclosures | Michael Read",
     description:
-      "Offensive security dossier: Hack The Box machine walkthroughs, live HTB rank and stats, and upstream vulnerability research including merged Quarkus hardening fixes and a confirmed CVE.",
+      "Offensive security research dossier: published CVE, merged upstream security fixes, and coordinated disclosures across Quarkus / Red Hat and Apache Kafka, plus engagement methodology and toolchain.",
+  },
+  {
+    route: "hackthebox",
+    title: "Hack The Box — Live Rank, Stats & Walkthroughs | Michael Read",
+    description:
+      "Live Hack The Box profile — Pro Hacker rank, category coverage, and detailed write-ups for retired machines. Stats sync daily from the live HTB profile.",
   },
 ];
 
 for (const s of summaries) {
   routes.push({
-    route: `offensive-security/walkthroughs/${s.slug}`,
+    route: `hackthebox/walkthroughs/${s.slug}`,
     title: `${s.name} — HTB ${s.difficulty} ${s.os} Walkthrough | Michael Read`,
     description: s.summary,
   });
@@ -151,8 +157,9 @@ const lastmod = new Date().toISOString().slice(0, 10);
 const sitemapUrls = [
   { loc: `${ORIGIN}/`, priority: "1.0" },
   { loc: `${ORIGIN}/offensive-security`, priority: "0.9" },
+  { loc: `${ORIGIN}/hackthebox`, priority: "0.9" },
   ...summaries.map(s => ({
-    loc: `${ORIGIN}/offensive-security/walkthroughs/${s.slug}`,
+    loc: `${ORIGIN}/hackthebox/walkthroughs/${s.slug}`,
     priority: "0.7",
   })),
 ];

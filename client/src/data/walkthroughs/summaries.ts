@@ -365,5 +365,5 @@ export const WALKTHROUGHS: Walkthrough[] = WALKTHROUGH_SUMMARIES.map((s) => ({
   date: s.retired,
   tags: s.tags,
   summary: s.summary,
-  url: `/offensive-security/walkthroughs/${s.slug}`,
+  url: `/hackthebox/walkthroughs/${s.slug}`,
 }));

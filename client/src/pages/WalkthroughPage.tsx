@@ -135,11 +135,11 @@ export default function WalkthroughPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <Link
-                href="/offensive-security#walkthroughs"
+                href="/hackthebox#walkthroughs"
                 className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-slate-400 hover:text-red-300 transition-colors"
               >
                 <ArrowLeft size={14} />
-                cd ~/offensive-security/walkthroughs
+                cd ~/hackthebox/walkthroughs
               </Link>
 
               <p className="section-eyebrow mt-8 mb-3">
@@ -239,7 +239,7 @@ export default function WalkthroughPage() {
                     <ExternalLink size={15} />
                   </a>
                   <Link
-                    href="/offensive-security#walkthroughs"
+                    href="/hackthebox#walkthroughs"
                     className="glass-readable-button inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-all font-semibold hover:bg-red-500"
                   >
                     <ArrowLeft size={16} />

@@ -28,7 +28,7 @@ export interface WalkSection {
 }
 
 export interface WalkthroughDoc {
-  slug: string; // URL slug: /offensive-security/walkthroughs/<slug>
+  slug: string; // URL slug: /hackthebox/walkthroughs/<slug>
   name: string; // display name, e.g. "White Rabbit"
   platform: string; // "Hack The Box"
   os: "Linux" | "Windows" | "Other";

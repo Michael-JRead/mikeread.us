@@ -111,12 +111,20 @@ export default function OffensiveSecuritySection() {
             </div>
           )}
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
             <Link
-              href="/offensive-security"
+              href="/hackthebox"
               className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-red-600 text-white font-semibold transition-all hover:bg-red-500 shadow-lg shadow-red-600/40"
             >
-              Explore the Operations Dossier
+              <HackTheBoxIcon size={20} />
+              Open HTB Dossier
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              href="/offensive-security"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-lg border border-red-500/50 text-red-300 hover:bg-red-500/10 hover:border-red-400/70 hover:text-red-200 transition-colors font-semibold"
+            >
+              Research & Disclosures
               <ArrowRight size={18} />
             </Link>
             <a
@@ -125,7 +133,6 @@ export default function OffensiveSecuritySection() {
               rel="noopener noreferrer"
               className="glass-readable-button inline-flex items-center gap-2 px-8 py-3 rounded-lg transition-all font-semibold hover:bg-red-500"
             >
-              <HackTheBoxIcon size={20} />
               View HTB Profile
               <ExternalLink size={16} />
             </a>
