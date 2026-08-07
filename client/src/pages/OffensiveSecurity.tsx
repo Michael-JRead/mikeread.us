@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -22,17 +22,17 @@ import {
 import type { ReactNode } from "react";
 import { SITE_META } from "@/data/siteContent";
 import { WALKTHROUGHS } from "@/data/walkthroughs";
-import { DISCLOSURES, type DisclosureStatus } from "@/data/offsec";
+import { DISCLOSURES, type Disclosure, type DisclosureStatus } from "@/data/offsec";
 
-// Disclosure-row status → leading icon. "Merged" (fix landed) + "Vendor hardening"
-// (vendor-declined-CVE-but-credited) are green wins; "CVE published" is high-severity
+// Disclosure-row status → leading icon. "Merged" (fix landed) + "Accepted (hardening)"
+// (vendor accepted; typically credited) are green wins; "CVE published" is high-severity
 // rose; "Fix in progress" is amber (work-in-flight); "Advisory pending" is amber
 // (embargo). Kept close to the ledger so future status values fail typecheck if unhandled.
 function statusIcon(status: DisclosureStatus): ReactNode {
   switch (status) {
     case "Merged":
       return <GitPullRequest size={15} className="text-emerald-400 shrink-0" />;
-    case "Vendor hardening":
+    case "Accepted (hardening)":
       return <ShieldCheck size={15} className="text-emerald-400 shrink-0" />;
     case "CVE published":
       return <ShieldAlert size={15} className="text-rose-400 shrink-0" />;
@@ -45,7 +45,7 @@ function statusIcon(status: DisclosureStatus): ReactNode {
 function statusBadgeClass(status: DisclosureStatus): string {
   switch (status) {
     case "Merged":
-    case "Vendor hardening":
+    case "Accepted (hardening)":
       return "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40";
     case "CVE published":
       return "bg-rose-500/15 text-rose-200 border border-rose-400/40";
@@ -53,6 +53,271 @@ function statusBadgeClass(status: DisclosureStatus): string {
     case "Advisory pending":
       return "bg-amber-500/15 text-amber-300 border border-amber-400/40";
   }
+}
+
+// Row-groups shown as intra-table subheaders, in narrative order:
+// the biggest pile first (merged fixes), then the credited hardening, then work-in-flight.
+const LEDGER_GROUPS: { key: DisclosureStatus; label: string }[] = [
+  { key: "Merged", label: "Fixed upstream" },
+  { key: "Accepted (hardening)", label: "Accepted — hardening" },
+  { key: "Fix in progress", label: "Fix in progress" },
+  { key: "Advisory pending", label: "Advisory pending" },
+];
+
+function SummaryBullets({ items }: { items?: string[] }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <ul className="space-y-1 max-w-md">
+      {items.map((b, i) => (
+        <li key={i} className="flex items-start gap-2 text-slate-300 text-[13px] leading-relaxed">
+          <span className="text-red-400 mt-1 shrink-0" aria-hidden="true">•</span>
+          <span>{b}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function DisclosureRefLinks({ d }: { d: Disclosure }) {
+  if (d.links) {
+    return (
+      <div className="flex flex-col items-end gap-0.5">
+        {d.links.map((l) => (
+          <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
+            {l.label} <ExternalLink size={12} />
+          </a>
+        ))}
+      </div>
+    );
+  }
+  if (d.url) {
+    return (
+      <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
+        {d.ref ?? "link"} <ExternalLink size={12} />
+      </a>
+    );
+  }
+  return <span className="font-mono text-xs text-slate-500">—</span>;
+}
+
+// Small pill for the vendor cell — makes the vendor scannable without adding a whole column.
+function VendorChip({ vendor }: { vendor: string }) {
+  return (
+    <span className="inline-flex items-center rounded-md border border-slate-700 bg-slate-900/60 px-2 py-0.5 font-mono text-[11px] text-slate-300 whitespace-nowrap">
+      {vendor}
+    </span>
+  );
+}
+
+function CreditedChip() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/40 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-300 whitespace-nowrap">
+      ✓ credited
+    </span>
+  );
+}
+
+function FeaturedCveCard({ cve }: { cve: Disclosure }) {
+  return (
+    <div
+      className="mb-8 rounded-lg border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_40px_rgba(244,63,94,0.12)] p-6 md:p-7"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <ShieldAlert size={16} className="text-rose-400" aria-hidden="true" />
+            <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
+            {cve.severity && (
+              <>
+                <span className="text-rose-500/60" aria-hidden="true">·</span>
+                <span className="font-mono text-[11px] text-rose-300">{cve.severity}</span>
+              </>
+            )}
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">{cve.title}</h3>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+            <VendorChip vendor={cve.vendor} />
+            <span className="text-slate-500" aria-hidden="true">·</span>
+            <span className="text-slate-400">{cve.type}</span>
+            {cve.cwe && (
+              <>
+                <span className="text-slate-600" aria-hidden="true">·</span>
+                <span className="font-mono text-[11px] text-red-400">{cve.cwe}</span>
+              </>
+            )}
+          </div>
+        </div>
+        {cve.ref && (
+          <span className="font-mono text-base md:text-lg text-rose-300 font-bold whitespace-nowrap">
+            {cve.ref}
+          </span>
+        )}
+      </div>
+
+      <div className="mb-5">
+        <SummaryBullets items={cve.summary} />
+      </div>
+
+      {cve.links && (
+        <div className="flex flex-wrap gap-2">
+          {cve.links.map((l) => (
+            <a
+              key={l.url}
+              href={l.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-rose-500/40 bg-slate-900/50 px-3 py-1.5 font-mono text-xs text-rose-200 hover:border-rose-400/70 hover:text-rose-100 hover:bg-slate-900/70 transition-colors"
+            >
+              {l.label} <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MetricTile({ label, value, accent }: { label: string; value: string | number; accent?: "rose" | "emerald" }) {
+  const valueClass =
+    accent === "rose"
+      ? "text-rose-300"
+      : accent === "emerald"
+        ? "text-emerald-300"
+        : "text-white";
+  return (
+    <div className="rounded-lg border border-red-500/25 bg-slate-900/40 backdrop-blur-sm px-4 py-3">
+      <div className={`text-2xl md:text-3xl font-bold ${valueClass}`}>{value}</div>
+      <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">{label}</div>
+    </div>
+  );
+}
+
+function DisclosureLedger() {
+  const featuredCve = DISCLOSURES.find((d) => d.status === "CVE published");
+  const others = DISCLOSURES.filter((d) => d.status !== "CVE published");
+
+  const cvePublished = DISCLOSURES.filter((d) => d.status === "CVE published").length;
+  const upstreamFixes =
+    DISCLOSURES.filter((d) => d.status === "Merged").length + cvePublished;
+  const vendors = new Set(DISCLOSURES.map((d) => d.vendor)).size;
+  const credited = DISCLOSURES.filter((d) => d.credited).length;
+
+  const grouped = LEDGER_GROUPS.map((g) => ({
+    ...g,
+    rows: others.filter((d) => d.status === g.key),
+  })).filter((g) => g.rows.length > 0);
+
+  return (
+    <div className="mt-16">
+      <p className="section-eyebrow mb-3">
+        <span className="text-slate-500">02 /</span> disclosure
+      </p>
+      <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <ShieldAlert size={26} className="text-red-500" />
+        Responsible Disclosure &amp; Research
+      </h2>
+      <p className="text-gray-400 mb-6 max-w-3xl">
+        Original vulnerability research and merged upstream security fixes — every row
+        links to its public record.
+      </p>
+
+      {/* Summary metrics strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <MetricTile label="Disclosures" value={DISCLOSURES.length} />
+        <MetricTile label="CVE Published" value={cvePublished} accent="rose" />
+        <MetricTile label="Upstream Fixes" value={upstreamFixes} />
+        <MetricTile label="Vendors" value={vendors} />
+        <div className="hidden md:block col-span-4">
+          <p className="mt-1 font-mono text-[11px] text-slate-500">
+            <span className="text-emerald-300">{credited}</span> disclosures credited to me by the upstream vendor.
+          </p>
+        </div>
+      </div>
+
+      {/* Featured CVE hero */}
+      {featuredCve && <FeaturedCveCard cve={featuredCve} />}
+
+      {/* Grouped table with intra-body subheaders */}
+      <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
+        <table className="w-full min-w-[860px] text-sm">
+          <thead>
+            <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-slate-400 border-b border-red-500/20">
+              <th className="px-4 py-3">Finding</th>
+              <th className="px-4 py-3">Summary</th>
+              <th className="px-4 py-3">Class</th>
+              <th className="px-4 py-3">Vendor</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3 text-right">Ref</th>
+            </tr>
+          </thead>
+          <tbody>
+            {grouped.map((group, gi) => (
+              <Fragment key={group.key}>
+                <tr>
+                  <td
+                    colSpan={6}
+                    className={`px-4 ${gi === 0 ? "pt-4" : "pt-8"} pb-2`}
+                  >
+                    <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-500 border-b border-red-500/10 pb-2">
+                      <span className="text-red-400 font-bold">{group.rows.length}</span>
+                      <span>{group.label}</span>
+                    </div>
+                  </td>
+                </tr>
+                {group.rows.map((d) => (
+                  <tr
+                    key={d.title}
+                    className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top"
+                  >
+                    <td className="px-4 py-3 max-w-xs">
+                      <div className="flex items-start gap-2">
+                        <span className="mt-0.5">{statusIcon(d.status)}</span>
+                        <div className="min-w-0">
+                          <span className="text-white font-medium">{d.title}</span>
+                          {d.credited && (
+                            <span className="ml-2 align-middle inline-block">
+                              <CreditedChip />
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <SummaryBullets items={d.summary} />
+                    </td>
+                    <td className="px-4 py-3 min-w-[10rem]">
+                      <span className="text-slate-300">{d.type}</span>
+                      {d.cwe && (
+                        <span className="text-slate-500 font-mono text-[11px]"> · {d.cwe}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <VendorChip vendor={d.vendor} />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(d.status)}`}
+                      >
+                        {d.status}
+                      </span>
+                      {d.severity && (
+                        <span className="block font-mono text-[11px] text-rose-300 mt-1">
+                          {d.severity}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <DisclosureRefLinks d={d} />
+                    </td>
+                  </tr>
+                ))}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
 import { CategoryBars, FreshnessStamp, RankRing, StatTile, Terminal, useHtbStats } from "@/lib/htb";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
@@ -145,18 +410,6 @@ export default function OffensiveSecurity() {
                   Offensive Security
                 </h1>
                 <div className="section-rule mt-5" />
-                <p className="mt-5 text-xl text-gray-200 max-w-3xl leading-relaxed">
-                  Offensive security engineer working{" "}
-                  <span className="text-red-300 font-semibold">web-app and Active Directory attack paths</span> — backed by
-                  six offensive GIAC certifications, a live Hack The Box{" "}
-                  <span className="text-red-300 font-semibold">Hacker</span> rank, and{" "}
-                  <span className="text-red-300 font-semibold">real upstream security research</span> including a
-                  vendor-confirmed CVE and merged hardening fixes to Quarkus.
-                </p>
-                <p className="mt-3 text-base text-gray-400 max-w-2xl">
-                  Everything below is verifiable — stats sync daily from my live profile and
-                  every finding links to its source.
-                </p>
               </div>
 
               {data ? (
@@ -277,76 +530,7 @@ export default function OffensiveSecurity() {
               )}
 
               {/* Disclosure ledger */}
-              <div className="mt-16">
-                <p className="section-eyebrow mb-3">
-                  <span className="text-slate-500">02 /</span> disclosure
-                </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                  <ShieldAlert size={26} className="text-red-500" />
-                  Responsible Disclosure &amp; Research
-                </h2>
-                <p className="text-gray-400 mb-6 max-w-3xl">
-                  Original vulnerability research, merged upstream security fixes, and a
-                  published CVE — every row links to its public record.
-                </p>
-                <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
-                  <table className="w-full min-w-[680px] text-sm">
-                    <thead>
-                      <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-slate-400 border-b border-red-500/20">
-                        <th className="px-4 py-3">Finding</th>
-                        <th className="px-4 py-3">Vendor</th>
-                        <th className="px-4 py-3">Class</th>
-                        <th className="px-4 py-3">Status</th>
-                        <th className="px-4 py-3 text-right">Ref</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {DISCLOSURES.map((d) => (
-                        <tr key={d.title} className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              {statusIcon(d.status)}
-                              <span className="text-white font-medium">{d.title}</span>
-                            </div>
-                            {d.note && <div className="text-slate-400 text-xs mt-1 max-w-md leading-relaxed">{d.note}</div>}
-                            {d.credited && <span className="inline-block mt-1 text-[11px] font-mono text-emerald-300">✓ credited in the fix</span>}
-                          </td>
-                          <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{d.vendor}</td>
-                          <td className="px-4 py-3">
-                            <span className="text-slate-300">{d.type}</span>
-                            {d.cwe && <span className="block font-mono text-[11px] text-red-400 mt-0.5">{d.cwe}</span>}
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(d.status)}`}>
-                              {d.status}
-                            </span>
-                            {d.severity && (
-                              <span className="block font-mono text-[11px] text-rose-300 mt-1">{d.severity}</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-right whitespace-nowrap">
-                            {d.links ? (
-                              <div className="flex flex-col items-end gap-0.5">
-                                {d.links.map((l) => (
-                                  <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
-                                    {l.label} <ExternalLink size={12} />
-                                  </a>
-                                ))}
-                              </div>
-                            ) : d.url ? (
-                              <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
-                                {d.ref ?? "link"} <ExternalLink size={12} />
-                              </a>
-                            ) : (
-                              <span className="font-mono text-xs text-slate-500">—</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <DisclosureLedger />
 
               {/* Methodology */}
               <div className="mt-16">
