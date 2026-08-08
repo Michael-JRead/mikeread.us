@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-08-07T10:09:04.635Z",
-  "generatedAt": "2026-08-07T10:09:04.635Z",
-  "commit": "7626cfc",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/31168880736",
+  "fetchedAt": "2026-08-08T09:52:36.558Z",
+  "generatedAt": "2026-08-08T09:52:36.558Z",
+  "commit": "34f8315",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/31251527386",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 361,
+    "ranking": 363,
     "points": 839,
     "user_owns": 49,
     "system_owns": 49,
@@ -16,16 +16,16 @@
     "system_bloods": 0,
     "respects": 0,
     "team": "ISP1337Hackers",
-    "current_rank_progress": 29.64,
+    "current_rank_progress": 28.84,
     "next_rank": "Elite Hacker",
-    "next_rank_points": 36.687,
-    "rank_ownership": 52.41,
+    "next_rank_points": 36.547000000000004,
+    "rank_ownership": 52.21,
     "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 847
+    "total": 848
   },
   "challengeCategories": [
     {
@@ -91,8 +91,8 @@
     {
       "name": "Blockchain",
       "solved": 4,
-      "total": 16,
-      "percentage": 25
+      "total": 17,
+      "percentage": 24
     },
     {
       "name": "AI/ML",
