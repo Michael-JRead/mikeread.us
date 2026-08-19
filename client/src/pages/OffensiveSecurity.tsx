@@ -1,9 +1,11 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "wouter";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
   Boxes,
+  ChevronDown,
   ExternalLink,
   GitPullRequest,
   Hammer,
@@ -13,7 +15,14 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { SITE_META } from "@/data/siteContent";
-import { DISCLOSURES, type Disclosure, type DisclosureStatus } from "@/data/offsec";
+import {
+  DISCLOSURES,
+  VENDORS,
+  type Disclosure,
+  type DisclosureStatus,
+  type VendorInfo,
+} from "@/data/offsec";
+import { VENDOR_LOGOS } from "@/components/VendorLogos";
 import HackTheBoxIcon from "@/components/HackTheBoxIcon";
 import Navbar from "@/components/Navbar";
 import SkipLink from "@/components/SkipLink";
@@ -21,8 +30,8 @@ import Footer from "@/components/Footer";
 
 // Disclosure-row status → leading icon. "Merged" (fix landed) + "Accepted (hardening)"
 // (vendor accepted; typically credited) are green wins; "CVE published" is high-severity
-// rose; "Fix in progress" is amber (work-in-flight); "Advisory pending" is amber
-// (embargo). Kept close to the ledger so future status values fail typecheck if unhandled.
+// rose; the rest are amber (work-in-flight or embargo). Kept close to the renderers so
+// future status values fail typecheck if unhandled.
 function statusIcon(status: DisclosureStatus): ReactNode {
   switch (status) {
     case "Merged":
@@ -52,53 +61,32 @@ function statusBadgeClass(status: DisclosureStatus): string {
   }
 }
 
-// Row-groups shown as intra-table subheaders, in narrative order:
-// the biggest pile first (merged fixes), then the credited hardening, then work-in-flight.
-const LEDGER_GROUPS: { key: DisclosureStatus; label: string }[] = [
-  { key: "Merged", label: "Fixed upstream" },
-  { key: "Accepted (hardening)", label: "Accepted — hardening" },
-  { key: "Fix in progress", label: "Fix in progress" },
-  { key: "Confirmed — CVE pending", label: "Confirmed — CVE pending" },
-  { key: "Advisory pending", label: "Advisory pending" },
-];
+// Narrative order inside a vendor panel: headline CVEs first, then in-flight
+// confirmations, then the merged pile, then remaining work-in-progress.
+const STATUS_RANK: Record<DisclosureStatus, number> = {
+  "CVE published": 0,
+  "Confirmed — CVE pending": 1,
+  "Advisory pending": 2,
+  Merged: 3,
+  "Fix in progress": 4,
+  "Accepted (hardening)": 5,
+};
 
-function SummaryBullets({ items }: { items?: string[] }) {
-  if (!items || items.length === 0) return null;
-  return (
-    <ul className="space-y-1.5">
-      {items.map((b, i) => (
-        <li key={i} className="flex items-start gap-2 text-slate-300 text-[13px] leading-relaxed">
-          <span className="text-red-400 mt-1 shrink-0" aria-hidden="true">•</span>
-          <span>{b}</span>
-        </li>
-      ))}
-    </ul>
-  );
+function sortByStatus(rows: Disclosure[]): Disclosure[] {
+  return rows
+    .map((d, i) => ({ d, i }))
+    .sort((a, b) => STATUS_RANK[a.d.status] - STATUS_RANK[b.d.status] || a.i - b.i)
+    .map(({ d }) => d);
 }
 
-function DisclosureRefLinks({ d }: { d: Disclosure }) {
-  if (d.links) {
-    return (
-      <div className="flex flex-col items-end gap-0.5">
-        {d.links.map((l) => (
-          <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
-            {l.label} <ExternalLink size={12} />
-          </a>
-        ))}
-      </div>
-    );
-  }
-  if (d.url) {
-    return (
-      <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-red-400 hover:text-red-300">
-        {d.ref ?? "link"} <ExternalLink size={12} />
-      </a>
-    );
-  }
-  return <span className="font-mono text-xs text-slate-500">—</span>;
+/** Every public record for a row, normalized to one list. */
+function recordLinks(d: Disclosure): { label: string; url: string }[] {
+  if (d.links) return d.links;
+  if (d.url) return [{ label: d.ref ?? "public record", url: d.url }];
+  return [];
 }
 
-// Small pill for the vendor cell — makes the vendor scannable without adding a whole column.
+// Small pill for the vendor cell — makes the vendor scannable without adding weight.
 function VendorChip({ vendor }: { vendor: string }) {
   return (
     <span className="inline-flex items-center rounded-md border border-slate-700 bg-slate-900/60 px-2 py-0.5 font-mono text-[11px] text-slate-300 whitespace-nowrap">
@@ -115,32 +103,114 @@ function CreditedChip() {
   );
 }
 
-function FeaturedCveCard({ cve }: { cve: Disclosure }) {
+/** Row of link chips to a finding's public records; falls back to a plain ref label. */
+function RecordLinkChips({
+  d,
+  tone = "slate",
+  max,
+}: {
+  d: Disclosure;
+  tone?: "slate" | "rose";
+  /** Cap the number of chips (compact rows) — the hero shows the full set. */
+  max?: number;
+}) {
+  const links = max ? recordLinks(d).slice(0, max) : recordLinks(d);
+  const chipClass =
+    tone === "rose"
+      ? "border-rose-500/40 text-rose-200 hover:border-rose-400/70 hover:text-rose-100"
+      : "border-slate-600/60 text-slate-300 hover:border-red-400/60 hover:text-red-200";
+  if (recordLinks(d).length === 0) {
+    if (!d.ref) return null;
+    return (
+      <span className="inline-flex items-center rounded-md border border-slate-700/60 bg-slate-950/40 px-2.5 py-1 font-mono text-[11px] text-slate-400">
+        {d.ref}
+      </span>
+    );
+  }
   return (
-    <div className="mb-8 rounded-lg border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_40px_rgba(244,63,94,0.12)] p-6 md:p-7">
+    <div className="flex flex-wrap gap-2">
+      {links.map((l) => (
+        <a
+          key={l.url}
+          href={l.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center gap-1.5 rounded-md border bg-slate-950/40 px-2.5 py-1 font-mono text-[11px] transition-colors ${chipClass}`}
+        >
+          {l.label} <ExternalLink size={11} aria-hidden="true" />
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function VendorLogoTile({
+  vendor,
+  size = "md",
+}: {
+  vendor: VendorInfo;
+  size?: "sm" | "md";
+}) {
+  const Logo = VENDOR_LOGOS[vendor.key];
+  const tile = size === "md" ? "w-14 h-14 rounded-xl" : "w-9 h-9 rounded-lg";
+  const mark = size === "md" ? "w-8 h-8" : "w-5 h-5";
+  return (
+    <div
+      className={`${tile} shrink-0 flex items-center justify-center border border-slate-700/60 bg-slate-950/80`}
+      aria-hidden="true"
+    >
+      {Logo && <Logo className={mark} style={{ color: vendor.brand }} />}
+    </div>
+  );
+}
+
+// Titles on pending cards repeat the vendor ("Apache Kafka: unbounded …") — the card
+// already names the vendor, so drop the prefix and re-capitalize what's left.
+function stripVendorPrefix(title: string, vendor: VendorInfo): string {
+  const idx = title.indexOf(": ");
+  if (idx === -1) return title;
+  const prefix = title.slice(0, idx).toLowerCase();
+  const names = [vendor.name, vendor.match, `${vendor.name} Streams`, "Apache Kafka Streams"];
+  if (!names.some((n) => prefix.startsWith(n.toLowerCase()))) return title;
+  const rest = title.slice(idx + 2);
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
+}
+
+function FeaturedCveCard({ cve }: { cve: Disclosure }) {
+  const vendor = VENDORS.find((v) => v.match === cve.vendor);
+  return (
+    <div className="mb-6 rounded-lg border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_40px_rgba(244,63,94,0.12)] p-6 md:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <ShieldAlert size={16} className="text-rose-400" aria-hidden="true" />
-            <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
-            {cve.severity && (
-              <>
-                <span className="text-rose-500/60" aria-hidden="true">·</span>
-                <span className="font-mono text-[11px] text-rose-300">{cve.severity}</span>
-              </>
-            )}
-          </div>
-          <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">{cve.title}</h3>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
-            <VendorChip vendor={cve.vendor} />
-            <span className="text-slate-500" aria-hidden="true">·</span>
-            <span className="text-slate-400">{cve.type}</span>
-            {cve.cwe && (
-              <>
-                <span className="text-slate-600" aria-hidden="true">·</span>
-                <span className="font-mono text-[11px] text-red-400">{cve.cwe}</span>
-              </>
-            )}
+        <div className="flex items-start gap-4 min-w-0">
+          {vendor && (
+            <div className="hidden sm:block">
+              <VendorLogoTile vendor={vendor} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <ShieldAlert size={16} className="text-rose-400" aria-hidden="true" />
+              <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
+              {cve.severity && (
+                <>
+                  <span className="text-rose-500/60" aria-hidden="true">·</span>
+                  <span className="font-mono text-[11px] text-rose-300">{cve.severity}</span>
+                </>
+              )}
+              {cve.credited && <CreditedChip />}
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">{cve.title}</h3>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+              <VendorChip vendor={cve.vendor} />
+              <span className="text-slate-500" aria-hidden="true">·</span>
+              <span className="text-slate-400">{cve.type}</span>
+              {cve.cwe && (
+                <>
+                  <span className="text-slate-600" aria-hidden="true">·</span>
+                  <span className="font-mono text-[11px] text-red-400">{cve.cwe}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
         {cve.ref && (
@@ -150,36 +220,53 @@ function FeaturedCveCard({ cve }: { cve: Disclosure }) {
         )}
       </div>
 
-      <div className="mb-5">
-        <SummaryBullets items={cve.summary} />
-      </div>
-
-      {cve.links && (
-        <div className="flex flex-wrap gap-2">
-          {cve.links.map((l) => (
-            <a
-              key={l.url}
-              href={l.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border border-rose-500/40 bg-slate-900/50 px-3 py-1.5 font-mono text-xs text-rose-200 hover:border-rose-400/70 hover:text-rose-100 hover:bg-slate-900/70 transition-colors"
-            >
-              {l.label} <ExternalLink size={12} aria-hidden="true" />
-            </a>
-          ))}
-        </div>
+      {(cve.tagline ?? cve.summary?.[0]) && (
+        <p className="mb-5 text-sm text-slate-300 leading-relaxed max-w-3xl">
+          {cve.tagline ?? cve.summary?.[0]}
+        </p>
       )}
+
+      <RecordLinkChips d={cve} tone="rose" />
     </div>
   );
 }
 
-function MetricTile({ label, value, accent }: { label: string; value: string | number; accent?: "rose" | "emerald" }) {
+/** Compact highlight card for a vendor-confirmed finding awaiting its CVE ID. */
+function PendingCveCard({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
+  return (
+    <div className="rounded-lg border border-amber-500/30 bg-slate-900/40 backdrop-blur-sm p-4">
+      <div className="flex items-center gap-3">
+        <VendorLogoTile vendor={vendor} size="sm" />
+        <div className="min-w-0 flex-1">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-amber-300">
+            CVE pending · {vendor.name}
+          </p>
+          <p className="text-sm text-white font-medium leading-snug mt-0.5">
+            {d.short ?? stripVendorPrefix(d.title, vendor)}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetricTile({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string | number;
+  accent?: "rose" | "emerald" | "amber";
+}) {
   const valueClass =
     accent === "rose"
       ? "text-rose-300"
       : accent === "emerald"
         ? "text-emerald-300"
-        : "text-white";
+        : accent === "amber"
+          ? "text-amber-300"
+          : "text-white";
   return (
     <div className="rounded-lg border border-red-500/25 bg-slate-900/40 backdrop-blur-sm px-4 py-3">
       <div className={`text-2xl md:text-3xl font-bold ${valueClass}`}>{value}</div>
@@ -188,20 +275,12 @@ function MetricTile({ label, value, accent }: { label: string; value: string | n
   );
 }
 
-function DisclosureLedger() {
-  const featuredCve = DISCLOSURES.find((d) => d.status === "CVE published");
-  const others = DISCLOSURES.filter((d) => d.status !== "CVE published");
-
-  const cvePublished = DISCLOSURES.filter((d) => d.status === "CVE published").length;
-  const upstreamFixes =
-    DISCLOSURES.filter((d) => d.status === "Merged").length + cvePublished;
-  const vendors = new Set(DISCLOSURES.map((d) => d.vendor)).size;
+/** Section 01 — metrics, the published-CVE hero, and the pending-CVE pipeline. */
+function DisclosureHighlights() {
+  const published = DISCLOSURES.filter((d) => d.status === "CVE published");
+  const pending = DISCLOSURES.filter((d) => d.status === "Confirmed — CVE pending");
+  const merged = DISCLOSURES.filter((d) => d.status === "Merged").length;
   const credited = DISCLOSURES.filter((d) => d.credited).length;
-
-  const grouped = LEDGER_GROUPS.map((g) => ({
-    ...g,
-    rows: others.filter((d) => d.status === g.key),
-  })).filter((g) => g.rows.length > 0);
 
   return (
     <div>
@@ -213,16 +292,16 @@ function DisclosureLedger() {
         Responsible Disclosure &amp; Research
       </h2>
       <p className="text-gray-400 mb-6 max-w-3xl">
-        Original vulnerability research and merged upstream security fixes — every row
-        links to its public record.
+        Original vulnerability research across the Java ecosystem — responsibly disclosed,
+        vendor-confirmed, and backed by public records.
       </p>
 
       {/* Summary metrics strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
         <MetricTile label="Disclosures" value={DISCLOSURES.length} />
-        <MetricTile label="CVE Published" value={cvePublished} accent="rose" />
-        <MetricTile label="Upstream Fixes" value={upstreamFixes} />
-        <MetricTile label="Vendors" value={vendors} />
+        <MetricTile label="CVE Published" value={published.length} accent="rose" />
+        <MetricTile label="CVEs Pending" value={pending.length} accent="amber" />
+        <MetricTile label="Fixes Merged" value={merged} accent="emerald" />
         <div className="hidden md:block col-span-4">
           <p className="mt-1 font-mono text-[11px] text-slate-500">
             <span className="text-emerald-300">{credited}</span> disclosures credited to me by the upstream vendor.
@@ -230,87 +309,222 @@ function DisclosureLedger() {
         </div>
       </div>
 
-      {/* Featured CVE hero */}
-      {featuredCve && <FeaturedCveCard cve={featuredCve} />}
+      {/* Published CVE hero */}
+      {published.map((cve) => (
+        <FeaturedCveCard key={cve.title} cve={cve} />
+      ))}
 
-      {/* Grouped table with intra-body subheaders */}
-      <div className="overflow-x-auto rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm">
-        <table className="w-full min-w-[720px] text-sm table-fixed">
-          <colgroup>
-            <col className="w-[32%]" />
-            <col className="w-[42%]" />
-            <col className="w-[14%]" />
-            <col className="w-[12%]" />
-          </colgroup>
-          <thead>
-            <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-slate-400 border-b border-red-500/20">
-              <th className="px-4 py-3">Finding</th>
-              <th className="px-4 py-3">Summary</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ref</th>
-            </tr>
-          </thead>
-          <tbody>
-            {grouped.map((group, gi) => (
-              <Fragment key={group.key}>
-                <tr>
-                  <td
-                    colSpan={4}
-                    className={`px-4 ${gi === 0 ? "pt-4" : "pt-8"} pb-2`}
-                  >
-                    <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-slate-500 border-b border-red-500/10 pb-2">
-                      <span className="text-red-400 font-bold">{group.rows.length}</span>
-                      <span>{group.label}</span>
-                    </div>
-                  </td>
-                </tr>
-                {group.rows.map((d) => (
-                  <tr
-                    key={d.title}
-                    className="border-b border-red-500/10 last:border-0 hover:bg-slate-800/30 transition-colors align-top"
-                  >
-                    <td className="px-4 py-3 align-top">
-                      <div className="flex items-start gap-2">
-                        <span className="mt-0.5">{statusIcon(d.status)}</span>
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <span className="text-white font-medium leading-tight">{d.title}</span>
-                            {d.credited && <CreditedChip />}
-                          </div>
-                          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                            <VendorChip vendor={d.vendor} />
-                            <span className="text-slate-400 break-words">{d.type}</span>
-                            {d.cwe && (
-                              <span className="text-slate-500 font-mono text-[11px]">· {d.cwe}</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 align-top">
-                      <SummaryBullets items={d.summary} />
-                    </td>
-                    <td className="px-4 py-3 align-top">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(d.status)}`}
-                      >
-                        {d.status}
-                      </span>
-                      {d.severity && (
-                        <span className="block font-mono text-[11px] text-rose-300 mt-1">
-                          {d.severity}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right align-top">
-                      <DisclosureRefLinks d={d} />
-                    </td>
-                  </tr>
-                ))}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
+      {/* CVE pipeline — vendor-confirmed, IDs pending */}
+      {pending.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+            <span className="text-amber-400 font-bold">{pending.length}</span>
+            <span>in the CVE pipeline — vendor-confirmed, IDs pending</span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3 items-start">
+            {pending.map((d) => {
+              const vendor = VENDORS.find((v) => v.match === d.vendor);
+              if (!vendor) return null;
+              return <PendingCveCard key={d.title} d={d} vendor={vendor} />;
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** One finding inside an expanded vendor panel — a single scannable row; the link is the detail. */
+function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
+  return (
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-b border-slate-800/70 last:border-0 hover:bg-slate-900/40 transition-colors">
+      <div className="flex items-start gap-2.5 flex-1 min-w-[240px]">
+        <span className="mt-0.5">{statusIcon(d.status)}</span>
+        <span className="text-sm text-white font-medium leading-snug">
+          {d.short ?? stripVendorPrefix(d.title, vendor)}
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 ml-auto">
+        {d.cwe && <span className="font-mono text-[11px] text-red-400/90 whitespace-nowrap">{d.cwe}</span>}
+        {d.severity && <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{d.severity}</span>}
+        {d.credited && <CreditedChip />}
+        <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap ${statusBadgeClass(d.status)}`}>
+          {d.status}
+        </span>
+        <RecordLinkChips d={d} max={2} />
+      </div>
+    </li>
+  );
+}
+
+function VendorStatChips({ rows }: { rows: Disclosure[] }) {
+  const merged = rows.filter((d) => d.status === "Merged").length;
+  const published = rows.filter((d) => d.status === "CVE published").length;
+  const pendingCves = rows.filter((d) => d.status === "Confirmed — CVE pending").length;
+  const credited = rows.filter((d) => d.credited).length;
+  const chip = "inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider whitespace-nowrap";
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      <span className={`${chip} border-slate-600/60 bg-slate-950/40 text-slate-300`}>
+        {rows.length} finding{rows.length === 1 ? "" : "s"}
+      </span>
+      {published > 0 && (
+        <span className={`${chip} border-rose-400/40 bg-rose-500/10 text-rose-300`}>
+          {published} CVE{published === 1 ? "" : "s"}
+        </span>
+      )}
+      {pendingCves > 0 && (
+        <span className={`${chip} border-amber-400/40 bg-amber-500/10 text-amber-300`}>
+          {pendingCves} CVE{pendingCves === 1 ? "" : "s"} pending
+        </span>
+      )}
+      {merged > 0 && (
+        <span className={`${chip} border-emerald-400/40 bg-emerald-500/10 text-emerald-300`}>
+          {merged} merged
+        </span>
+      )}
+      {credited > 0 && (
+        <span className={`${chip} border-emerald-400/40 bg-emerald-500/10 text-emerald-300`}>
+          credited ×{credited}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function VendorCard({
+  vendor,
+  rows,
+  open,
+  onToggle,
+}: {
+  vendor: VendorInfo;
+  rows: Disclosure[];
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      className={`group w-full h-full text-left rounded-lg border p-5 backdrop-blur-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 ${
+        open
+          ? "border-red-400/70 bg-slate-900/70 shadow-[0_0_30px_rgba(239,68,68,0.14)]"
+          : "border-red-500/25 bg-slate-900/40 hover:border-red-500/55 hover:bg-slate-900/60"
+      }`}
+    >
+      <div className="flex items-start gap-4">
+        <VendorLogoTile vendor={vendor} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="text-white font-bold leading-tight group-hover:text-red-200 transition-colors">
+                {vendor.name}
+              </h3>
+              <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">
+                {vendor.org}
+              </p>
+            </div>
+            <ChevronDown
+              size={18}
+              aria-hidden="true"
+              className={`shrink-0 mt-0.5 text-slate-500 group-hover:text-red-300 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </div>
+          <p className="text-sm text-slate-400 leading-relaxed mt-2">{vendor.blurb}</p>
+          <div className="mt-3">
+            <VendorStatChips rows={rows} />
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function VendorDetailPanel({ vendor, rows }: { vendor: VendorInfo; rows: Disclosure[] }) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ duration: reduced ? 0 : 0.3, ease: "easeInOut" }}
+      className="overflow-hidden"
+    >
+      <div
+        role="region"
+        aria-label={`${vendor.name} findings`}
+        className="mt-4 rounded-lg border border-red-500/30 bg-slate-950/50 backdrop-blur-sm overflow-hidden"
+      >
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-red-500/20 bg-slate-900/40">
+          <VendorLogoTile vendor={vendor} size="sm" />
+          <div>
+            <p className="text-white font-semibold leading-tight">{vendor.name}</p>
+            <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+              {rows.length} finding{rows.length === 1 ? "" : "s"} · click a reference for the full record
+            </p>
+          </div>
+        </div>
+        <ul>
+          {rows.map((d) => (
+            <FindingRow key={d.title} d={d} vendor={vendor} />
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+}
+
+/** Section 02 — one interactive card per product; click to open the full body of work. */
+function VendorShowcase() {
+  const [openKey, setOpenKey] = useState<string | null>(null);
+
+  const grouped = VENDORS.map((vendor) => ({
+    vendor,
+    rows: sortByStatus(DISCLOSURES.filter((d) => d.vendor === vendor.match)),
+  })).filter((g) => g.rows.length > 0);
+
+  const active = grouped.find((g) => g.vendor.key === openKey) ?? null;
+  const toggle = (key: string) => setOpenKey((cur) => (cur === key ? null : key));
+
+  return (
+    <div>
+      <p className="section-eyebrow mb-3">
+        <span className="text-slate-500">02 /</span> upstream contributions
+      </p>
+      <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Products I've Helped Harden</h2>
+      <p className="text-gray-400 mb-6 max-w-3xl">
+        Select a product to see every finding I've reported there — status, severity, and its
+        public record.
+      </p>
+
+      <div className="grid md:grid-cols-2 gap-4 items-stretch">
+        {grouped.map(({ vendor, rows }) => (
+          <Fragment key={vendor.key}>
+            <VendorCard
+              vendor={vendor}
+              rows={rows}
+              open={openKey === vendor.key}
+              onToggle={() => toggle(vendor.key)}
+            />
+            {/* Mobile: the panel opens right under the tapped card. */}
+            <div className="md:hidden">
+              <AnimatePresence initial={false}>
+                {openKey === vendor.key && <VendorDetailPanel vendor={vendor} rows={rows} />}
+              </AnimatePresence>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+
+      {/* Desktop: one shared panel below the card grid. */}
+      <div className="hidden md:block">
+        <AnimatePresence initial={false} mode="wait">
+          {active && (
+            <VendorDetailPanel key={active.vendor.key} vendor={active.vendor} rows={active.rows} />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -379,13 +593,16 @@ export default function OffensiveSecurity() {
               </div>
 
               <div className="space-y-16">
-                {/* Disclosure ledger */}
-                <DisclosureLedger />
+                {/* Headline research: metrics, CVE hero, pipeline */}
+                <DisclosureHighlights />
+
+                {/* Interactive vendor cards */}
+                <VendorShowcase />
 
                 {/* Methodology */}
                 <div>
                   <p className="section-eyebrow mb-3">
-                    <span className="text-slate-500">02 /</span> methodology
+                    <span className="text-slate-500">03 /</span> methodology
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">How I Work an Engagement</h2>
                   <p className="text-gray-400 mb-6 max-w-2xl">
@@ -419,7 +636,7 @@ export default function OffensiveSecurity() {
                 {/* Toolchain */}
                 <div>
                   <p className="section-eyebrow mb-3">
-                    <span className="text-slate-500">03 /</span> toolchain
+                    <span className="text-slate-500">04 /</span> toolchain
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Arsenal</h2>
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">

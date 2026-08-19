@@ -122,7 +122,7 @@ const routes = [
     route: "offensive-security",
     title: "Offensive Security Research — CVEs & Disclosures | Michael Read",
     description:
-      "Offensive security research dossier: published CVE, merged upstream security fixes, and coordinated disclosures across Quarkus / Red Hat and Apache Kafka, plus engagement methodology and toolchain.",
+      "Offensive security research dossier: published CVE, a pipeline of vendor-confirmed CVEs, and merged upstream security fixes across Quarkus / Red Hat, Apache Kafka, ActiveMQ Artemis, and Spring Boot — plus engagement methodology and toolchain.",
   },
   {
     route: "hackthebox",

@@ -11,6 +11,8 @@ export type DisclosureStatus =
 
 export interface Disclosure {
   title: string;
+  /** Short display title for compact renders (finding rows, pending cards). */
+  short?: string;
   vendor: string;
   cwe?: string;
   type: string; // vulnerability class in plain language
@@ -21,14 +23,72 @@ export interface Disclosure {
   /** Multiple labeled public records (CVE, NVD, vendor advisory, errata). */
   links?: { label: string; url: string }[];
   credited?: boolean;
-  /** Short scannable bullets. Rendered as a bulleted list in the ledger's Summary column. */
+  /** One-line description used by compact renders (the CVE hero). */
+  tagline?: string;
+  /**
+   * Longer scannable bullets. Kept as the canonical record for each finding;
+   * the page intentionally renders links instead of prose — readers click through.
+   */
   summary?: string[];
 }
+
+/**
+ * A vendor/product the owner has contributed security research to.
+ * `match` joins against Disclosure.vendor; `key` joins against the logo map
+ * in @/components/VendorLogos.
+ */
+export interface VendorInfo {
+  key: string;
+  /** Exact Disclosure.vendor string this card aggregates. */
+  match: string;
+  name: string;
+  org: string;
+  blurb: string;
+  /** Brand tint for the logo mark (hex). */
+  brand: string;
+}
+
+// Card order on the page — largest body of work first.
+export const VENDORS: VendorInfo[] = [
+  {
+    key: "quarkus",
+    match: "Quarkus / Red Hat",
+    name: "Quarkus",
+    org: "Red Hat",
+    blurb: "Red Hat's Kubernetes-native Java framework — the supersonic, subatomic runtime.",
+    brand: "#4695EB",
+  },
+  {
+    key: "kafka",
+    match: "Apache Kafka",
+    name: "Apache Kafka",
+    org: "Apache Software Foundation",
+    blurb: "The distributed event-streaming platform powering most of the world's data pipelines.",
+    brand: "#e2e8f0",
+  },
+  {
+    key: "artemis",
+    match: "Apache ActiveMQ Artemis",
+    name: "ActiveMQ Artemis",
+    org: "Apache Software Foundation",
+    blurb: "Apache's high-performance, multi-protocol message broker.",
+    brand: "#D22128",
+  },
+  {
+    key: "spring",
+    match: "Spring",
+    name: "Spring Boot",
+    org: "Spring team / Broadcom",
+    blurb: "The most widely deployed Java application framework in the world.",
+    brand: "#6DB33F",
+  },
+];
 
 // All rows are the owner's real, externally verifiable upstream security work.
 export const DISCLOSURES: Disclosure[] = [
   {
     title: "Quarkus REST multipart part-header memory-exhaustion DoS",
+    short: "REST multipart part-header memory-exhaustion DoS",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-770",
     type: "Uncontrolled Resource Consumption (unauthenticated DoS)",
@@ -36,6 +96,8 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Important · CVSS 7.5",
     ref: "CVE-2026-16308",
     credited: true,
+    tagline:
+      "Unauthenticated multipart/form-data request exhausts the JVM heap in RESTEasy Reactive — fixed in Red Hat build of Quarkus 3.27.4.SP3, with downstream advisories from IBM and others.",
     links: [
       { label: "CVE-2026-16308", url: "https://www.cve.org/CVERecord?id=CVE-2026-16308" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-16308" },
@@ -51,6 +113,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Quarkus 3.38.0: reintroduced CVE-2026-50559 path-normalization authorization bypass",
+    short: "Reintroduced CVE-2026-50559 path-normalization bypass in 3.38.0 GA",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-863",
     type: "Authorization bypass (path normalization) — regression report",
@@ -65,6 +128,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Apache Kafka: CIDR ACL bypass in Authorizer.authorizeByResourceType() default impl",
+    short: "CIDR ACL bypass in authorizeByResourceType()",
     vendor: "Apache Kafka",
     cwe: "CWE-863",
     type: "Authorization bypass (ACL)",
@@ -79,6 +143,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Quarkus OIDC DPoP: no iat window / no jti replay cache (RFC 9449 conformance)",
+    short: "OIDC DPoP proofs accepted with no iat window / jti replay cache",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-294",
     type: "Auth bypass by capture-replay",
@@ -180,6 +245,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "quarkus-security: @PermissionChecker with String[] parameter invoked with null (object-level auth silently no-ops)",
+    short: "@PermissionChecker invoked with null — object-level auth silently no-ops",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-863",
     type: "Incorrect authorization (silent evaluation on empty data)",
@@ -194,6 +260,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "quarkus-spring-security: @PostAuthorize / @PreFilter / @PostFilter silently ignored on Spring migration",
+    short: "Spring @PostAuthorize / @PreFilter / @PostFilter silently ignored",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-863",
     type: "Incorrect authorization (dropped object-level checks)",
@@ -209,6 +276,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Apache Kafka: unbounded CreatePartitions crashes and cascade-kills the KRaft controller quorum",
+    short: "Unbounded CreatePartitions cascade-kills the KRaft controller quorum",
     vendor: "Apache Kafka",
     cwe: "CWE-770",
     type: "Uncontrolled Resource Consumption (KRaft controller DoS)",
@@ -221,6 +289,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Apache Kafka Streams: OOM via unchecked deserialization size fields in changelog / repartition records",
+    short: "Kafka Streams OOM via unchecked deserialization size fields",
     vendor: "Apache Kafka",
     cwe: "CWE-789",
     type: "Memory Allocation with Excessive Size Value",
@@ -233,6 +302,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Apache ActiveMQ Artemis: JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
+    short: "JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
     vendor: "Apache ActiveMQ Artemis",
     cwe: "CWE-1333",
     type: "Regular Expression Denial of Service (ReDoS)",
@@ -245,6 +315,7 @@ export const DISCLOSURES: Disclosure[] = [
   },
   {
     title: "Spring Boot: Jedis SSL auto-configuration does not enable TLS hostname verification",
+    short: "Jedis SSL auto-configuration skips TLS hostname verification",
     vendor: "Spring",
     cwe: "CWE-297",
     type: "Improper Certificate Validation (MITM)",
