@@ -242,4 +242,19 @@ export const DISCLOSURES: Disclosure[] = [
       "Artemis PMC (Clebert Suconic) formally accepted the report; patch is under peer review with a CVE being assigned",
     ],
   },
+  {
+    title: "Spring Boot: Jedis SSL auto-configuration does not enable TLS hostname verification",
+    vendor: "Spring",
+    cwe: "CWE-297",
+    type: "Improper Certificate Validation (MITM)",
+    status: "Confirmed — CVE pending",
+    ref: "GHSA-j5r6-cj5p-9mg6",
+    credited: true,
+    summary: [
+      "Spring Boot's Jedis (Redis) auto-configuration builds SSLParameters for ciphers/protocols but never sets EndpointIdentificationAlgorithm=\"HTTPS\", so the JSSE SSLSocket performs no hostname verification",
+      "On-path attacker holding any chain-trusted certificate can MITM Redis traffic (cached sessions, tokens, data); the default Lettuce client verifies hostname and is not affected — same weakness class as the accepted CVE-2026-40974 (Cassandra)",
+      "Spring team (Stéphane Nicoll) accepted the report under draft advisory GHSA-j5r6-cj5p-9mg6; CVE will be issued in the next release round with credit to me as \"Mike Read\"",
+      "Patched versions: Spring Boot 3.5.18 / 3.4.19 / 2.7.36 and Spring Boot Data Redis 4.1.2 / 4.0.9",
+    ],
+  },
 ];
