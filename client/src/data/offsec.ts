@@ -5,6 +5,7 @@ export type DisclosureStatus =
   | "Merged"
   | "Advisory pending"
   | "CVE published"
+  | "Confirmed — CVE pending"
   | "Fix in progress"
   | "Accepted (hardening)";
 
@@ -174,6 +175,71 @@ export const DISCLOSURES: Disclosure[] = [
       "Micrometer HTTP-server binding tagged its metrics with the raw request-line method token",
       "An unauthenticated attacker could mint a permanent Timer per unique method string — an unbounded, never-evicted meter leak",
       "Closed by folding the tag to a bounded allowlist of known HTTP methods",
+    ],
+  },
+  {
+    title: "quarkus-security: @PermissionChecker with String[] parameter invoked with null (object-level auth silently no-ops)",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-863",
+    type: "Incorrect authorization (silent evaluation on empty data)",
+    status: "Merged",
+    ref: "PR #56066",
+    url: "https://github.com/quarkusio/quarkus/pull/56066",
+    summary: [
+      "@PermissionChecker methods whose only object parameter is String[] were invoked with null at call time",
+      "Object-level authorization silently evaluated against no data, defaulting to allow in common check patterns",
+      "Vendor confirmed and merged the fix within three days of the report (Quarkus 3.38.2)",
+    ],
+  },
+  {
+    title: "quarkus-spring-security: @PostAuthorize / @PreFilter / @PostFilter silently ignored on Spring migration",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-863",
+    type: "Incorrect authorization (dropped object-level checks)",
+    status: "Fix in progress",
+    ref: "issue #56070",
+    url: "https://github.com/quarkusio/quarkus/issues/56070",
+    credited: true,
+    summary: [
+      "Spring @PostAuthorize / @PreFilter / @PostFilter annotations honored upstream are silently dropped when apps migrate to Quarkus via quarkus-spring-security",
+      'Vendor opened public tracking issue #56070 crediting me as "Mike Read"',
+      "Hardening / developer-experience fix in flight",
+    ],
+  },
+  {
+    title: "Apache Kafka: unbounded CreatePartitions crashes and cascade-kills the KRaft controller quorum",
+    vendor: "Apache Kafka",
+    cwe: "CWE-770",
+    type: "Uncontrolled Resource Consumption (KRaft controller DoS)",
+    status: "Confirmed — CVE pending",
+    summary: [
+      "A single low-privilege authenticated CreatePartitions request with an unbounded partition count crashes the active KRaft controller",
+      "Standbys cascade-crash as they take over, taking down the whole control-plane quorum",
+      "Apache Kafka Security Team acknowledged and confirmed the issue; CVE and release timeline pending",
+    ],
+  },
+  {
+    title: "Apache Kafka Streams: OOM via unchecked deserialization size fields in changelog / repartition records",
+    vendor: "Apache Kafka",
+    cwe: "CWE-789",
+    type: "Memory Allocation with Excessive Size Value",
+    status: "Confirmed — CVE pending",
+    summary: [
+      "Class of DoS bugs where any attacker with producer access can crash any Kafka Streams application via a single crafted record",
+      "Size fields on changelog / repartition records are trusted verbatim during deserialization, driving allocation before validation",
+      "Apache Kafka Security Team acknowledged and confirmed the issue; CVE and release timeline pending",
+    ],
+  },
+  {
+    title: "Apache ActiveMQ Artemis: JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
+    vendor: "Apache ActiveMQ Artemis",
+    cwe: "CWE-1333",
+    type: "Regular Expression Denial of Service (ReDoS)",
+    status: "Confirmed — CVE pending",
+    summary: [
+      "SQL92 LIKE operator in the JMS/Core message-selector engine compiles to a backtracking Java regex",
+      "A single crafted selector pattern drives super-linear CPU consumption per delivered message, exhausting the broker",
+      "Artemis PMC (Clebert Suconic) formally accepted the report; patch is under peer review with a CVE being assigned",
     ],
   },
 ];

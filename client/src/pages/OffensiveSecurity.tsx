@@ -33,6 +33,7 @@ function statusIcon(status: DisclosureStatus): ReactNode {
       return <ShieldAlert size={15} className="text-rose-400 shrink-0" />;
     case "Fix in progress":
     case "Advisory pending":
+    case "Confirmed — CVE pending":
       return <ShieldAlert size={15} className="text-amber-400 shrink-0" />;
   }
 }
@@ -46,6 +47,7 @@ function statusBadgeClass(status: DisclosureStatus): string {
       return "bg-rose-500/15 text-rose-200 border border-rose-400/40";
     case "Fix in progress":
     case "Advisory pending":
+    case "Confirmed — CVE pending":
       return "bg-amber-500/15 text-amber-300 border border-amber-400/40";
   }
 }
@@ -56,6 +58,7 @@ const LEDGER_GROUPS: { key: DisclosureStatus; label: string }[] = [
   { key: "Merged", label: "Fixed upstream" },
   { key: "Accepted (hardening)", label: "Accepted — hardening" },
   { key: "Fix in progress", label: "Fix in progress" },
+  { key: "Confirmed — CVE pending", label: "Confirmed — CVE pending" },
   { key: "Advisory pending", label: "Advisory pending" },
 ];
 
