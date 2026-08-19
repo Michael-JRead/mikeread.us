@@ -5,7 +5,9 @@ import {
   ArrowLeft,
   ArrowRight,
   Boxes,
+  Bug,
   ChevronDown,
+  Code2,
   ExternalLink,
   GitPullRequest,
   Hammer,
@@ -280,8 +282,6 @@ function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
   const pending = DISCLOSURES.filter((d) => d.status === "Confirmed — CVE pending");
   const merged = DISCLOSURES.filter((d) => d.status === "Merged").length;
-  const credited = DISCLOSURES.filter((d) => d.credited).length;
-
   return (
     <div>
       <p className="section-eyebrow mb-3">
@@ -302,11 +302,6 @@ function DisclosureHighlights() {
         <MetricTile label="CVE Published" value={published.length} accent="rose" />
         <MetricTile label="CVEs Pending" value={pending.length} accent="amber" />
         <MetricTile label="Fixes Merged" value={merged} accent="emerald" />
-        <div className="hidden md:block col-span-4">
-          <p className="mt-1 font-mono text-[11px] text-slate-500">
-            <span className="text-emerald-300">{credited}</span> disclosures credited to me by the upstream vendor.
-          </p>
-        </div>
       </div>
 
       {/* Published CVE hero */}
@@ -530,13 +525,71 @@ function VendorShowcase() {
   );
 }
 
-const PHASES: { n: string; name: string; desc: string; tactics: string[] }[] = [
-  { n: "01", name: "Reconnaissance", desc: "Map the external footprint — passive OSINT, DNS and subdomain discovery, and attack-surface enumeration before a single packet is sent in anger.", tactics: ["Reconnaissance", "Discovery"] },
-  { n: "02", name: "Enumeration", desc: "Fingerprint every exposed service, pull versions and misconfigurations, and build the target model that drives the rest of the engagement.", tactics: ["Discovery"] },
-  { n: "03", name: "Exploitation", desc: "Turn findings into access — web, network, and service exploitation, chained deliberately and validated with working proof, not theory.", tactics: ["Initial Access", "Execution"] },
-  { n: "04", name: "Privilege Escalation", desc: "Move from foothold to full control through kernel, service, credential, and misconfiguration paths on Linux and Windows.", tactics: ["Privilege Escalation", "Credential Access"] },
-  { n: "05", name: "Lateral Movement", desc: "Pivot through the environment — credential reuse, Active Directory abuse, and trust relationships to reach the objective.", tactics: ["Lateral Movement"] },
-  { n: "06", name: "Post-Exploitation & Reporting", desc: "Triage loot with SecretHound, document the full attack chain, and translate it into prioritized, business-aware remediation.", tactics: ["Collection", "Impact"] },
+// Two very different disciplines, each with its own playbook: scoped bug-bounty
+// testing, and the source-driven research that turns into upstream CVEs.
+const METHOD_TRACKS: {
+  key: "bounty" | "oss";
+  label: string;
+  sub: string;
+  frameworks: string;
+  steps: { name: string; desc: string }[];
+}[] = [
+  {
+    key: "bounty",
+    label: "Bug Bounties",
+    sub: "scoped programs · web, API & cloud targets",
+    frameworks: "PTES · OWASP WSTG · MITRE ATT&CK",
+    steps: [
+      {
+        name: "Scope & rules of engagement",
+        desc: "Read the program policy end to end — in-scope assets, exclusions, safe harbor, and reward tiers — so every test stays inside the lines.",
+      },
+      {
+        name: "Recon & attack surface",
+        desc: "Enumerate subdomains, discover content and endpoints, fingerprint the stack, and mine JavaScript and historical URLs for the surface others walk past.",
+      },
+      {
+        name: "Vulnerability discovery",
+        desc: "Hunt high-impact classes first — broken access control (IDOR/BOLA), auth and session flaws, injection, SSRF, and business-logic abuse — not low-signal noise.",
+      },
+      {
+        name: "Validate & prove impact",
+        desc: "Turn a finding into a minimal, safe proof of concept, score it honestly with CVSS, and never touch another user's data.",
+      },
+      {
+        name: "Report & follow through",
+        desc: "One clear bug per report — repro steps, impact, remediation — then work the triage thread until it's confirmed and resolved.",
+      },
+    ],
+  },
+  {
+    key: "oss",
+    label: "Open-Source Research",
+    sub: "source-driven CVE hunting · coordinated disclosure",
+    frameworks: "ISO/IEC 29147 · 30111",
+    steps: [
+      {
+        name: "Read the source",
+        desc: "Pick widely-deployed OSS and review its security-sensitive paths — TLS integration, authentication and authorization, deserialization, and resource limits.",
+      },
+      {
+        name: "Find the defect in code",
+        desc: "Trace the flaw to a specific method and commit, and confirm it's a framework defect present on the latest release and main — not application misuse.",
+      },
+      {
+        name: "Build a reproducer",
+        desc: "Stand up a self-contained PoC — often a Dockerized victim and attacker — with minimal dependencies and deterministic, verbatim output.",
+      },
+      {
+        name: "Disclose responsibly",
+        desc: "Email the vendor's security team privately with the write-up, PoC, severity assessment, and a suggested fix; hold the details under embargo.",
+      },
+      {
+        name: "Drive the fix & CVE",
+        desc: "Clarify the mechanism with maintainers, verify the patch actually closes it, and see it through to a merged fix, an assigned CVE, and credit.",
+      },
+    ],
+  },
 ];
 
 // Tools split into what was BUILT vs OPERATED — an honest use/build distinction.
@@ -604,32 +657,47 @@ export default function OffensiveSecurity() {
                   <p className="section-eyebrow mb-3">
                     <span className="text-slate-500">03 /</span> methodology
                   </p>
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">How I Work an Engagement</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">How I Work</h2>
                   <p className="text-gray-400 mb-6 max-w-2xl">
-                    Aligned to <span className="text-red-300">PTES</span>, the{" "}
-                    <span className="text-red-300">Unified Kill Chain</span>, and{" "}
-                    <span className="text-red-300">MITRE ATT&amp;CK</span> tactics.
+                    Two disciplines, two playbooks — scoped bug-bounty testing, and the
+                    source-driven research that turns into upstream CVEs.
                   </p>
-                  <div className="space-y-px">
-                    {PHASES.map((p) => (
-                      <div
-                        key={p.n}
-                        className="group flex gap-5 p-5 bg-slate-900/30 border-l-2 border-red-500/40 hover:border-red-500 hover:bg-slate-900/50 transition-all"
-                      >
-                        <span className="font-mono text-lg text-red-500 font-bold shrink-0 tabular-nums">{p.n}</span>
-                        <div>
-                          <h3 className="font-bold text-white group-hover:text-red-300 transition-colors">{p.name}</h3>
-                          <p className="text-sm text-gray-400 mt-1 leading-relaxed">{p.desc}</p>
-                          <div className="flex flex-wrap gap-1.5 mt-3">
-                            {p.tactics.map((t) => (
-                              <span key={t} className="font-mono text-[10px] uppercase tracking-wider rounded bg-red-500/10 text-red-300 border border-red-500/20 px-2 py-0.5">
-                                {t}
-                              </span>
-                            ))}
+                  <div className="grid lg:grid-cols-2 gap-5 items-start">
+                    {METHOD_TRACKS.map((track) => {
+                      const Icon = track.key === "bounty" ? Bug : Code2;
+                      return (
+                        <div
+                          key={track.key}
+                          className="rounded-lg border border-red-500/25 bg-slate-900/40 backdrop-blur-sm p-5 md:p-6"
+                        >
+                          <div className="flex items-start gap-3 mb-5 pb-4 border-b border-red-500/15">
+                            <div className="w-10 h-10 shrink-0 rounded-lg border border-red-500/30 bg-slate-950/70 flex items-center justify-center text-red-400">
+                              <Icon size={18} aria-hidden="true" />
+                            </div>
+                            <div>
+                              <h3 className="text-white font-bold leading-tight">{track.label}</h3>
+                              <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">
+                                {track.sub}
+                              </p>
+                              <p className="font-mono text-[10px] text-red-300/80 mt-1.5">{track.frameworks}</p>
+                            </div>
                           </div>
+                          <ol className="space-y-4">
+                            {track.steps.map((step, i) => (
+                              <li key={step.name} className="flex gap-3.5">
+                                <span className="font-mono text-sm text-red-500 font-bold shrink-0 tabular-nums mt-0.5">
+                                  {String(i + 1).padStart(2, "0")}
+                                </span>
+                                <div>
+                                  <h4 className="text-sm font-semibold text-white leading-snug">{step.name}</h4>
+                                  <p className="text-[13px] text-gray-400 mt-1 leading-relaxed">{step.desc}</p>
+                                </div>
+                              </li>
+                            ))}
+                          </ol>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
