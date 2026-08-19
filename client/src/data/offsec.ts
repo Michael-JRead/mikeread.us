@@ -162,6 +162,33 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "quarkus-spring-web reads @RequestHeader from the URL query string (RESTEasy Reactive) — auth / tenant-isolation bypass",
+    short: "quarkus-spring-web reads @RequestHeader from the URL query string",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-290",
+    type: "Authorization / tenant-isolation bypass (trusted header spoofing)",
+    status: "Confirmed — CVE pending",
+    summary: [
+      "quarkus-spring-web binds a Spring @RequestHeader from the URL query string in RESTEasy Reactive, so a client can forge a header the application trusts for authorization or tenant isolation",
+      "An unauthenticated request can override a security-relevant header without ever setting it at the transport layer",
+      'Quarkus security team accepted it as an embargoed CVE and started the process — Guillaume Smet: "I believe this warrants a CVE... I would place it under embargo"; severity assessed around "important"',
+    ],
+  },
+  {
+    title: "Quarkus OIDC shared token-introspection cache (token-only key) enables cross-tenant authentication bypass",
+    short: "OIDC token-introspection cache (token-only key) — cross-tenant auth bypass",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-287",
+    type: "Cross-tenant authentication bypass (cache-key scoping)",
+    status: "Confirmed — CVE pending",
+    credited: true,
+    summary: [
+      "Quarkus OIDC caches token-introspection results under a token-only key, ignoring the tenant, so an opaque token accepted in one tenant can authenticate against another",
+      "Confirmed end-to-end on a running Quarkus 3.38.0 app with a full PoC; the fix is tenant-scoped cache keys",
+      'Sergey Beryozkin: "I\'ll be dealing with it as an embargoed CVE with a credit to you" — severity assessed around Moderate',
+    ],
+  },
+  {
     title: "Remote dev mode: path traversal + unsafe deserialization",
     vendor: "Quarkus / Red Hat",
     cwe: "CWE-22 / CWE-502",
