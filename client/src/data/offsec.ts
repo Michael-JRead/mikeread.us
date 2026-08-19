@@ -35,6 +35,7 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important · CVSS 7.5",
     ref: "CVE-2026-16308",
+    credited: true,
     links: [
       { label: "CVE-2026-16308", url: "https://www.cve.org/CVERecord?id=CVE-2026-16308" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-16308" },
@@ -45,7 +46,7 @@ export const DISCLOSURES: Disclosure[] = [
     summary: [
       "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
       "Unauthenticated multipart/form-data request with an oversized part-header section exhausts the JVM heap in RESTEasy Reactive's MultipartParser (OutOfMemoryError)",
-      "Fixed in Red Hat build of Quarkus 3.27.4.SP3; downstream advisories issued by IBM and others",
+      "Fixed in Red Hat build of Quarkus 3.27.4.SP3; downstream advisories issued by IBM and others, with IBM's advisory crediting me by name",
     ],
   },
   {
@@ -67,13 +68,13 @@ export const DISCLOSURES: Disclosure[] = [
     vendor: "Apache Kafka",
     cwe: "CWE-863",
     type: "Authorization bypass (ACL)",
-    status: "Fix in progress",
+    status: "Merged",
     ref: "PR #22883",
     url: "https://github.com/apache/kafka/pull/22883",
     summary: [
       "Reported to Apache Kafka security team",
       "Maintainers confirmed the issue and pointed to an already-open fix PR",
-      "Not yet in a shipped release",
+      "Fix now merged upstream (PR #22883)",
     ],
   },
   {
