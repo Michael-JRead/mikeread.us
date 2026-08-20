@@ -336,6 +336,20 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Apache Kafka: unvalidated per-record size field kills the log cleaner (broker-wide compaction DoS)",
+    short: "Unvalidated per-record size field kills the log cleaner (compaction DoS)",
+    vendor: "Apache Kafka",
+    cwe: "CWE-20 / CWE-1284",
+    type: "Improper input validation → memory exhaustion (compaction DoS)",
+    status: "Confirmed — CVE pending",
+    credited: true,
+    summary: [
+      "A low-privilege producer (WRITE on one compacted topic) sends a single small compressed batch whose per-record sizeOfBodyInBytes is a lie; it is accepted at ingest but makes the background log cleaner attempt a ~2 GB allocation and die with OutOfMemoryError",
+      "The cleaner thread is never restarted, so compaction stops broker-wide — including __consumer_offsets and __transaction_state — and the poison record survives restarts (unrecoverable without manual segment surgery)",
+      "Apache Kafka Security Team confirmed the issue and will assign a CVE, acknowledging my responsible disclosure in the advisory (co-reported by multiple researchers); reporter-assessed CVSS ~8.0 High",
+    ],
+  },
+  {
     title: "Apache ActiveMQ Artemis: JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
     short: "JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
     vendor: "Apache ActiveMQ Artemis",
