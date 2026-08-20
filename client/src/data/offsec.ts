@@ -82,6 +82,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The most widely deployed Java application framework in the world.",
     brand: "#6DB33F",
   },
+  {
+    key: "keycloak",
+    match: "Keycloak",
+    name: "Keycloak",
+    org: "CNCF / Red Hat",
+    blurb: "The open-source identity and access management platform behind Red Hat SSO.",
+    brand: "#4D4D4D",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -354,6 +362,22 @@ export const DISCLOSURES: Disclosure[] = [
       "On-path attacker holding any chain-trusted certificate can MITM Redis traffic (cached sessions, tokens, data); the default Lettuce client verifies hostname and is not affected — same weakness class as the accepted CVE-2026-40974 (Cassandra)",
       "Spring team (Stéphane Nicoll) accepted the report under draft advisory GHSA-j5r6-cj5p-9mg6; CVE will be issued in the next release round with credit to me as \"Mike Read\"",
       "Patched versions: Spring Boot 3.5.18 / 3.4.19 / 2.7.36 and Spring Boot Data Redis 4.1.2 / 4.0.9",
+    ],
+  },
+  {
+    title: "Keycloak: username enumeration via empty-password login timing (dummyHash bypassed)",
+    short: "Username enumeration via empty-password login timing",
+    vendor: "Keycloak",
+    cwe: "CWE-208",
+    type: "Username enumeration (observable timing discrepancy)",
+    status: "Fix in progress",
+    ref: "issue #51887",
+    url: "https://github.com/keycloak/keycloak/issues/51887",
+    credited: true,
+    summary: [
+      "Keycloak runs a dummy PBKDF2 hash for non-existent users to make login timing uniform — but the empty-password path early-returns for an existing user without hashing, so an existing username answers ~one PBKDF2 faster than a non-existent one",
+      "Unauthenticated attacker can enumerate valid usernames from response latency alone; brute-force protection is off by default, so nothing masks it (Keycloak 26.7.2)",
+      'Maintainer opened public tracking issue #51887, crediting "Mike Read for discovering the timing issue"',
     ],
   },
 ];
