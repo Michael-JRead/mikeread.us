@@ -350,6 +350,20 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Apache Kafka Streams: integer-overflow infinite CPU loop in PunctuationSchedule.next()",
+    short: "Kafka Streams integer-overflow infinite CPU loop (PunctuationSchedule.next)",
+    vendor: "Apache Kafka",
+    cwe: "CWE-190 / CWE-835",
+    type: "Integer overflow → infinite loop (DoS)",
+    status: "Confirmed — CVE pending",
+    credited: true,
+    summary: [
+      "A single record with timestamp=Long.MAX_VALUE overflows the punctuation-schedule arithmetic, producing a negative nextPunctuationTime that makes PunctuationQueue.maybePunctuate() loop ~2^64 times inside a synchronized block — permanently hanging the StreamThread",
+      "One crafted record from a producer with WRITE on the input topic can freeze a Kafka Streams application; the hang persists across restarts if the record stays in the topic",
+      "Apache Kafka Security confirmed it and is preparing the upstream fix (targeting AK 4.4.0 + patch releases); CVE pending, credited to me — reporter-assessed CVSS 6.5",
+    ],
+  },
+  {
     title: "Apache ActiveMQ Artemis: JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
     short: "JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
     vendor: "Apache ActiveMQ Artemis",
