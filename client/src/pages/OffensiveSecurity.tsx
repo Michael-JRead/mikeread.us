@@ -282,6 +282,7 @@ function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
   const pending = DISCLOSURES.filter((d) => d.status === "Confirmed — CVE pending");
   const merged = DISCLOSURES.filter((d) => d.status === "Merged").length;
+  const vendorsCount = new Set(DISCLOSURES.map((d) => d.vendor)).size;
   return (
     <div>
       <p className="section-eyebrow mb-3">
@@ -300,8 +301,8 @@ function DisclosureHighlights() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
         <MetricTile label="Disclosures" value={DISCLOSURES.length} />
         <MetricTile label="CVE Published" value={published.length} accent="rose" />
-        <MetricTile label="CVEs Pending" value={pending.length} accent="amber" />
         <MetricTile label="Fixes Merged" value={merged} accent="emerald" />
+        <MetricTile label="Vendors" value={vendorsCount} />
       </div>
 
       {/* Published CVE hero */}
