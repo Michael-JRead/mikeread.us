@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-08-27T19:49:35.171Z",
-  "generatedAt": "2026-08-27T19:49:35.171Z",
-  "commit": "d009394",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/33110289661",
+  "fetchedAt": "2026-08-28T20:49:39.886Z",
+  "generatedAt": "2026-08-28T20:49:39.886Z",
+  "commit": "4072868",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/33209877137",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 417,
+    "ranking": 414,
     "points": 673,
     "user_owns": 49,
     "system_owns": 49,
@@ -25,7 +25,7 @@
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 850
+    "total": 851
   },
   "challengeCategories": [
     {
@@ -103,8 +103,8 @@
     {
       "name": "Coding",
       "solved": 2,
-      "total": 17,
-      "percentage": 12
+      "total": 18,
+      "percentage": 11
     },
     {
       "name": "Secure Coding",
