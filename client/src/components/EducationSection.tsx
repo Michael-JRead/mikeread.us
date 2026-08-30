@@ -1,12 +1,24 @@
+import { useState } from "react";
 import { CERTIFICATIONS, EDUCATION, type EducationItem } from "@/data/siteContent";
 import { Award, GraduationCap } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 
-// Per-institution emblem + metadata. The monogram tiles stand in for the
-// official (copyrighted) university marks — swap in real logo images if desired.
-const INSTITUTIONS: Record<string, { short: string; brand: string; kind: string }> = {
-  "SANS Technology Institute": { short: "SANS", brand: "#4FA3D1", kind: "Graduate · Information Security" },
-  "University of Maryland": { short: "UMD", brand: "#E03A3E", kind: "College Park, Maryland" },
+// Per-institution emblem + metadata. `logo` points at an official mark in
+// client/public/assets/edu/; if the file is absent the tile falls back to a
+// brand-tinted monogram, so the section always renders cleanly.
+const INSTITUTIONS: Record<string, { short: string; brand: string; kind: string; logo?: string }> = {
+  "SANS Technology Institute": {
+    short: "SANS",
+    brand: "#4FA3D1",
+    kind: "Graduate · Information Security",
+    logo: "/assets/edu/sans.png",
+  },
+  "University of Maryland": {
+    short: "UMD",
+    brand: "#E03A3E",
+    kind: "College Park, Maryland",
+    logo: "/assets/edu/umd.png",
+  },
 };
 
 function metaFor(institution: string) {
@@ -33,7 +45,25 @@ function honorsOf(details: string[]): string | null {
     : null;
 }
 
-function EmblemTile({ short, brand }: { short: string; brand: string }) {
+function EmblemTile({ short, brand, logo, name }: { short: string; brand: string; logo?: string; name: string }) {
+  // Show the official logo when its file is present; fall back to the monogram
+  // (e.g. before the asset is added, or if it 404s).
+  const [logoOk, setLogoOk] = useState(Boolean(logo));
+
+  if (logo && logoOk) {
+    return (
+      <div className="w-16 h-16 shrink-0 rounded-2xl bg-white flex items-center justify-center overflow-hidden border border-white/20 shadow-lg p-1.5">
+        <img
+          src={logo}
+          alt={`${name} logo`}
+          loading="lazy"
+          className="w-full h-full object-contain"
+          onError={() => setLogoOk(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className="relative w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center border-2 shadow-lg"
@@ -56,12 +86,12 @@ function EmblemTile({ short, brand }: { short: string; brand: string }) {
 }
 
 function InstitutionCard({ institution, items }: { institution: string; items: EducationItem[] }) {
-  const { short, brand, kind } = metaFor(institution);
+  const { short, brand, kind, logo } = metaFor(institution);
   return (
     <div className="h-full rounded-xl border border-red-500/25 bg-slate-900/40 p-6 backdrop-blur-sm transition-all hover:border-red-500/50 hover:bg-slate-900/60">
       {/* Institution header */}
       <div className="flex items-center gap-4 pb-5 mb-5 border-b border-red-500/15">
-        <EmblemTile short={short} brand={brand} />
+        <EmblemTile short={short} brand={brand} logo={logo} name={institution} />
         <div className="min-w-0">
           <h3 className="text-lg font-bold text-white leading-tight">{institution}</h3>
           {kind && (
