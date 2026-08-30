@@ -238,20 +238,6 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
-    title: "Micrometer HTTP method tag — unbounded meter leak",
-    vendor: "Quarkus / Red Hat",
-    cwe: "CWE-770",
-    type: "Uncontrolled Resource Consumption (DoS)",
-    status: "Merged",
-    ref: "PR #55030",
-    url: "https://github.com/quarkusio/quarkus/pull/55030",
-    summary: [
-      "Micrometer HTTP-server binding tagged its metrics with the raw request-line method token",
-      "An unauthenticated attacker could mint a permanent Timer per unique method string — an unbounded, never-evicted meter leak",
-      "Closed by folding the tag to a bounded allowlist of known HTTP methods",
-    ],
-  },
-  {
     title: "quarkus-security: @PermissionChecker with String[] parameter invoked with null (object-level auth silently no-ops)",
     short: "@PermissionChecker invoked with null — object-level auth silently no-ops",
     vendor: "Quarkus / Red Hat",

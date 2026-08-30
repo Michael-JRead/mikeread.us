@@ -1,60 +1,151 @@
-import { CERTIFICATIONS, EDUCATION } from "@/data/siteContent";
-import { BookOpen, Award } from "lucide-react";
+import { CERTIFICATIONS, EDUCATION, type EducationItem } from "@/data/siteContent";
+import { Award, GraduationCap } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 
+// Per-institution emblem + metadata. The monogram tiles stand in for the
+// official (copyrighted) university marks — swap in real logo images if desired.
+const INSTITUTIONS: Record<string, { short: string; brand: string; kind: string }> = {
+  "SANS Technology Institute": { short: "SANS", brand: "#4FA3D1", kind: "Graduate · Information Security" },
+  "University of Maryland": { short: "UMD", brand: "#E03A3E", kind: "College Park, Maryland" },
+};
+
+function metaFor(institution: string) {
+  return (
+    INSTITUTIONS[institution] ?? {
+      short: institution.slice(0, 2).toUpperCase(),
+      brand: "#ef4444",
+      kind: "",
+    }
+  );
+}
+
+// Pull an honors phrase ("Summa Cum Laude" …) out of the detail bullets so it can
+// render as a badge instead of a plain line.
+function honorsOf(details: string[]): string | null {
+  const line = details.find((d) => /cum laude/i.test(d));
+  if (!line) return null;
+  const m = line.match(/(summa|magna)?\s*cum laude/i);
+  return m
+    ? m[0]
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+    : null;
+}
+
+function EmblemTile({ short, brand }: { short: string; brand: string }) {
+  return (
+    <div
+      className="relative w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center border-2 shadow-lg"
+      style={{ borderColor: `${brand}66`, backgroundColor: `${brand}1a`, boxShadow: `0 0 24px ${brand}22` }}
+      aria-hidden="true"
+    >
+      <span
+        className={`font-extrabold tracking-tight ${short.length > 3 ? "text-base" : "text-xl"}`}
+        style={{ color: brand }}
+      >
+        {short}
+      </span>
+      <GraduationCap
+        size={14}
+        className="absolute -bottom-1.5 -right-1.5 rounded-full bg-slate-950 p-0.5"
+        style={{ color: brand }}
+      />
+    </div>
+  );
+}
+
+function InstitutionCard({ institution, items }: { institution: string; items: EducationItem[] }) {
+  const { short, brand, kind } = metaFor(institution);
+  return (
+    <div className="h-full rounded-xl border border-red-500/25 bg-slate-900/40 p-6 backdrop-blur-sm transition-all hover:border-red-500/50 hover:bg-slate-900/60">
+      {/* Institution header */}
+      <div className="flex items-center gap-4 pb-5 mb-5 border-b border-red-500/15">
+        <EmblemTile short={short} brand={brand} />
+        <div className="min-w-0">
+          <h3 className="text-lg font-bold text-white leading-tight">{institution}</h3>
+          {kind && (
+            <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-500">{kind}</p>
+          )}
+          <p className="mt-1 font-mono text-[11px] text-red-300/80">
+            {items.length} credential{items.length === 1 ? "" : "s"}
+          </p>
+        </div>
+      </div>
+
+      {/* Degrees at this institution */}
+      <ol className="space-y-5">
+        {items.map((edu) => {
+          const honors = honorsOf(edu.details);
+          const inProgress = /expected/i.test(edu.period);
+          const bullets = edu.details.filter((d) => !/cum laude/i.test(d));
+          return (
+            <li key={edu.degree} className="relative pl-4 border-l-2 border-red-500/30">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <h4 className="font-semibold text-white leading-snug">{edu.degree}</h4>
+                {honors && (
+                  <span className="inline-flex items-center rounded-md border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                    {honors}
+                  </span>
+                )}
+                {inProgress && (
+                  <span className="inline-flex items-center rounded-md border border-sky-400/40 bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-sky-300">
+                    In progress
+                  </span>
+                )}
+              </div>
+              <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-slate-500">{edu.period}</p>
+              {bullets.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {bullets.map((d, i) => (
+                    <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-slate-400">
+                      <span className="mt-1 shrink-0 text-red-400" aria-hidden="true">•</span>
+                      <span>{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
 
 export default function EducationSection() {
+  // Group degrees under their institution, preserving first-seen order.
+  const order: string[] = [];
+  const groups: Record<string, EducationItem[]> = {};
+  for (const edu of EDUCATION) {
+    if (!groups[edu.institution]) {
+      groups[edu.institution] = [];
+      order.push(edu.institution);
+    }
+    groups[edu.institution].push(edu);
+  }
+
   return (
     <section id="education" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <SectionHeader index="03" eyebrow="academics" title="Education" />
 
-          {/* Education Timeline */}
-          <div className="space-y-6">
-            {EDUCATION.map((edu, index) => (
-              <div
-                key={index}
-                className="relative pl-8 pb-8 border-l-2 border-red-500 border-opacity-40 last:pb-0"
-              >
-                {/* Timeline Dot */}
-                <div className="absolute -left-4 top-0 w-6 h-6 bg-gradient-to-br from-red-500 to-red-700 rounded-full border-4 border-slate-900 shadow-lg shadow-red-500/50"></div>
-
-                {/* Content */}
-                <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-lg border border-red-500 border-opacity-30 hover:border-opacity-60 transition-all duration-300 backdrop-blur-sm">
-                  <div className="flex items-start gap-3 mb-3">
-                    <BookOpen className="text-red-500 flex-shrink-0 mt-1" size={20} />
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white">{edu.degree}</h3>
-                      <p className="text-red-400 font-semibold">{edu.institution}</p>
-                      <p className="text-gray-400 text-sm mt-1">{edu.period}</p>
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  {edu.details.length > 0 && (
-                    <ul className="mt-4 space-y-2">
-                      {edu.details.map((detail, dIndex) => (
-                        <li key={dIndex} className="flex gap-2 text-gray-300 text-sm">
-                          <span className="text-red-500 font-bold">-</span>
-                          <span>{detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
+          <div className="grid gap-5 md:grid-cols-2 items-stretch">
+            {order.map((institution) => (
+              <InstitutionCard key={institution} institution={institution} items={groups[institution]} />
             ))}
           </div>
 
-          {/* Certifications Summary */}
-            <div className="mt-16 p-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg border border-red-500 border-opacity-40 backdrop-blur-sm hover:border-opacity-60 transition-all duration-300">
+          {/* Certifications summary */}
+          <div className="mt-12 rounded-xl border border-red-500/40 bg-gradient-to-br from-slate-800 to-slate-900 p-8 backdrop-blur-sm transition-all duration-300 hover:border-red-500/60">
             <div className="flex items-center gap-3 mb-4">
               <Award size={28} className="text-red-500" />
               <h3 className="text-2xl font-bold text-white">Professional Certifications</h3>
             </div>
             <p className="text-gray-300 mb-4">
-              I hold {CERTIFICATIONS.length} active industry certifications across cloud security, penetration testing, compliance, and security management.
+              I hold {CERTIFICATIONS.length} active industry certifications across cloud security,
+              penetration testing, compliance, and security management.
             </p>
             <a
               href="#certifications"
@@ -68,4 +159,3 @@ export default function EducationSection() {
     </section>
   );
 }
-
