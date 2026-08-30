@@ -71,6 +71,19 @@ export const ENGAGED_PROJECTS: EngagedProject[] = [
   { key: "connect2id", name: "Connect2id / Nimbus", org: "Connect2id", blurb: "Nimbus OAuth 2.0 and OpenID Connect SDKs for the JVM.", role: "Security research", url: "https://connect2id.com", brand: "#9BB0D6", mono: "C2" },
   { key: "jsonsmart", name: "json-smart", org: "Open source", blurb: "High-performance JSON parser for the JVM.", role: "Security research", url: "https://github.com/netplex/json-smart-v2", brand: "#C0CA33", mono: "Js" },
   { key: "apiman", name: "apiman", org: "Open source", blurb: "Open-source API management and gateway.", role: "Security research", url: "https://github.com/apiman/apiman", brand: "#E8734A", mono: "ap" },
+  { key: "undertow", name: "Undertow", org: "Red Hat · JBoss", blurb: "High-performance embeddable Java web server — the web layer of WildFly.", role: "Security research", url: "https://undertow.io", brand: "#D0463B", mono: "Un" },
+  { key: "vertx", name: "Eclipse Vert.x", org: "Eclipse Foundation", blurb: "Reactive toolkit for building event-driven applications on the JVM.", role: "Security research", url: "https://vertx.io", brand: "#A46FD0", mono: "Vx" },
+  { key: "hibernate", name: "Hibernate Validator", org: "Red Hat · Hibernate", blurb: "Reference implementation of Jakarta Bean Validation (JSR 380).", role: "Security research", url: "https://hibernate.org/validator", brand: "#8FA8B5" },
+  { key: "cxf", name: "Apache CXF", org: "Apache Software Foundation", blurb: "Services framework for SOAP and REST web services (JAX-WS / JAX-RS).", role: "Security research", url: "https://cxf.apache.org", brand: "#A6C34C", mono: "Cx" },
+  { key: "cassandra", name: "Cassandra Java Driver", org: "Apache Software Foundation", blurb: "Java client driver for Apache Cassandra over the CQL native protocol.", role: "Security research", url: "https://github.com/apache/cassandra-java-driver", brand: "#4FA8C7" },
+  { key: "jose4j", name: "jose4j", org: "Open source", blurb: "Java library implementing the JOSE suite — JWS, JWE, JWK, and JWT.", role: "Security research", url: "https://bitbucket.org/b_c/jose4j", brand: "#8FA3C8", mono: "Jo" },
+  { key: "jackson", name: "Jackson", org: "FasterXML", blurb: "The de-facto JSON (and YAML/CSV) data-processing library for Java.", role: "Security research", url: "https://github.com/FasterXML/jackson", brand: "#C0CA33", mono: "Jk" },
+  { key: "jgroups", name: "JGroups", org: "Red Hat · JBoss", blurb: "Java toolkit for reliable multicast group communication and clustering.", role: "Security research", url: "http://www.jgroups.org", brand: "#7C9ED9", mono: "Jg" },
+  { key: "jbossremoting", name: "JBoss Remoting", org: "Red Hat · JBoss", blurb: "Remote-invocation transport used by WildFly and JBoss EAP.", role: "Security research", url: "https://github.com/jboss-remoting/jboss-remoting", brand: "#E0733E", mono: "Jb" },
+  { key: "johnzon", name: "Apache Johnzon", org: "Apache Software Foundation", blurb: "JSON processing library implementing the JSON-P and JSON-B Java APIs.", role: "Security research", url: "https://johnzon.apache.org", brand: "#E0A96D", mono: "Jz" },
+  { key: "olingo", name: "Apache Olingo", org: "Apache Software Foundation", blurb: "Java implementation of the OData protocol for RESTful data services.", role: "Security research", url: "https://olingo.apache.org", brand: "#7FB2DA", mono: "Ol" },
+  { key: "james", name: "Apache James", org: "Apache Software Foundation", blurb: "Modular Java email server and mail-processing framework.", role: "Security research", url: "https://james.apache.org", brand: "#C99A5B", mono: "Jm" },
+  { key: "tapestry", name: "Apache Tapestry", org: "Apache Software Foundation", blurb: "Component-oriented framework for dynamic, scalable Java web apps.", role: "Security research", url: "https://tapestry.apache.org", brand: "#B9C24C", mono: "Tp" },
 ];
 
 export interface CertificationItem {
