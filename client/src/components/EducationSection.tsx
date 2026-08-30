@@ -11,13 +11,13 @@ const INSTITUTIONS: Record<string, { short: string; brand: string; kind: string;
     short: "SANS",
     brand: "#4FA3D1",
     kind: "Graduate · Information Security",
-    logo: "/assets/edu/sans.png",
+    logo: "/assets/edu/sans.jpg",
   },
   "University of Maryland": {
     short: "UMD",
     brand: "#E03A3E",
     kind: "College Park, Maryland",
-    logo: "/assets/edu/umd.png",
+    logo: "/assets/edu/UM.png",
   },
 };
 
