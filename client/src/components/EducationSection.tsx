@@ -6,18 +6,23 @@ import SectionHeader from "./SectionHeader";
 // Per-institution emblem + metadata. `logo` points at an official mark in
 // client/public/assets/edu/; if the file is absent the tile falls back to a
 // brand-tinted monogram, so the section always renders cleanly.
-const INSTITUTIONS: Record<string, { short: string; brand: string; kind: string; logo?: string }> = {
+const INSTITUTIONS: Record<
+  string,
+  { short: string; brand: string; kind: string; logo?: string; fit?: "cover" | "contain" }
+> = {
   "SANS Technology Institute": {
     short: "SANS",
     brand: "#4FA3D1",
     kind: "Graduate · Information Security",
     logo: "/assets/edu/sans.jpg",
+    fit: "cover", // full-bleed navy square — fill the tile edge to edge
   },
   "University of Maryland": {
     short: "UMD",
     brand: "#E03A3E",
     kind: "College Park, Maryland",
     logo: "/assets/edu/UM.png",
+    fit: "contain", // detailed seal on white — sit it on a white chip
   },
 };
 
@@ -45,19 +50,36 @@ function honorsOf(details: string[]): string | null {
     : null;
 }
 
-function EmblemTile({ short, brand, logo, name }: { short: string; brand: string; logo?: string; name: string }) {
+function EmblemTile({
+  short,
+  brand,
+  logo,
+  fit = "contain",
+  name,
+}: {
+  short: string;
+  brand: string;
+  logo?: string;
+  fit?: "cover" | "contain";
+  name: string;
+}) {
   // Show the official logo when its file is present; fall back to the monogram
   // (e.g. before the asset is added, or if it 404s).
   const [logoOk, setLogoOk] = useState(Boolean(logo));
 
   if (logo && logoOk) {
+    const cover = fit === "cover";
     return (
-      <div className="w-16 h-16 shrink-0 rounded-2xl bg-white flex items-center justify-center overflow-hidden border border-white/20 shadow-lg p-1.5">
+      <div
+        className={`w-20 h-20 shrink-0 overflow-hidden rounded-2xl shadow-lg ${
+          cover ? "border border-white/10" : "border border-white/20 bg-white"
+        }`}
+      >
         <img
           src={logo}
           alt={`${name} logo`}
           loading="lazy"
-          className="w-full h-full object-contain"
+          className={`h-full w-full ${cover ? "object-cover" : "object-contain p-1.5"}`}
           onError={() => setLogoOk(false)}
         />
       </div>
@@ -66,18 +88,18 @@ function EmblemTile({ short, brand, logo, name }: { short: string; brand: string
 
   return (
     <div
-      className="relative w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center border-2 shadow-lg"
+      className="relative w-20 h-20 shrink-0 rounded-2xl flex items-center justify-center border-2 shadow-lg"
       style={{ borderColor: `${brand}66`, backgroundColor: `${brand}1a`, boxShadow: `0 0 24px ${brand}22` }}
       aria-hidden="true"
     >
       <span
-        className={`font-extrabold tracking-tight ${short.length > 3 ? "text-base" : "text-xl"}`}
+        className={`font-extrabold tracking-tight ${short.length > 3 ? "text-lg" : "text-2xl"}`}
         style={{ color: brand }}
       >
         {short}
       </span>
       <GraduationCap
-        size={14}
+        size={16}
         className="absolute -bottom-1.5 -right-1.5 rounded-full bg-slate-950 p-0.5"
         style={{ color: brand }}
       />
@@ -86,12 +108,12 @@ function EmblemTile({ short, brand, logo, name }: { short: string; brand: string
 }
 
 function InstitutionCard({ institution, items }: { institution: string; items: EducationItem[] }) {
-  const { short, brand, kind, logo } = metaFor(institution);
+  const { short, brand, kind, logo, fit } = metaFor(institution);
   return (
     <div className="h-full rounded-xl border border-red-500/25 bg-slate-900/40 p-6 backdrop-blur-sm transition-all hover:border-red-500/50 hover:bg-slate-900/60">
       {/* Institution header */}
       <div className="flex items-center gap-4 pb-5 mb-5 border-b border-red-500/15">
-        <EmblemTile short={short} brand={brand} logo={logo} name={institution} />
+        <EmblemTile short={short} brand={brand} logo={logo} fit={fit} name={institution} />
         <div className="min-w-0">
           <h3 className="text-lg font-bold text-white leading-tight">{institution}</h3>
           {kind && (
