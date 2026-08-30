@@ -33,6 +33,46 @@ export interface ProjectItem {
   links?: { label: string; url: string }[];
 }
 
+/**
+ * An open-source project the owner contributes security research to. These cards
+ * intentionally carry NO vulnerability specifics — only the project, a neutral
+ * role, and a public link — since much of the underlying work is under
+ * coordinated-disclosure embargo.
+ */
+export interface EngagedProject {
+  /** Logo lookup key in @/components/VendorLogos; falls back to `mono`. */
+  key: string;
+  name: string;
+  org: string;
+  /** What the project is — never what was found in it. */
+  blurb: string;
+  /** Neutral relationship label, e.g. "Security research". */
+  role: string;
+  url: string;
+  /** Brand tint for the logo/monogram (hex, chosen for contrast on dark). */
+  brand: string;
+  /** 1–2 char monogram shown when no logo exists for `key`. */
+  mono?: string;
+}
+
+// Order: most recognizable first. Quarkus is the only card that names public
+// outcomes (merged fixes + a published CVE); every other card stays generic.
+export const ENGAGED_PROJECTS: EngagedProject[] = [
+  { key: "quarkus", name: "Quarkus", org: "Red Hat", blurb: "Kubernetes-native Java framework — the supersonic, subatomic runtime.", role: "Merged fixes · CVE", url: "https://github.com/quarkusio/quarkus", brand: "#4695EB" },
+  { key: "kafka", name: "Apache Kafka", org: "Apache Software Foundation", blurb: "The distributed event-streaming platform behind most data pipelines.", role: "Security research", url: "https://github.com/apache/kafka", brand: "#E2E8F0" },
+  { key: "keycloak", name: "Keycloak", org: "CNCF · Red Hat", blurb: "Open-source identity and access management (Red Hat build of Keycloak / SSO).", role: "Security research", url: "https://github.com/keycloak/keycloak", brand: "#7FB2DA" },
+  { key: "spring", name: "Spring Boot", org: "Spring · Broadcom", blurb: "The most widely deployed Java application framework in the world.", role: "Security research", url: "https://github.com/spring-projects/spring-boot", brand: "#6DB33F" },
+  { key: "tomcat", name: "Apache Tomcat", org: "Apache Software Foundation", blurb: "The reference-implementation Java servlet and JSP container.", role: "Security research", url: "https://github.com/apache/tomcat", brand: "#E0B93E" },
+  { key: "artemis", name: "ActiveMQ Artemis", org: "Apache Software Foundation", blurb: "High-performance, multi-protocol message broker.", role: "Security research", url: "https://github.com/apache/activemq-artemis", brand: "#D9433B" },
+  { key: "pulsar", name: "Apache Pulsar", org: "Apache Software Foundation", blurb: "Cloud-native distributed messaging and streaming.", role: "Security research", url: "https://github.com/apache/pulsar", brand: "#35A7E0" },
+  { key: "commons", name: "Apache Commons", org: "Apache Software Foundation", blurb: "Foundational, reusable Java component libraries.", role: "Security research", url: "https://commons.apache.org", brand: "#C9A227", mono: "Ac" },
+  { key: "infinispan", name: "Infinispan", org: "Red Hat", blurb: "In-memory distributed key/value data store and cache.", role: "Security research", url: "https://github.com/infinispan/infinispan", brand: "#E06A5C", mono: "In" },
+  { key: "smallrye", name: "SmallRye", org: "Red Hat", blurb: "MicroProfile implementations powering Quarkus and other runtimes.", role: "Security research", url: "https://github.com/smallrye", brand: "#6AA9D8", mono: "Sr" },
+  { key: "connect2id", name: "Connect2id / Nimbus", org: "Connect2id", blurb: "Nimbus OAuth 2.0 and OpenID Connect SDKs for the JVM.", role: "Security research", url: "https://connect2id.com", brand: "#9BB0D6", mono: "C2" },
+  { key: "jsonsmart", name: "json-smart", org: "Open source", blurb: "High-performance JSON parser for the JVM.", role: "Security research", url: "https://github.com/netplex/json-smart-v2", brand: "#C0CA33", mono: "Js" },
+  { key: "apiman", name: "apiman", org: "Open source", blurb: "Open-source API management and gateway.", role: "Security research", url: "https://github.com/apiman/apiman", brand: "#E8734A", mono: "ap" },
+];
+
 export interface CertificationItem {
   name: string;
   shortName: string;
@@ -279,26 +319,6 @@ export const EDUCATION: EducationItem[] = [
 ];
 
 export const PROJECTS: ProjectItem[] = [
-  {
-    title: "Quarkus Security Contributions",
-    summary:
-      "Source-level security review and vulnerability research contributed to Quarkus, the Red Hat–backed Supersonic Subatomic Java framework used across enterprise cloud-native workloads.",
-    description:
-      "Reviewing Quarkus at the source level, I discovered and reported six security weaknesses that were fixed upstream and now ship to every downstream application. I found Dev MCP endpoints exposed without the localhost, CORS, and Host-header checks that guard the framework's other development-mode endpoints — the lockdown fix landed with credit to me (PR #55353, milestone 3.27.5). I also flagged that the same scoping gap left sibling dev-mode endpoints (`/q/arc/*`, `/q/quarkus-oidc/*`, `/q/open-in-ide/*`, `/q/dev-mcp`) reachable via DNS rebinding or an off-loopback bind, and Quarkus responded with a new global Host-validation filter that covers every dev-mode route (PR #55431). I reported an unauthenticated memory-exhaustion denial of service in the SmallRye GraphQL extension, where deeply nested queries against cyclic schemas could balloon into multi-gigabyte heap allocation from a single request, resolved with a sensible default query-depth limit (PR #55361). I found the Pulsar extension silently skipping TLS hostname verification even when it was explicitly configured — a man-in-the-middle exposure — fixed by properly enabling verification and honoring the trust-all setting (PR #55308). I reported that the Micrometer HTTP-server binding tagged its metrics with the raw request-line `method` token, letting an unauthenticated attacker mint a permanent Timer per unique method string — an unbounded, never-evicted meter leak — closed by folding the tag to a bounded allowlist of known HTTP methods (PR #55030). And I reported two flaws in remote dev mode: a path-traversal escape from the application root via unnormalized path resolution, and unsafe deserialization of network input through a raw ObjectInputStream with no filter — both hardened in one backported fix (PR #55380). Separately, I discovered and responsibly disclosed an unauthenticated denial-of-service vulnerability in Quarkus REST — an oversized multipart part-header section that exhausts the JVM heap in RESTEasy Reactive's MultipartParser — now published as CVE-2026-16308 (rated Important, CVSS 7.5) and fixed in Red Hat build of Quarkus 3.27.4.SP3.",
-    tags: ["Java", "Quarkus", "Vulnerability Research", "Secure Code Review", "CVE", "Denial of Service", "TLS", "Deserialization", "Responsible Disclosure"],
-    githubUrl: "https://github.com/quarkusio/quarkus",
-    links: [
-      { label: "PR #55030", url: "https://github.com/quarkusio/quarkus/pull/55030" },
-      { label: "PR #55308", url: "https://github.com/quarkusio/quarkus/pull/55308" },
-      { label: "PR #55353", url: "https://github.com/quarkusio/quarkus/pull/55353" },
-      { label: "PR #55361", url: "https://github.com/quarkusio/quarkus/pull/55361" },
-      { label: "PR #55380", url: "https://github.com/quarkusio/quarkus/pull/55380" },
-      { label: "PR #55431", url: "https://github.com/quarkusio/quarkus/pull/55431" },
-      { label: "CVE-2026-16308", url: "https://access.redhat.com/security/cve/CVE-2026-16308" },
-    ],
-    impact:
-      "Six merged fixes hardening Quarkus defaults for every downstream app, plus a published CVE (CVE-2026-16308, Important / CVSS 7.5).",
-  },
   {
     title: "SecretHound",
     summary:
