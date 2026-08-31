@@ -96,7 +96,7 @@ export default function HeroSection() {
 
             {PUBLISHED_CVES.length > 0 && (
               <div>
-                <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-slate-300 mb-3">
+                <div className="inline-flex items-center gap-2 font-mono text-xs tracking-wide text-slate-300 mb-3">
                   <ShieldCheck size={14} className="text-red-400" aria-hidden="true" />
                   CVEs Discovered
                 </div>
