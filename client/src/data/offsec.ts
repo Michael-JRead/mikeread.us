@@ -331,3 +331,38 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
 ];
+
+/** A published CVE surfaced as a compact chip (homepage hero strip). */
+export interface PublishedCve {
+  id: string;
+  url: string;
+  /** Short descriptor next to the id, e.g. "CVSS 8.7" or "Important". */
+  label?: string;
+}
+
+// Compact chip label: prefer the "CVSS x.y" fragment of a severity string,
+// else the leading severity word ("Important"), else nothing.
+function cveChipLabel(severity?: string): string | undefined {
+  if (!severity) return undefined;
+  const cvss = severity.match(/CVSS\s+[\d.]+/i);
+  if (cvss) return cvss[0];
+  const lead = severity.split("·")[0].trim();
+  return lead || undefined;
+}
+
+/**
+ * Published CVEs, derived from DISCLOSURES so the homepage "CVEs Discovered"
+ * strip and this ledger can never drift: add a `CVE published` row above and it
+ * surfaces in both places automatically, in the same order.
+ */
+export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
+  (d): d is Disclosure & { ref: string } =>
+    d.status === "CVE published" && !!d.ref && d.ref.startsWith("CVE-"),
+).map((d) => {
+  const canonical = d.links?.find((l) => l.label === d.ref) ?? d.links?.[0];
+  return {
+    id: d.ref,
+    url: canonical?.url ?? d.url ?? `https://www.cve.org/CVERecord?id=${d.ref}`,
+    label: cveChipLabel(d.severity),
+  };
+});

@@ -178,57 +178,57 @@ function stripVendorPrefix(title: string, vendor: VendorInfo): string {
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
+// One published-CVE hero. Built to tile: a fixed header band (status + CVE id),
+// a logo+title row, a single meta line, the tagline, and link chips pinned to the
+// bottom — so any number of CVEs line up as an even, scannable set in the grid.
 function FeaturedCveCard({ cve }: { cve: Disclosure }) {
   const vendor = VENDORS.find((v) => v.match === cve.vendor);
   return (
-    <div className="mb-6 rounded-lg border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_40px_rgba(244,63,94,0.12)] p-6 md:p-7">
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-        <div className="flex items-start gap-4 min-w-0">
-          {vendor && (
-            <div className="hidden sm:block">
-              <VendorLogoTile vendor={vendor} />
-            </div>
-          )}
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <ShieldAlert size={16} className="text-rose-400" aria-hidden="true" />
-              <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
-              {cve.severity && (
-                <>
-                  <span className="text-rose-500/60" aria-hidden="true">·</span>
-                  <span className="font-mono text-[11px] text-rose-300">{cve.severity}</span>
-                </>
-              )}
-              {cve.credited && <CreditedChip />}
-            </div>
-            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">{cve.title}</h3>
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
-              <VendorChip vendor={cve.vendor} />
-              <span className="text-slate-500" aria-hidden="true">·</span>
-              <span className="text-slate-400">{cve.type}</span>
-              {cve.cwe && (
-                <>
-                  <span className="text-slate-600" aria-hidden="true">·</span>
-                  <span className="font-mono text-[11px] text-red-400">{cve.cwe}</span>
-                </>
-              )}
-            </div>
-          </div>
+    <div className="h-full flex flex-col rounded-xl border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_30px_rgba(244,63,94,0.10)] p-5 md:p-6">
+      {/* Header band: status label · CVE id */}
+      <div className="flex items-center justify-between gap-3 pb-3 mb-4 border-b border-rose-500/20">
+        <div className="flex items-center gap-2">
+          <ShieldAlert size={15} className="text-rose-400 shrink-0" aria-hidden="true" />
+          <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
+          {cve.credited && <CreditedChip />}
         </div>
         {cve.ref && (
-          <span className="font-mono text-base md:text-lg text-rose-300 font-bold whitespace-nowrap">
+          <span className="font-mono text-sm md:text-base text-rose-200 font-bold whitespace-nowrap">
             {cve.ref}
           </span>
         )}
       </div>
 
+      {/* Title with product mark */}
+      <div className="flex items-start gap-3">
+        {vendor && (
+          <div className="hidden sm:block">
+            <VendorLogoTile vendor={vendor} size="sm" />
+          </div>
+        )}
+        <h3 className="text-lg md:text-xl font-bold text-white leading-snug">{cve.title}</h3>
+      </div>
+
+      {/* One meta line: vendor · class · CWE · severity */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm">
+        <VendorChip vendor={cve.vendor} />
+        <span className="text-slate-400">{cve.type}</span>
+        {cve.cwe && <span className="font-mono text-[11px] text-red-400 whitespace-nowrap">{cve.cwe}</span>}
+        {cve.severity && (
+          <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{cve.severity}</span>
+        )}
+      </div>
+
+      {/* Tagline grows to fill, so link chips align across cards */}
       {(cve.tagline ?? cve.summary?.[0]) && (
-        <p className="mb-5 text-sm text-slate-300 leading-relaxed max-w-3xl">
+        <p className="mt-3 text-[13px] text-slate-300 leading-relaxed flex-1">
           {cve.tagline ?? cve.summary?.[0]}
         </p>
       )}
 
-      <RecordLinkChips d={cve} tone="rose" />
+      <div className="mt-4">
+        <RecordLinkChips d={cve} tone="rose" />
+      </div>
     </div>
   );
 }
@@ -305,10 +305,16 @@ function DisclosureHighlights() {
         <MetricTile label="Vendors" value={vendorsCount} />
       </div>
 
-      {/* Published CVE hero */}
-      {published.map((cve) => (
-        <FeaturedCveCard key={cve.title} cve={cve} />
-      ))}
+      {/* Published CVE heroes — one full-width, two-plus tiled so they stay even */}
+      {published.length > 0 && (
+        <div
+          className={`mb-8 grid gap-4 items-stretch ${published.length > 1 ? "lg:grid-cols-2" : ""}`}
+        >
+          {published.map((cve) => (
+            <FeaturedCveCard key={cve.title} cve={cve} />
+          ))}
+        </div>
+      )}
 
       {/* CVE pipeline — vendor-confirmed, IDs pending */}
       {pending.length > 0 && (

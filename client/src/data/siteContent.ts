@@ -162,21 +162,9 @@ export const HERO_STATS = [
   { value: "Secret", label: "Active security clearance" },
 ];
 
-export interface CveEntry {
-  id: string;
-  url: string;
-  label?: string; // short descriptor shown next to the id, e.g. "CVSS 7.5"
-}
-
-// Published CVEs credited to the owner, surfaced as hero chips.
-// To add another, drop in a new { id, url, label } row.
-export const CVES: CveEntry[] = [
-  {
-    id: "CVE-2026-16308",
-    url: "https://www.cve.org/CVERecord?id=CVE-2026-16308",
-    label: "CVSS 7.5",
-  },
-];
+// The homepage "CVEs Discovered" strip is derived from the disclosure ledger —
+// see PUBLISHED_CVES in @/data/offsec. Adding a `CVE published` row there is the
+// single edit that updates both the Offensive Security page and the homepage.
 
 export const ABOUT_PARAGRAPHS = [
   "I am a cybersecurity engineer with a background spanning AWS, DoD programs, and high-impact cloud modernization efforts. My focus is securing enterprise-scale systems without slowing delivery. I bring a unique combination of military discipline, technical depth, and strategic thinking to every engagement.",

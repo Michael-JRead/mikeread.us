@@ -1,4 +1,5 @@
-import { SITE_META, HERO_STATS, CVES } from "@/data/siteContent";
+import { SITE_META, HERO_STATS } from "@/data/siteContent";
+import { PUBLISHED_CVES } from "@/data/offsec";
 import { ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 import HackTheBoxIcon from "./HackTheBoxIcon";
 import ScrambleText from "./ScrambleText";
@@ -93,14 +94,14 @@ export default function HeroSection() {
               </a>
             </div>
 
-            {CVES.length > 0 && (
+            {PUBLISHED_CVES.length > 0 && (
               <div>
                 <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-slate-300 mb-3">
                   <ShieldCheck size={14} className="text-red-400" aria-hidden="true" />
-                  CVE Discovered
+                  CVEs Discovered
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {CVES.map((cve) => (
+                  {PUBLISHED_CVES.map((cve) => (
                     <a
                       key={cve.id}
                       href={cve.url}
