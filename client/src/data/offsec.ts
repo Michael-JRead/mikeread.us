@@ -120,6 +120,52 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Quarkus OIDC: cross-tenant authentication bypass via shared token-introspection cache",
+    short: "OIDC cross-tenant auth bypass via shared token-introspection cache",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-524",
+    type: "Cross-tenant authentication bypass (sensitive-cache reuse)",
+    status: "CVE published",
+    severity: "Important · CVSS 8.7",
+    ref: "CVE-2026-19625",
+    credited: true,
+    tagline:
+      "In multi-tenant Quarkus OIDC deployments, opaque access tokens are cached by token value alone — with no tenant discriminator — so a token introspected for one tenant is reused to authenticate it against another, defeating tenant isolation. Red Hat–assigned CVE, rated Important.",
+    links: [
+      { label: "CVE-2026-19625", url: "https://www.cve.org/CVERecord?id=CVE-2026-19625" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-19625" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-19625" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "Quarkus OIDC keys its token-introspection cache on the opaque token value only, with no tenant discriminator; in a multi-tenant application a token introspected under one tenant is served from cache for another, bypassing tenant isolation (scope-changed, CVSS 8.7)",
+      "Red Hat assigned CVE-2026-19625 (RHBZ#2517693) and rated it Important; the fix is a tenant-scoped cache key",
+    ],
+  },
+  {
+    title: "Quarkus spring-web: authorization bypass via URL query-string manipulation (@RequestHeader)",
+    short: "spring-web reads @RequestHeader from the URL query string (authz bypass)",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-551",
+    type: "Authorization bypass (query string parsed as a request header)",
+    status: "CVE published",
+    severity: "Important",
+    ref: "CVE-2026-19651",
+    credited: true,
+    tagline:
+      "The quarkus-spring-web compatibility layer resolves Spring @RequestHeader values from the URL query string, so an unauthenticated caller who cannot set a trusted request header can pass it as a query parameter instead — bypassing header-based authorization. Red Hat–assigned CVE, rated Important.",
+    links: [
+      { label: "CVE-2026-19651", url: "https://www.cve.org/CVERecord?id=CVE-2026-19651" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-19651" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-19651" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "quarkus-spring-web maps Spring's @RequestHeader binding such that header values are also read from the URL query string; a caller who cannot set a trusted header can instead supply it as a query parameter, defeating header-based authorization and tenant isolation",
+      "Red Hat assigned CVE-2026-19651 (RHBZ#2517694) and rated it Important (CWE-551: authorization before parsing and canonicalization)",
+    ],
+  },
+  {
     title: "Quarkus 3.38.0: reintroduced CVE-2026-50559 path-normalization authorization bypass",
     short: "Reintroduced CVE-2026-50559 path-normalization bypass in 3.38.0 GA",
     vendor: "Quarkus / Red Hat",
