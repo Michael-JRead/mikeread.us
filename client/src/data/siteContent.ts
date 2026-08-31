@@ -31,6 +31,16 @@ export interface ProjectItem {
   impact?: string;
   /** Optional extra labeled links (e.g. individual PRs) rendered as buttons. */
   links?: { label: string; url: string }[];
+  /** Release label shown as a badge, e.g. "v2.0". */
+  version?: string;
+  /** Short motto under the title, e.g. "Hunt · Collect · Organize". */
+  tagline?: string;
+  /** Path to a logo mark under client/public/assets; falls back to an icon tile. */
+  logo?: string;
+  /** Headline numbers rendered as a compact stat strip. */
+  stats?: { value: string; label: string }[];
+  /** Capability tiles — a short title and a one-line detail each. */
+  highlights?: { title: string; detail: string }[];
 }
 
 /**
@@ -322,14 +332,45 @@ export const EDUCATION: EducationItem[] = [
 export const PROJECTS: ProjectItem[] = [
   {
     title: "SecretHound",
+    version: "v2.0",
+    tagline: "Hunt · Collect · Organize",
+    logo: "/assets/secrethound.png",
     summary:
-      "An offline credential and secret analyzer for offensive-security engagements — pure local analysis with no network calls, no scanning, and no exploitation.",
+      "A pure-Python, zero-dependency, fully offline analyzer that reads the loot you already hold — dumps, potfiles, configs, and other tools' output — and points you at the credentials, hashes, tickets, and key material hiding inside.",
     description:
-      "SecretHound triages the loot you already hold during a pentest or OSCP-style engagement — other tools' output files, your own notes, Hashcat and John potfiles, SSH material, configs, databases, archives, and RDP session files — entirely offline. Fourteen analyzers (Shannon entropy, regex pattern matching, credential-pair extraction, encoded-secret decoding, SQLite triage, keyword and inventory sweeps, and more) classify every finding by severity, from CRITICAL decoded credentials and user/password pairs down to low-entropy leads, then assemble an ATTACK PATH panel that points you at the highest-value next move. It is deliberately air-gapped by design: it reads files you already have, never opens a network connection, and never attempts exploitation — making it safe to run against sensitive engagement data.",
-    tags: ["Python", "Offensive Security", "OSCP", "Credential Analysis", "DFIR", "CLI"],
+      "The tool points; you act. SecretHound reads only local files and never opens a socket — no scanning, no exploitation, no DNS — so it stays on the right side of the OSCP+ exam rules. Read the ranked ATTACK PATH panel first: the BEST NEXT ACTION is your move.",
+    stats: [
+      { value: "300+", label: "Tuned detectors" },
+      { value: "0", label: "Runtime deps" },
+      { value: "5", label: "Output formats" },
+      { value: "100%", label: "Offline" },
+    ],
+    highlights: [
+      {
+        title: "AD / Kerberos / ADCS surface",
+        detail:
+          "300+ tuned detectors — mimikatz, Rubeus, Certipy, NetExec, SharpDPAPI, BloodHound and dozens more.",
+      },
+      {
+        title: "Correlation engine",
+        detail:
+          "Chains BloodHound, Certipy, potfiles, nmap and enum4linux-ng output into one ranked attack path.",
+      },
+      {
+        title: "Loot-typed parsers",
+        detail:
+          ".kdbx, .pfx, .kirbi, .ccache, lsass dumps, ESEDB and PCAP — read directly and ranked by severity.",
+      },
+      {
+        title: "OSCP+ compliance, air-gapped",
+        detail:
+          "Every suggested step is vetted exam-legal; lab-only spoofing (Responder / relay) is flagged and excluded.",
+      },
+    ],
+    tags: ["Python", "Zero-dependency", "Active Directory", "OSCP+", "Credential Analysis", "Offline / Air-gapped", "CLI"],
     githubUrl: "https://github.com/Michael-JRead/Secrethound",
     impact:
-      "Turns scattered engagement loot into a ranked, offline attack path in a single pass — zero network exposure of sensitive data.",
+      "Turns scattered engagement loot into a single ranked attack path in one offline pass — surfacing the highest-value next move without exposing sensitive data to the network.",
   },
 ];
 

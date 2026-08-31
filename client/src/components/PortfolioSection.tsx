@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { PROJECTS, ENGAGED_PROJECTS, SITE_META, type EngagedProject } from "@/data/siteContent";
 import { VENDOR_LOGOS } from "@/components/VendorLogos";
-import { Github, ExternalLink, Zap, Boxes, ArrowRight } from "lucide-react";
+import { Github, ExternalLink, Zap, Boxes, ArrowRight, ShieldCheck } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
 
@@ -89,26 +89,82 @@ export default function PortfolioSection() {
             >
               <div className="pointer-events-none absolute top-0 right-0 h-40 w-40 -mr-20 -mt-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-20" />
               <div className="relative">
-                <div className="flex flex-wrap items-start gap-5">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-800 shadow-lg shadow-red-900/40">
-                    <Boxes size={26} className="text-white" aria-hidden="true" />
-                  </div>
+                <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+                  {project.logo ? (
+                    <div className="h-20 w-20 md:h-24 md:w-24 shrink-0 overflow-hidden rounded-2xl border border-red-500/30 bg-black shadow-lg shadow-red-900/30">
+                      <img
+                        src={project.logo}
+                        alt={`${project.title} logo`}
+                        width={640}
+                        height={640}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-800 shadow-lg shadow-red-900/40">
+                      <Boxes size={26} className="text-white" aria-hidden="true" />
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <h3 className="text-2xl font-bold text-white transition-colors group-hover:text-red-400">
                         {project.title}
                       </h3>
+                      {project.version && (
+                        <span className="inline-flex items-center rounded-md border border-red-500/40 bg-red-500/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-red-200">
+                          {project.version}
+                        </span>
+                      )}
                       <span className="inline-flex items-center rounded-md border border-red-500/30 bg-red-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-red-300">
                         Authored
                       </span>
                     </div>
-                    <p className="mt-2 text-gray-400 leading-relaxed">{project.summary}</p>
+                    {project.tagline && (
+                      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-red-300/80">
+                        {project.tagline}
+                      </p>
+                    )}
+                    <p className="mt-2.5 text-gray-400 leading-relaxed">{project.summary}</p>
                   </div>
                 </div>
 
-                <p className="mt-5 text-gray-300 leading-relaxed">{project.description}</p>
+                {project.stats && (
+                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {project.stats.map((s) => (
+                      <div
+                        key={s.label}
+                        className="rounded-lg border border-red-500/20 bg-slate-950/50 px-4 py-3 text-center"
+                      >
+                        <div className="text-2xl font-bold text-red-400">{s.value}</div>
+                        <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                          {s.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                <div className="mt-5 flex flex-wrap gap-2">
+                <p className="mt-6 text-gray-300 leading-relaxed">{project.description}</p>
+
+                {project.highlights && (
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {project.highlights.map((h) => (
+                      <div
+                        key={h.title}
+                        className="flex gap-3 rounded-lg border border-slate-700/50 bg-slate-950/40 p-4"
+                      >
+                        <ShieldCheck size={16} className="mt-0.5 shrink-0 text-red-400" aria-hidden="true" />
+                        <div>
+                          <h4 className="text-sm font-semibold text-white leading-snug">{h.title}</h4>
+                          <p className="mt-1 text-[13px] leading-relaxed text-slate-400">{h.detail}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-6 flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
@@ -135,7 +191,7 @@ export default function PortfolioSection() {
                       className="inline-flex items-center gap-2 rounded-lg border border-red-500/30 bg-slate-800 px-4 py-2 text-sm font-medium text-red-300 transition-all hover:border-red-500/60 hover:bg-slate-700"
                     >
                       <Github size={16} />
-                      Repository
+                      View on GitHub
                     </a>
                   </div>
                 )}

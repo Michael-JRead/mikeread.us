@@ -601,7 +601,7 @@ const METHOD_TRACKS: {
 
 // Tools split into what was BUILT vs OPERATED — an honest use/build distinction.
 const AUTHORED: { name: string; desc: string; url: string }[] = [
-  { name: "SecretHound", desc: "Offline credential & secret analyzer for engagement loot", url: "https://github.com/Michael-JRead/Secrethound" },
+  { name: "SecretHound", desc: "Offline, zero-dependency loot analyzer — 300+ AD/Kerberos/ADCS detectors correlate dumps, potfiles & configs into a ranked, OSCP+-legal attack path", url: "https://github.com/Michael-JRead/Secrethound" },
 ];
 const OPERATED: { group: string; tools: string[] }[] = [
   { group: "recon", tools: ["nmap", "ffuf", "gobuster", "amass", "nuclei"] },
