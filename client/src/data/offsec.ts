@@ -339,6 +339,22 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Quarkus OIDC: JWT token-type not checked on the server-less verification path (refresh token usable as a bearer token)",
+    short: "OIDC server-less path skips the JWT token-type check (refresh token → bearer)",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-287",
+    type: "Token-type confusion (refresh token accepted as a bearer token)",
+    status: "Fix in progress",
+    ref: "PR #56359",
+    url: "https://github.com/quarkusio/quarkus/pull/56359",
+    credited: true,
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "On the server-less OIDC verification path (e.g. inlined public keys), Quarkus did not check the JWT token-type claim, so a refresh token in JWT format — verifiable by the same key — could be presented and accepted as a bearer/access token",
+      'Maintainer opened fix PR #56359 (backported to 3.27 / 3.33 / 3.39), crediting me — "The issue was identified by Michael-JRead"',
+    ],
+  },
+  {
     title: "Keycloak: username enumeration via empty-password login timing (dummyHash bypassed)",
     short: "Username enumeration via empty-password login timing",
     vendor: "Keycloak",
