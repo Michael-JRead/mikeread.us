@@ -95,6 +95,29 @@ export const VENDORS: VendorInfo[] = [
 // All rows are the owner's real, externally verifiable upstream security work.
 export const DISCLOSURES: Disclosure[] = [
   {
+    title: "Quarkus Qute: server-side template injection in ReflectionValueResolver → RCE",
+    short: "Qute SSTI via ReflectionValueResolver reflection chain → RCE",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-1336",
+    type: "Server-Side Template Injection (SSTI) → remote code execution",
+    status: "CVE published",
+    severity: "High · CVSS 8.8",
+    ref: "CVE-2026-12894",
+    credited: true,
+    tagline:
+      "Qute's ReflectionValueResolver filters which methods a template may call, but the filter is escaped through a reflection chain — Enum.getDeclaringClass() hands back a Class, then getClassLoader() reaches further — turning a template expression into arbitrary code execution in the Java process. Fixed in Quarkus 3.39.2 and up; credited.",
+    links: [
+      { label: "CVE-2026-12894", url: "https://www.cve.org/CVERecord?id=CVE-2026-12894" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-12894" },
+      { label: "GHSA-prf4-p7fp-fr79", url: "https://github.com/quarkusio/quarkus/security/advisories/GHSA-prf4-p7fp-fr79" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "Qute's ReflectionValueResolver enforces a filter over which methods a template may invoke; the filter is escaped via a reflection chain — Enum.getDeclaringClass() returns a Class, then getClassLoader() and friends reach further — enabling arbitrary remote code execution in the Java process (CVSS 8.8)",
+      "Fixed in Quarkus 4.0.0 / 3.40.0 / 3.39.2 / 3.33.4 / 3.27.6; GitHub Security Advisory GHSA-prf4-p7fp-fr79 credits me (Michael-JRead)",
+    ],
+  },
+  {
     title: "Quarkus REST multipart part-header memory-exhaustion DoS",
     short: "REST multipart part-header memory-exhaustion DoS",
     vendor: "Quarkus / Red Hat",
@@ -149,20 +172,21 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-551",
     type: "Authorization bypass (query string parsed as a request header)",
     status: "CVE published",
-    severity: "Important",
+    severity: "Important · CVSS 7.4",
     ref: "CVE-2026-19651",
     credited: true,
     tagline:
-      "The quarkus-spring-web compatibility layer resolves Spring @RequestHeader values from the URL query string, so an unauthenticated caller who cannot set a trusted request header can pass it as a query parameter instead — bypassing header-based authorization. Red Hat–assigned CVE, rated Important.",
+      "The quarkus-spring-web compatibility layer resolves Spring @RequestHeader values from the URL query string, so an unauthenticated caller who cannot set a trusted request header can pass it as a query parameter instead — bypassing header-based authorization. Fixed in Quarkus 3.39.2 and up; credited.",
     links: [
       { label: "CVE-2026-19651", url: "https://www.cve.org/CVERecord?id=CVE-2026-19651" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-19651" },
       { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-19651" },
+      { label: "GHSA-vv4c-mhvm-c6gv", url: "https://github.com/quarkusio/quarkus/security/advisories/GHSA-vv4c-mhvm-c6gv" },
     ],
     summary: [
       "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
-      "quarkus-spring-web maps Spring's @RequestHeader binding such that header values are also read from the URL query string; a caller who cannot set a trusted header can instead supply it as a query parameter, defeating header-based authorization and tenant isolation",
-      "Red Hat assigned CVE-2026-19651 (RHBZ#2517694) and rated it Important (CWE-551: authorization before parsing and canonicalization)",
+      "quarkus-spring-web maps Spring's @RequestHeader binding such that header values are also read from the URL query string; a caller who cannot set a trusted header can instead supply it as a query parameter, defeating header-based authorization and tenant isolation (CVSS 7.4)",
+      "Red Hat assigned CVE-2026-19651 (RHBZ#2517694, CWE-551) rated Important; fixed in Quarkus 4.0.0 / 3.40.0 / 3.39.2 / 3.33.4 / 3.27.6, and the GitHub Security Advisory GHSA-vv4c-mhvm-c6gv credits me (Michael-JRead)",
     ],
   },
   {
