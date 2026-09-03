@@ -109,6 +109,7 @@ export const DISCLOSURES: Disclosure[] = [
     links: [
       { label: "CVE-2026-12894", url: "https://www.cve.org/CVERecord?id=CVE-2026-12894" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-12894" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-12894" },
       { label: "GHSA-prf4-p7fp-fr79", url: "https://github.com/quarkusio/quarkus/security/advisories/GHSA-prf4-p7fp-fr79" },
     ],
     summary: [
@@ -133,6 +134,7 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "CVE-2026-16308", url: "https://www.cve.org/CVERecord?id=CVE-2026-16308" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-16308" },
       { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-16308" },
+      { label: "GHSA-g8rv-gp9f-q875", url: "https://github.com/advisories/GHSA-g8rv-gp9f-q875" },
       { label: "RHSA-2026:47189", url: "https://access.redhat.com/errata/RHSA-2026:47189" },
       { label: "IBM", url: "https://www.ibm.com/support/pages/security-bulletin-ibm-enterprise-build-quarkus-affected-dos-vulnerability" },
     ],
