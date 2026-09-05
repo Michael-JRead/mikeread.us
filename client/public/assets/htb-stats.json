@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-09-04T13:30:53.656Z",
-  "generatedAt": "2026-09-04T13:30:53.656Z",
-  "commit": "612d055",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/33878471742",
+  "fetchedAt": "2026-09-05T12:40:46.781Z",
+  "generatedAt": "2026-09-05T12:40:46.781Z",
+  "commit": "2141353",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/33966710409",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 448,
+    "ranking": 451,
     "points": 673,
     "user_owns": 49,
     "system_owns": 49,
@@ -25,7 +25,7 @@
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 851
+    "total": 852
   },
   "challengeCategories": [
     {
@@ -55,8 +55,8 @@
     {
       "name": "Misc",
       "solved": 31,
-      "total": 59,
-      "percentage": 53
+      "total": 60,
+      "percentage": 52
     },
     {
       "name": "Forensics",
