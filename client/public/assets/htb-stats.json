@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-09-11T13:32:49.074Z",
-  "generatedAt": "2026-09-11T13:32:49.074Z",
-  "commit": "ee88f4e",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/34604898293",
+  "fetchedAt": "2026-09-12T12:50:00.246Z",
+  "generatedAt": "2026-09-12T12:50:00.246Z",
+  "commit": "0a91aaf",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/34694742394",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 480,
+    "ranking": 502,
     "points": 529,
     "user_owns": 49,
     "system_owns": 49,
@@ -18,14 +18,14 @@
     "team": "SystemZero",
     "current_rank_progress": 0,
     "next_rank": "Elite Hacker",
-    "next_rank_points": 28.987,
-    "rank_ownership": 41.41,
+    "next_rank_points": 27.972,
+    "rank_ownership": 39.96,
     "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 852
+    "total": 853
   },
   "challengeCategories": [
     {
@@ -67,8 +67,8 @@
     {
       "name": "Mobile",
       "solved": 6,
-      "total": 23,
-      "percentage": 26
+      "total": 24,
+      "percentage": 25
     },
     {
       "name": "OSINT",
