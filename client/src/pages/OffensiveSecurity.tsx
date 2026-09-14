@@ -161,7 +161,16 @@ function VendorLogoTile({
       className={`${tile} shrink-0 flex items-center justify-center border border-slate-700/60 bg-slate-950/80`}
       aria-hidden="true"
     >
-      {Logo && <Logo className={mark} style={{ color: vendor.brand }} />}
+      {Logo ? (
+        <Logo className={mark} style={{ color: vendor.brand }} />
+      ) : (
+        <span
+          className={`font-mono font-bold ${size === "md" ? "text-base" : "text-[11px]"}`}
+          style={{ color: vendor.brand }}
+        >
+          {vendor.name.slice(0, 2).toUpperCase()}
+        </span>
+      )}
     </div>
   );
 }

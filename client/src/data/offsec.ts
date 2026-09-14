@@ -90,6 +90,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The open-source identity and access management platform behind Red Hat SSO.",
     brand: "#4D4D4D",
   },
+  {
+    key: "netty",
+    match: "Netty",
+    name: "Netty",
+    org: "Netty project",
+    blurb: "The asynchronous event-driven network framework underneath much of the JVM ecosystem.",
+    brand: "#A3B8CC",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -228,6 +236,29 @@ export const DISCLOSURES: Disclosure[] = [
       "Discovered and responsibly disclosed privately to the Apache ActiveMQ security team",
       "A remote client could issue Core channel-1 CREATE_QUEUE to create durable queues and addresses with no authentication or authorization check (CWE-306 / CWE-862)",
       "Apache assigned CVE-2026-49362; unauthorized broker-state manipulation with a denial-of-service impact",
+    ],
+  },
+  {
+    title: "Netty: incomplete validation of malformed Transfer-Encoding enables HTTP request smuggling",
+    short: "Malformed Transfer-Encoding validation gap → HTTP request smuggling",
+    vendor: "Netty",
+    cwe: "CWE-444",
+    type: "HTTP request smuggling (inconsistent interpretation of requests)",
+    status: "CVE published",
+    severity: "Moderate · CVSS 6.5",
+    ref: "CVE-2026-89044",
+    credited: true,
+    tagline:
+      "Netty's HTTP/1 decoder validated Transfer-Encoding by suffix-matching the raw header value instead of parsing the coding list, so variants such as \"chunked, xchunked\" or a multi-line header slipped past the rejection rule — desynchronising a front-end/back-end pair into request smuggling. Fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "CVE-2026-89044", url: "https://www.cve.org/CVERecord?id=CVE-2026-89044" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-89044" },
+      { label: "GHSA-hcvj-94mj-jp5c", url: "https://github.com/netty/netty/security/advisories/GHSA-hcvj-94mj-jp5c" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "The HTTP/1 decoder accepted malformed Transfer-Encoding headers in which \"chunked\" was present but not the final transfer coding, because validation suffix-matched the raw header value rather than parsing the coding list — enabling request smuggling in parser-differential deployments (CVSS 6.5)",
+      "Fixed in netty-codec-http 4.1.138.Final and 4.2.18.Final; advisory GHSA-hcvj-94mj-jp5c credits me as a reporter, alongside other researchers who independently reported the same issue",
     ],
   },
   {
