@@ -95,30 +95,6 @@ export const VENDORS: VendorInfo[] = [
 // All rows are the owner's real, externally verifiable upstream security work.
 export const DISCLOSURES: Disclosure[] = [
   {
-    title: "Quarkus Qute: server-side template injection in ReflectionValueResolver → RCE",
-    short: "Qute SSTI via ReflectionValueResolver reflection chain → RCE",
-    vendor: "Quarkus / Red Hat",
-    cwe: "CWE-1336",
-    type: "Server-Side Template Injection (SSTI) → remote code execution",
-    status: "CVE published",
-    severity: "High · CVSS 8.8",
-    ref: "CVE-2026-12894",
-    credited: true,
-    tagline:
-      "Qute's ReflectionValueResolver filters which methods a template may call, but the filter is escaped through a reflection chain — Enum.getDeclaringClass() hands back a Class, then getClassLoader() reaches further — turning a template expression into arbitrary code execution in the Java process. Fixed in Quarkus 3.39.2 and up; credited.",
-    links: [
-      { label: "CVE-2026-12894", url: "https://www.cve.org/CVERecord?id=CVE-2026-12894" },
-      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-12894" },
-      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-12894" },
-      { label: "GHSA-prf4-p7fp-fr79", url: "https://github.com/quarkusio/quarkus/security/advisories/GHSA-prf4-p7fp-fr79" },
-    ],
-    summary: [
-      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
-      "Qute's ReflectionValueResolver enforces a filter over which methods a template may invoke; the filter is escaped via a reflection chain — Enum.getDeclaringClass() returns a Class, then getClassLoader() and friends reach further — enabling arbitrary remote code execution in the Java process (CVSS 8.8)",
-      "Fixed in Quarkus 4.0.0 / 3.40.0 / 3.39.2 / 3.33.4 / 3.27.6; GitHub Security Advisory GHSA-prf4-p7fp-fr79 credits me (Michael-JRead)",
-    ],
-  },
-  {
     title: "Quarkus REST multipart part-header memory-exhaustion DoS",
     short: "REST multipart part-header memory-exhaustion DoS",
     vendor: "Quarkus / Red Hat",
@@ -189,6 +165,69 @@ export const DISCLOSURES: Disclosure[] = [
       "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
       "quarkus-spring-web maps Spring's @RequestHeader binding such that header values are also read from the URL query string; a caller who cannot set a trusted header can instead supply it as a query parameter, defeating header-based authorization and tenant isolation (CVSS 7.4)",
       "Red Hat assigned CVE-2026-19651 (RHBZ#2517694, CWE-551) rated Important; fixed in Quarkus 4.0.0 / 3.40.0 / 3.39.2 / 3.33.4 / 3.27.6, and the GitHub Security Advisory GHSA-vv4c-mhvm-c6gv credits me (Michael-JRead)",
+    ],
+  },
+  {
+    title: "Apache ActiveMQ Artemis: JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
+    short: "JMS/Core message-selector LIKE ReDoS (super-linear CPU DoS)",
+    vendor: "Apache ActiveMQ Artemis",
+    cwe: "CWE-1333",
+    type: "Regular-expression denial of service (algorithmic complexity)",
+    status: "CVE published",
+    ref: "CVE-2026-75880",
+    credited: true,
+    tagline:
+      "The SQL92 LIKE operator in the JMS/Core message-selector engine compiled to a backtracking Java regex, so an authenticated client attaching a consumer with a crafted wildcard selector drove super-linear CPU per delivered message and occupied a shared broker thread. Fixed by the Artemis PMC with wildcard caps in the selector compiler.",
+    links: [
+      { label: "CVE-2026-75880", url: "https://www.cve.org/CVERecord?id=CVE-2026-75880" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-75880" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache ActiveMQ security team",
+      "An authenticated client could attach a consumer whose selector used crafted wildcards, causing excessive evaluation during message delivery and occupying a shared broker thread",
+      "Accepted by the Artemis PMC, who authored the fix in ComparisonExpression (wildcard caps) and assigned CVE-2026-75880",
+    ],
+  },
+  {
+    title: "Apache ActiveMQ Artemis: Java deserialization via message-based management parameter processing",
+    short: "Java deserialization via message-based management requests",
+    vendor: "Apache ActiveMQ Artemis",
+    cwe: "CWE-502",
+    type: "Deserialization of untrusted data",
+    status: "CVE published",
+    ref: "CVE-2026-57822",
+    credited: true,
+    tagline:
+      "When the broker processes management-via-messaging requests, parameter processing triggers Java deserialization of a client-supplied object — reachable by a messaging client holding MANAGE permission. Reported after tracing the deserialization ahead of the per-operation management check.",
+    links: [
+      { label: "CVE-2026-57822", url: "https://www.cve.org/CVERecord?id=CVE-2026-57822" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-57822" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache ActiveMQ security team",
+      "Artemis deserialized an untrusted, client-supplied object out of a management message during parameter processing on the management-via-messaging path",
+      "Apache assigned CVE-2026-57822, scoping the affected path to clients authorized with MANAGE permission",
+    ],
+  },
+  {
+    title: "Apache ActiveMQ Artemis: unauthenticated durable-queue creation over the Core protocol",
+    short: "Unauthenticated durable-queue creation via the Core protocol",
+    vendor: "Apache ActiveMQ Artemis",
+    cwe: "CWE-306",
+    type: "Missing authentication / authorization for a critical function",
+    status: "CVE published",
+    ref: "CVE-2026-49362",
+    credited: true,
+    tagline:
+      "An unauthenticated remote attacker could create arbitrary durable queues through the Core protocol, manipulating broker state and opening a denial-of-service path — the CREATE_QUEUE packet was handled on channel 1 before authentication and authorization were enforced.",
+    links: [
+      { label: "CVE-2026-49362", url: "https://www.cve.org/CVERecord?id=CVE-2026-49362" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-49362" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache ActiveMQ security team",
+      "A remote client could issue Core channel-1 CREATE_QUEUE to create durable queues and addresses with no authentication or authorization check (CWE-306 / CWE-862)",
+      "Apache assigned CVE-2026-49362; unauthorized broker-state manipulation with a denial-of-service impact",
     ],
   },
   {
