@@ -249,7 +249,7 @@ export const DISCLOSURES: Disclosure[] = [
     ref: "CVE-2026-89044",
     credited: true,
     tagline:
-      "Netty's HTTP/1 decoder validated Transfer-Encoding by suffix-matching the raw header value instead of parsing the coding list, so variants such as \"chunked, xchunked\" or a multi-line header slipped past the rejection rule — desynchronising a front-end/back-end pair into request smuggling. Fixed in 4.1.138.Final and 4.2.18.Final.",
+      "Netty's HTTP/1 decoder validated Transfer-Encoding by suffix-matching the raw header value instead of parsing the coding list, so variants such as \"chunked, xchunked\" or a multi-line header slipped past the rejection rule — desynchronising a front-end/back-end pair into request smuggling. Fixed in 4.1.138.Final and 4.2.18.Final; credited.",
     links: [
       { label: "CVE-2026-89044", url: "https://www.cve.org/CVERecord?id=CVE-2026-89044" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-89044" },
@@ -258,7 +258,7 @@ export const DISCLOSURES: Disclosure[] = [
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "The HTTP/1 decoder accepted malformed Transfer-Encoding headers in which \"chunked\" was present but not the final transfer coding, because validation suffix-matched the raw header value rather than parsing the coding list — enabling request smuggling in parser-differential deployments (CVSS 6.5)",
-      "Fixed in netty-codec-http 4.1.138.Final and 4.2.18.Final; advisory GHSA-hcvj-94mj-jp5c credits me as a reporter, alongside other researchers who independently reported the same issue",
+      "Fixed in netty-codec-http 4.1.138.Final and 4.2.18.Final; advisory GHSA-hcvj-94mj-jp5c credits me as a reporter",
     ],
   },
   {
