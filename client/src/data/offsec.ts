@@ -262,6 +262,53 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Quarkus websockets-next: unbounded inbound message buffering enables a single-connection heap-exhaustion DoS",
+    short: "websockets-next unbounded message buffering → single-connection OOM DoS",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-770",
+    type: "Uncontrolled resource consumption (unauthenticated DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "CVE-2026-87742",
+    credited: true,
+    tagline:
+      "A @WebSocket endpoint on the documented default execution model buffers inbound messages with no bound and never applies read backpressure, so one connection streaming faster than the handler drains exhausts the JVM heap. Fixed by bounding the per-connection processing queue; credited.",
+    links: [
+      { label: "CVE-2026-87742", url: "https://www.cve.org/CVERecord?id=CVE-2026-87742" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-87742" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-87742" },
+      { label: "GHSA-g4x4-8j33-p4h3", url: "https://github.com/advisories/GHSA-g4x4-8j33-p4h3" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "A remote attacker streaming messages over a single connection faster than the application can process them exhausts the heap: the per-connection processing path buffers without bound and never engages read backpressure, so the event loop keeps reading at network speed until OutOfMemoryError (CVSS 7.5)",
+      "Reproduced end to end against Quarkus 3.39.1 under default configuration — one unauthenticated connection reached OutOfMemoryError in roughly three seconds",
+    ],
+  },
+  {
+    title: "Quarkus HTTP security: authorization bypass via path-normalization discrepancy in quarkus-vertx-http",
+    short: "Path-normalization discrepancy in HTTP security → authorization bypass",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-863",
+    type: "Authorization bypass (path-normalization discrepancy)",
+    status: "CVE published",
+    severity: "High",
+    ref: "CVE-2026-87743",
+    credited: true,
+    tagline:
+      "Quarkus HTTP security normalizes a request path differently from the layer that routes it, so a crafted path slips past a path-based authorization policy while still resolving to the protected resource. Reported against the current GA as an incomplete fix of the earlier path-normalization bypass; credited.",
+    links: [
+      { label: "CVE-2026-87743", url: "https://www.cve.org/CVERecord?id=CVE-2026-87743" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-87743" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-87743" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "The security layer and the routing layer disagree on how a request path normalizes, so a crafted path evades an HTTP path-based authorization policy while still reaching the endpoint it protects",
+      "Reported against the current GA release as an incomplete fix of the earlier path-normalization bypass; the vendor confirmed it and issued a new advisory crediting me",
+    ],
+  },
+  {
     title: "Quarkus 3.38.0: reintroduced CVE-2026-50559 path-normalization authorization bypass",
     short: "Reintroduced CVE-2026-50559 path-normalization bypass in 3.38.0 GA",
     vendor: "Quarkus / Red Hat",
