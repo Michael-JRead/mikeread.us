@@ -290,11 +290,13 @@ export const DISCLOSURES: Disclosure[] = [
     type: "Missing release of resource after effective lifetime (memory leak)",
     status: "CVE published",
     severity: "High · CVSS 7.5",
-    ref: "GHSA-ghg5-c4jg-8q5j",
+    ref: "CVE-2026-93494",
     credited: true,
     tagline:
       "Once a STOMP frame's declared content-length is satisfied, the decoder parks an allocator buffer in an instance field to await the single NUL byte that ends the frame. If that byte never arrives nothing releases it, so a peer leaks one buffer per connection — reclaimed by neither GC nor disconnect. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
+      { label: "CVE-2026-93494", url: "https://www.cve.org/CVERecord?id=CVE-2026-93494" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93494" },
       { label: "GHSA-ghg5-c4jg-8q5j", url: "https://github.com/netty/netty/security/advisories/GHSA-ghg5-c4jg-8q5j" },
     ],
     summary: [
@@ -311,11 +313,13 @@ export const DISCLOSURES: Disclosure[] = [
     type: "Uncontrolled resource consumption (malicious-server DoS)",
     status: "CVE published",
     severity: "High · CVSS 7.5",
-    ref: "GHSA-pq4x-537v-r54q",
+    ref: "CVE-2026-93563",
     credited: true,
     tagline:
       "SmtpResponseDecoder collects multi-line SMTP response detail lines into a list with no size or count limit, so a malicious or compromised server can stream continuation lines indefinitely while withholding the final line and exhaust the client's heap. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
+      { label: "CVE-2026-93563", url: "https://www.cve.org/CVERecord?id=CVE-2026-93563" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93563" },
       { label: "GHSA-pq4x-537v-r54q", url: "https://github.com/netty/netty/security/advisories/GHSA-pq4x-537v-r54q" },
     ],
     summary: [
@@ -342,6 +346,29 @@ export const DISCLOSURES: Disclosure[] = [
       "Reported to the Netty project under coordinated disclosure",
       "The flatten-aware release helper on the malformed-TLV error path does not reach TLVs nested inside child SSL TLVs, so each crafted connection pins pooled ByteBufs that are never returned to the allocator (CVSS 5.3)",
       "Identified as an incomplete fix of the project's earlier reference-leak patch; affects netty-codec-haproxy through 4.1.137.Final and 4.2.17.Final, fixed in 4.1.138.Final and 4.2.18.Final",
+    ],
+  },
+  {
+    title: "Netty: resource exhaustion in MqttDecoder via unvalidated Properties Length",
+    short: "MqttDecoder resource exhaustion via unvalidated Properties Length",
+    vendor: "Netty",
+    cwe: "CWE-400",
+    type: "Uncontrolled resource consumption — incomplete-fix report",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "CVE-2026-93575",
+    credited: true,
+    tagline:
+      "The MQTT decoder validates a packet's Remaining Length against the configured size limits but never checks the Properties Length against it. A packet declaring a small Remaining Length and an enormous Properties Length drives the decoder to buffer and re-parse huge property data, exhausting memory and CPU. Reported as an incomplete fix of CVE-2026-44248; fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "CVE-2026-93575", url: "https://www.cve.org/CVERecord?id=CVE-2026-93575" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93575" },
+      { label: "GHSA-jqf3-r9ww-c5x8", url: "https://github.com/netty/netty/security/advisories/GHSA-jqf3-r9ww-c5x8" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "Size limits are enforced only against the packet's Remaining Length, so an attacker-declared Properties Length far larger than it is accepted and parsed; because the decoder replays on incomplete input, the oversized section is re-parsed repeatedly, burning CPU as well as heap (CVSS 7.5)",
+      "Identified as an incomplete fix of CVE-2026-44248; affects netty-codec-mqtt through 4.1.137.Final and 4.2.17.Final, fixed in 4.1.138.Final and 4.2.18.Final",
     ],
   },
   {
