@@ -269,16 +269,19 @@ export const DISCLOSURES: Disclosure[] = [
     type: "Uncontrolled resource consumption (unauthenticated DoS)",
     status: "CVE published",
     severity: "High",
-    ref: "GHSA-pvjx-v7vp-62vq",
+    ref: "CVE-2026-93491",
     credited: true,
     tagline:
       "HttpServerCodec packs the first 32 pipelined request methods into a single long, then spills every one after that into an unbounded queue. A client that pipelines requests while withholding reads on its own end grows that queue without limit, driving unbounded heap growth. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
+      { label: "CVE-2026-93491", url: "https://www.cve.org/CVERecord?id=CVE-2026-93491" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93491" },
       { label: "GHSA-pvjx-v7vp-62vq", url: "https://github.com/netty/netty/security/advisories/GHSA-pvjx-v7vp-62vq" },
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "The per-connection method-tracking overflow queue in HttpServerCodec has no cap, so an unauthenticated client pipelining HTTP/1.1 requests faster than it reads responses grows it without bound until the heap is exhausted",
+      "The same defect class had already been fixed weeks earlier in the sibling HttpContentEncoder (CVE-2026-59899), which gained a maxPipelineDepth cap; HttpServerCodec — the codec essentially every Netty HTTP/1.1 server uses — never received the equivalent bound",
       "Affects netty-codec-http through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
     ],
   },
@@ -335,11 +338,13 @@ export const DISCLOSURES: Disclosure[] = [
     type: "Missing release of resource (reference-count leak) — incomplete-fix report",
     status: "CVE published",
     severity: "Moderate · CVSS 5.3",
-    ref: "GHSA-j58c-g352-8h4p",
+    ref: "CVE-2026-93564",
     credited: true,
     tagline:
       "When PROXY-protocol v2 parsing hits a malformed sibling TLV after a nested SSL TLV, the error path releases only the top level of a tree-shaped TLV list. Grandchild TLVs stay pinned, so repeated crafted connections exhaust pooled memory. Reported as an incomplete fix of the earlier patch; fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
+      { label: "CVE-2026-93564", url: "https://www.cve.org/CVERecord?id=CVE-2026-93564" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93564" },
       { label: "GHSA-j58c-g352-8h4p", url: "https://github.com/netty/netty/security/advisories/GHSA-j58c-g352-8h4p" },
     ],
     summary: [
