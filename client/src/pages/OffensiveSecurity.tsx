@@ -63,6 +63,10 @@ function statusBadgeClass(status: DisclosureStatus): string {
   }
 }
 
+// How many published findings lead the section as full hero cards; everything
+// beyond this renders as a one-line record so the section scales with the ledger.
+const HERO_CVE_COUNT = 4;
+
 // Narrative order inside a vendor panel: headline CVEs first, then in-flight
 // confirmations, then the merged pile, then remaining work-in-progress.
 const STATUS_RANK: Record<DisclosureStatus, number> = {
@@ -286,9 +290,54 @@ function MetricTile({
   );
 }
 
+// Numeric weight for ordering published findings by how serious they are: use the
+// CVSS score when the row carries one, otherwise rank the vendor's severity word.
+function severityWeight(d: Disclosure): number {
+  const m = d.severity?.match(/CVSS\s+([\d.]+)/i);
+  if (m) return parseFloat(m[1]);
+  const s = (d.severity ?? "").toLowerCase();
+  if (s.includes("critical")) return 9.5;
+  if (s.includes("high") || s.includes("important")) return 7.4;
+  if (s.includes("moderate") || s.includes("medium")) return 5.4;
+  if (s.includes("low")) return 3;
+  return 0;
+}
+
+/** One published finding in the compact record table under the heroes. */
+function PublishedRecordRow({ d }: { d: Disclosure }) {
+  return (
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-b border-slate-800/70 last:border-0 hover:bg-slate-900/40 transition-colors">
+      <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap shrink-0">
+        {d.ref}
+      </span>
+      <span className="flex-1 min-w-[15rem] text-sm font-medium leading-snug text-white">
+        {d.short ?? d.title}
+      </span>
+      <div className="flex flex-wrap items-center gap-2 ml-auto">
+        <VendorChip vendor={d.vendor} />
+        {d.cwe && <span className="font-mono text-[11px] text-red-400/90 whitespace-nowrap">{d.cwe}</span>}
+        {d.severity && (
+          <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{d.severity}</span>
+        )}
+        {d.credited && <CreditedChip />}
+        <RecordLinkChips d={d} max={2} />
+      </div>
+    </li>
+  );
+}
+
 /** Section 01 — metrics, the published-CVE hero, and the pending-CVE pipeline. */
 function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
+  // Lead with the most severe findings as full cards; the rest stay one-line records,
+  // so the section scales as the ledger grows instead of becoming a wall of cards.
+  const ranked = [...published].sort(
+    (a, b) =>
+      severityWeight(b) - severityWeight(a) ||
+      recordLinks(b).length - recordLinks(a).length,
+  );
+  const heroes = ranked.slice(0, HERO_CVE_COUNT);
+  const restRecords = ranked.slice(HERO_CVE_COUNT);
   const pending = DISCLOSURES.filter((d) => d.status === "Confirmed — CVE pending");
   const merged = DISCLOSURES.filter((d) => d.status === "Merged").length;
   const vendorsCount = new Set(DISCLOSURES.map((d) => d.vendor)).size;
@@ -315,13 +364,28 @@ function DisclosureHighlights() {
       </div>
 
       {/* Published CVE heroes — one full-width, two-plus tiled so they stay even */}
-      {published.length > 0 && (
+      {heroes.length > 0 && (
         <div
-          className={`mb-8 grid gap-4 items-stretch ${published.length > 1 ? "lg:grid-cols-2" : ""}`}
+          className={`mb-8 grid gap-4 items-stretch ${heroes.length > 1 ? "lg:grid-cols-2" : ""}`}
         >
-          {published.map((cve) => (
+          {heroes.map((cve) => (
             <FeaturedCveCard key={cve.title} cve={cve} />
           ))}
+        </div>
+      )}
+
+      {/* Every remaining published record, one scannable line each */}
+      {restRecords.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+            <span className="font-bold text-rose-400">{restRecords.length}</span>
+            <span>more published {restRecords.length === 1 ? "record" : "records"}</span>
+          </div>
+          <ul className="rounded-lg border border-rose-500/20 bg-slate-950/40 backdrop-blur-sm overflow-hidden">
+            {restRecords.map((d) => (
+              <PublishedRecordRow key={d.title} d={d} />
+            ))}
+          </ul>
         </div>
       )}
 

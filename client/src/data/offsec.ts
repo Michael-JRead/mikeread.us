@@ -262,6 +262,89 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Netty: unbounded per-connection queue growth in HttpServerCodec via HTTP/1.1 pipelining",
+    short: "HttpServerCodec unbounded per-connection queue via HTTP/1.1 pipelining",
+    vendor: "Netty",
+    cwe: "CWE-770",
+    type: "Uncontrolled resource consumption (unauthenticated DoS)",
+    status: "CVE published",
+    severity: "High",
+    ref: "GHSA-pvjx-v7vp-62vq",
+    credited: true,
+    tagline:
+      "HttpServerCodec packs the first 32 pipelined request methods into a single long, then spills every one after that into an unbounded queue. A client that pipelines requests while withholding reads on its own end grows that queue without limit, driving unbounded heap growth. Fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "GHSA-pvjx-v7vp-62vq", url: "https://github.com/netty/netty/security/advisories/GHSA-pvjx-v7vp-62vq" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "The per-connection method-tracking overflow queue in HttpServerCodec has no cap, so an unauthenticated client pipelining HTTP/1.1 requests faster than it reads responses grows it without bound until the heap is exhausted",
+      "Affects netty-codec-http through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
+    ],
+  },
+  {
+    title: "Netty: ByteBuf leak in StompSubframeDecoder when a frame body is never terminated",
+    short: "StompSubframeDecoder ByteBuf leak on unterminated frame body",
+    vendor: "Netty",
+    cwe: "CWE-772",
+    type: "Missing release of resource after effective lifetime (memory leak)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "GHSA-ghg5-c4jg-8q5j",
+    credited: true,
+    tagline:
+      "Once a STOMP frame's declared content-length is satisfied, the decoder parks an allocator buffer in an instance field to await the single NUL byte that ends the frame. If that byte never arrives nothing releases it, so a peer leaks one buffer per connection — reclaimed by neither GC nor disconnect. Fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "GHSA-ghg5-c4jg-8q5j", url: "https://github.com/netty/netty/security/advisories/GHSA-ghg5-c4jg-8q5j" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "A remote peer that sends a complete, well-formed STOMP body but omits its terminating NUL byte pins one allocator buffer per connection, with no path that ever releases it (CVSS 7.5)",
+      "Affects netty-codec-stomp through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
+    ],
+  },
+  {
+    title: "Netty: unbounded multi-line response accumulation in SmtpResponseDecoder",
+    short: "SmtpResponseDecoder unbounded multi-line accumulation → memory exhaustion",
+    vendor: "Netty",
+    cwe: "CWE-400 / CWE-770",
+    type: "Uncontrolled resource consumption (malicious-server DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "GHSA-pq4x-537v-r54q",
+    credited: true,
+    tagline:
+      "SmtpResponseDecoder collects multi-line SMTP response detail lines into a list with no size or count limit, so a malicious or compromised server can stream continuation lines indefinitely while withholding the final line and exhaust the client's heap. Fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "GHSA-pq4x-537v-r54q", url: "https://github.com/netty/netty/security/advisories/GHSA-pq4x-537v-r54q" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "The multi-line response accumulator is unbounded in both line count and total size, so the server side of an SMTP conversation can drive the client to OutOfMemoryError simply by never terminating the response (CVSS 7.5)",
+      "Affects netty-codec-smtp 4.1.0–4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
+    ],
+  },
+  {
+    title: "Netty: HAProxy PROXY-v2 nested-TLV grandchild ByteBuf reference-count leak",
+    short: "HAProxy PROXY-v2 nested-TLV grandchild ByteBuf leak (incomplete fix)",
+    vendor: "Netty",
+    type: "Missing release of resource (reference-count leak) — incomplete-fix report",
+    status: "CVE published",
+    severity: "Moderate · CVSS 5.3",
+    ref: "GHSA-j58c-g352-8h4p",
+    credited: true,
+    tagline:
+      "When PROXY-protocol v2 parsing hits a malformed sibling TLV after a nested SSL TLV, the error path releases only the top level of a tree-shaped TLV list. Grandchild TLVs stay pinned, so repeated crafted connections exhaust pooled memory. Reported as an incomplete fix of the earlier patch; fixed in 4.1.138.Final and 4.2.18.Final.",
+    links: [
+      { label: "GHSA-j58c-g352-8h4p", url: "https://github.com/netty/netty/security/advisories/GHSA-j58c-g352-8h4p" },
+    ],
+    summary: [
+      "Reported to the Netty project under coordinated disclosure",
+      "The flatten-aware release helper on the malformed-TLV error path does not reach TLVs nested inside child SSL TLVs, so each crafted connection pins pooled ByteBufs that are never returned to the allocator (CVSS 5.3)",
+      "Identified as an incomplete fix of the project's earlier reference-leak patch; affects netty-codec-haproxy through 4.1.137.Final and 4.2.17.Final, fixed in 4.1.138.Final and 4.2.18.Final",
+    ],
+  },
+  {
     title: "Quarkus websockets-next: unbounded inbound message buffering enables a single-connection heap-exhaustion DoS",
     short: "websockets-next unbounded message buffering → single-connection OOM DoS",
     vendor: "Quarkus / Red Hat",
