@@ -426,6 +426,30 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title: "Quarkus Qute: {#eval} drops the parent template's content type, disabling output escaping",
+    short: "Qute {#eval} drops the content type → escaping bypass (XSS / JSON injection)",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-79",
+    type: "Cross-site scripting / injection via output-escaping bypass",
+    status: "CVE published",
+    severity: "Moderate · CVSS 6.1",
+    ref: "CVE-2026-93432",
+    credited: true,
+    tagline:
+      "When the {#eval} section helper renders a sub-template it fails to pass along the parent template's content type, so Qute's default HTML and JSON escaping never applies and untrusted data is emitted raw — reaching cross-site scripting and JSON injection. Its own sibling str:eval preserves the content type correctly.",
+    links: [
+      { label: "CVE-2026-93432", url: "https://www.cve.org/CVERecord?id=CVE-2026-93432" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93432" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-93432" },
+      { label: "GHSA-6wxq-x76c-fqrf", url: "https://github.com/advisories/GHSA-6wxq-x76c-fqrf" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
+      "The {#eval} section helper does not propagate the parent template's content type to the sub-template it renders, so the engine applies no output encoding and untrusted input is written as raw text (CVSS 6.1)",
+      "Found by comparing {#eval} against its sibling str:eval, which preserves the content type correctly — the asymmetry between the two is what exposed the bug",
+    ],
+  },
+  {
     title: "Quarkus 3.38.0: reintroduced CVE-2026-50559 path-normalization authorization bypass",
     short: "Reintroduced CVE-2026-50559 path-normalization bypass in 3.38.0 GA",
     vendor: "Quarkus / Red Hat",
