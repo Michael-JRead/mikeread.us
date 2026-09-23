@@ -98,6 +98,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The asynchronous event-driven network framework underneath much of the JVM ecosystem.",
     brand: "#A3B8CC",
   },
+  {
+    key: "tomcat",
+    match: "Apache Tomcat",
+    name: "Apache Tomcat",
+    org: "Apache Software Foundation",
+    blurb: "The most widely deployed Java servlet container and web server.",
+    brand: "#F8DC75",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -447,6 +455,28 @@ export const DISCLOSURES: Disclosure[] = [
       "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
       "The {#eval} section helper does not propagate the parent template's content type to the sub-template it renders, so the engine applies no output encoding and untrusted input is written as raw text (CVSS 6.1)",
       "Found by comparing {#eval} against its sibling str:eval, which preserves the content type correctly — the asymmetry between the two is what exposed the bug",
+    ],
+  },
+  {
+    title: "Apache Tomcat: OCSP certStatus=UNKNOWN accepted for client-cert auth even with ocspSoftFail=false",
+    short: "OCSP certStatus=UNKNOWN accepted for client-cert auth despite soft-fail being disabled",
+    vendor: "Apache Tomcat",
+    cwe: "CWE-299",
+    type: "Improper check for certificate revocation — incomplete-fix report",
+    status: "CVE published",
+    ref: "CVE-2026-86248",
+    credited: true,
+    tagline:
+      "In the OpenSSL-FFM connector, a signed OCSP response carrying certStatus=UNKNOWN was accepted for client-certificate authentication even with ocspSoftFail=false — the setting whose entire purpose is to refuse a certificate whose revocation status cannot be established. Reported as a residual of the CVE-2026-34500 soft-fail fix.",
+    links: [
+      { label: "CVE-2026-86248", url: "https://www.cve.org/CVERecord?id=CVE-2026-86248" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-86248" },
+      { label: "GHSA-c47j-g3rg-hrfq", url: "https://github.com/advisories/GHSA-c47j-g3rg-hrfq" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache Tomcat security team",
+      "With ocspSoftFail=false, an UNKNOWN OCSP verdict should fail the handshake; instead the signed UNKNOWN response was treated as acceptable, so CLIENT_CERT authentication did not fail as expected and revocation checking was effectively skipped",
+      "Confirmed as a residual of the earlier CVE-2026-34500 soft-fail fix; affects Tomcat 9.0.92–9.0.121, 10.1.22–10.1.59 and 11.0.0-M14–11.0.25, fixed in 9.0.122, 10.1.60 and 11.0.26",
     ],
   },
   {
