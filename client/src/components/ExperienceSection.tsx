@@ -1,12 +1,10 @@
-import { useState } from "react";
 import { EXPERIENCES } from "@/data/siteContent";
-import { ChevronDown } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 
-
+// Deliberately minimal: role, employer, years and location only. The fuller
+// record (summaries, achievements, tooling) still lives in EXPERIENCES for
+// other uses, but this section is a scannable career spine, not a résumé dump.
 export default function ExperienceSection() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
-
   return (
     <section id="experience" className="py-20 relative scroll-mt-16">
       <div className="container mx-auto px-4">
@@ -16,86 +14,25 @@ export default function ExperienceSection() {
             cloud, DoD, and enterprise systems.
           </SectionHeader>
 
-          {/* Experience Timeline */}
-          <div className="space-y-4">
-            {EXPERIENCES.map((experience, index) => (
-              <div
-                key={index}
-                className="border border-red-500 border-opacity-30 rounded-lg overflow-hidden hover:border-opacity-60 hover:bg-slate-800 hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm"
-              >
-                {/* Header - Always Visible */}
-                <button
-                  onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                  className="w-full p-6 bg-slate-900 bg-opacity-40 hover:bg-opacity-60 transition-all duration-300 flex items-start justify-between gap-4 text-left"
-                >
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-white min-w-0">{experience.role}</h3>
-                      <span className="glass-readable-chip inline-flex px-3 py-1 rounded-full text-sm font-semibold max-w-full break-words">
-                        {experience.company}
-                      </span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-400 text-sm">
-                      <span className="font-medium">{experience.period}</span>
-                      <span className="hidden sm:inline">|</span>
-                      <span>{experience.location}</span>
-                    </div>
-                    <p className="text-gray-300 mt-3">{experience.summary}</p>
-                  </div>
-                  <ChevronDown
-                    size={24}
-                    className={`flex-shrink-0 text-red-500 transition-transform ${
-                      expandedIndex === index ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {/* Expanded Content */}
-                {expandedIndex === index && (
-                  <div className="px-6 pb-6 bg-gradient-to-b from-slate-800 to-slate-900 bg-opacity-50 border-t border-red-500 border-opacity-20">
-                    {/* Detailed Description */}
-                    {experience.details && (
-                      <div className="mb-6">
-                        <h4 className="font-semibold text-red-400 mb-2">Overview</h4>
-                        <p className="text-gray-300 leading-relaxed">{experience.details}</p>
-                      </div>
-                    )}
-
-                    {/* Key Highlights */}
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-red-400 mb-3">Key Achievements</h4>
-                      <ul className="space-y-2">
-                        {experience.highlights.map((highlight, hIndex) => (
-                          <li key={hIndex} className="flex gap-3 text-gray-300">
-                            <span className="text-red-500 font-bold flex-shrink-0">+</span>
-                            <span>{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Technologies */}
-                    <div>
-                      <h4 className="font-semibold text-red-400 mb-3">Technologies & Skills</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {experience.tags.map((tag, tIndex) => (
-                          <span
-                            key={tIndex}
-                            className="px-3 py-1 bg-slate-800 text-red-400 rounded-full text-sm font-medium hover:bg-slate-700 hover:text-red-300 transition-all duration-300 border border-red-500 border-opacity-30 hover:border-opacity-60"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+          <ol className="relative ml-1 border-l border-red-500/25">
+            {EXPERIENCES.map((experience) => (
+              <li key={`${experience.company}-${experience.role}`} className="relative pl-6 pb-7 last:pb-0">
+                <span
+                  className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-4 ring-slate-950"
+                  aria-hidden="true"
+                />
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h3 className="text-lg font-bold leading-snug text-white">{experience.role}</h3>
+                  <span className="font-medium text-red-300">{experience.company}</span>
+                </div>
+                <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+                  {experience.period} · {experience.location}
+                </p>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     </section>
   );
 }
-
