@@ -21,6 +21,7 @@ import {
   DISCLOSURES,
   VENDORS,
   cveIdsOf,
+  cveScoreOf,
   type Disclosure,
   type DisclosureStatus,
   type VendorInfo,
@@ -63,10 +64,6 @@ function statusBadgeClass(status: DisclosureStatus): string {
       return "bg-amber-500/15 text-amber-300 border border-amber-400/40";
   }
 }
-
-// How many published findings lead the section as full hero cards; everything
-// beyond this renders as a one-line record so the section scales with the ledger.
-const HERO_CVE_COUNT = 4;
 
 // Narrative order inside a vendor panel: headline CVEs first, then in-flight
 // confirmations, then the merged pile, then remaining work-in-progress.
@@ -192,72 +189,6 @@ function stripVendorPrefix(title: string, vendor: VendorInfo): string {
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
-// One published-CVE hero. Built to tile: a fixed header band (status + CVE id),
-// a logo+title row, a single meta line, the tagline, and link chips pinned to the
-// bottom — so any number of CVEs line up as an even, scannable set in the grid.
-function FeaturedCveCard({ cve }: { cve: Disclosure }) {
-  const vendor = VENDORS.find((v) => v.match === cve.vendor);
-  return (
-    <div className="h-full flex flex-col rounded-xl border border-rose-500/40 bg-gradient-to-br from-rose-950/40 via-slate-900/50 to-slate-900/60 backdrop-blur-sm shadow-[0_0_30px_rgba(244,63,94,0.10)] p-5 md:p-6">
-      {/* Header band: status label · CVE id */}
-      <div className="flex items-center justify-between gap-3 pb-3 mb-4 border-b border-rose-500/20">
-        <div className="flex items-center gap-2">
-          <ShieldAlert size={15} className="text-rose-400 shrink-0" aria-hidden="true" />
-          <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
-          {cve.credited && <CreditedChip />}
-        </div>
-        {cveIdsOf(cve).length > 0 ? (
-          <span className="flex flex-wrap justify-end gap-x-2 font-mono text-sm md:text-base font-bold text-rose-200">
-            {cveIdsOf(cve).map((id, i) => (
-              <Fragment key={id}>
-                {i > 0 && <span className="text-rose-500/50" aria-hidden="true">·</span>}
-                <span className="whitespace-nowrap">{id}</span>
-              </Fragment>
-            ))}
-          </span>
-        ) : (
-          cve.ref && (
-            <span className="font-mono text-sm md:text-base text-rose-200 font-bold whitespace-nowrap">
-              {cve.ref}
-            </span>
-          )
-        )}
-      </div>
-
-      {/* Title with product mark */}
-      <div className="flex items-start gap-3">
-        {vendor && (
-          <div className="hidden sm:block">
-            <VendorLogoTile vendor={vendor} size="sm" />
-          </div>
-        )}
-        <h3 className="text-lg md:text-xl font-bold text-white leading-snug">{cve.title}</h3>
-      </div>
-
-      {/* One meta line: vendor · class · CWE · severity */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm">
-        <VendorChip vendor={cve.vendor} />
-        <span className="text-slate-400">{cve.type}</span>
-        {cve.cwe && <span className="font-mono text-[11px] text-red-400 whitespace-nowrap">{cve.cwe}</span>}
-        {cve.severity && (
-          <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{cve.severity}</span>
-        )}
-      </div>
-
-      {/* Tagline grows to fill, so link chips align across cards */}
-      {(cve.tagline ?? cve.summary?.[0]) && (
-        <p className="mt-3 text-[13px] text-slate-300 leading-relaxed flex-1">
-          {cve.tagline ?? cve.summary?.[0]}
-        </p>
-      )}
-
-      <div className="mt-4">
-        <RecordLinkChips d={cve} tone="rose" />
-      </div>
-    </div>
-  );
-}
-
 /** Compact highlight card for a vendor-confirmed finding awaiting its CVE ID. */
 function PendingCveCard({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
   return (
@@ -315,29 +246,62 @@ function severityWeight(d: Disclosure): number {
   return 0;
 }
 
-/** One published finding in the compact record table under the heroes. */
+/**
+ * One published finding, as a row. Three columns on desktop: every CVE
+ * identifier with its own published CVSS, the finding itself with its class
+ * line, and the public records. Uniform across the whole ledger — no card is
+ * privileged over another.
+ */
 function PublishedRecordRow({ d }: { d: Disclosure }) {
+  const ids = cveIdsOf(d).length > 0 ? cveIdsOf(d) : d.ref ? [d.ref] : [];
   return (
-    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-b border-slate-800/70 last:border-0 hover:bg-slate-900/40 transition-colors">
-      <span className="flex flex-wrap gap-x-2 font-mono text-[12px] font-semibold text-rose-300 shrink-0">
-        {(cveIdsOf(d).length > 0 ? cveIdsOf(d) : [d.ref ?? ""]).map((id, i) => (
-          <Fragment key={id}>
-            {i > 0 && <span className="text-rose-500/50" aria-hidden="true">·</span>}
-            <span className="whitespace-nowrap">{id}</span>
-          </Fragment>
-        ))}
-      </span>
-      <span className="flex-1 min-w-[15rem] text-sm font-medium leading-snug text-white">
-        {d.short ?? d.title}
-      </span>
-      <div className="flex flex-wrap items-center gap-2 ml-auto">
-        <VendorChip vendor={d.vendor} />
-        {d.cwe && <span className="font-mono text-[11px] text-red-400/90 whitespace-nowrap">{d.cwe}</span>}
-        {d.severity && (
-          <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{d.severity}</span>
-        )}
-        {d.credited && <CreditedChip />}
-        <RecordLinkChips d={d} max={2} />
+    <li className="grid gap-x-5 gap-y-2.5 border-b border-slate-800/70 px-4 py-4 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[13.5rem_minmax(0,1fr)_auto] md:items-start">
+      {/* Identifiers, each with the score its own record publishes */}
+      <div className="flex flex-col gap-1">
+        {ids.map((id) => {
+          const score = cveScoreOf(d, id);
+          return (
+            <div key={id} className="flex flex-wrap items-baseline gap-x-2">
+              <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap">
+                {id}
+              </span>
+              {score && (
+                <span className="font-mono text-[10px] text-slate-500 whitespace-nowrap">{score}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* The finding, then its classification on one quiet line */}
+      <div className="min-w-0">
+        <p className="text-sm font-medium leading-snug text-white">{d.short ?? d.title}</p>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] text-slate-500">
+          <span className="text-slate-400">{d.vendor}</span>
+          {d.cwe && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-red-400/90">{d.cwe}</span>
+            </>
+          )}
+          {d.severity && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-rose-300/90">{d.severity.split("·")[0].trim()}</span>
+            </>
+          )}
+          {d.credited && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-emerald-400">✓ credited</span>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Public records */}
+      <div className="md:justify-self-end">
+        <RecordLinkChips d={d} max={3} />
       </div>
     </li>
   );
@@ -356,8 +320,6 @@ function DisclosureHighlights() {
       severityWeight(b) - severityWeight(a) ||
       recordLinks(b).length - recordLinks(a).length,
   );
-  const heroes = ranked.slice(0, HERO_CVE_COUNT);
-  const restRecords = ranked.slice(HERO_CVE_COUNT);
   const pending = DISCLOSURES.filter((d) => d.status === "Confirmed — CVE pending");
   const merged = DISCLOSURES.filter((d) => d.status === "Merged").length;
   const vendorsCount = new Set(DISCLOSURES.map((d) => d.vendor)).size;
@@ -383,26 +345,17 @@ function DisclosureHighlights() {
         <MetricTile label="Vendors" value={vendorsCount} />
       </div>
 
-      {/* Published CVE heroes — one full-width, two-plus tiled so they stay even */}
-      {heroes.length > 0 && (
-        <div
-          className={`mb-8 grid gap-4 items-stretch ${heroes.length > 1 ? "lg:grid-cols-2" : ""}`}
-        >
-          {heroes.map((cve) => (
-            <FeaturedCveCard key={cve.title} cve={cve} />
-          ))}
-        </div>
-      )}
-
-      {/* Every remaining published record, one scannable line each */}
-      {restRecords.length > 0 && (
+      {/* Every published finding, one row each, most severe first */}
+      {ranked.length > 0 && (
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-500">
-            <span className="font-bold text-rose-400">{restRecords.length}</span>
-            <span>more published {restRecords.length === 1 ? "record" : "records"}</span>
+          <div className="mb-3 flex flex-wrap items-center gap-x-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+            <span className="font-bold text-rose-400">{cveIdCount}</span>
+            <span>published CVE {cveIdCount === 1 ? "record" : "records"}</span>
+            <span aria-hidden="true">·</span>
+            <span>{ranked.length} distinct findings</span>
           </div>
-          <ul className="rounded-lg border border-rose-500/20 bg-slate-950/40 backdrop-blur-sm overflow-hidden">
-            {restRecords.map((d) => (
+          <ul className="overflow-hidden rounded-lg border border-rose-500/20 bg-slate-950/40 backdrop-blur-sm">
+            {ranked.map((d) => (
               <PublishedRecordRow key={d.title} d={d} />
             ))}
           </ul>

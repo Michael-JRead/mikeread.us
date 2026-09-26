@@ -23,6 +23,13 @@ export interface Disclosure {
   /** Multiple labeled public records (CVE, NVD, vendor advisory, errata). */
   links?: { label: string; url: string }[];
   credited?: boolean;
+  /**
+   * CVSS score per CVE identifier, keyed by id — a finding tracked under two
+   * ids can be scored differently in each record (and under different CVSS
+   * versions). Ids absent from this map have no score published in a source we
+   * can cite, and render without one rather than borrowing another record's.
+   */
+  cveScores?: Record<string, string>;
   /** One-line description used by compact renders (the CVE hero). */
   tagline?: string;
   /**
@@ -120,6 +127,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Important · CVSS 7.5",
     ref: "CVE-2026-16308",
     credited: true,
+    cveScores: {
+      "CVE-2026-16308": "CVSS 7.5",
+    },
     tagline:
       "Unauthenticated multipart/form-data request exhausts the JVM heap in RESTEasy Reactive — fixed in Red Hat build of Quarkus 3.27.4.SP3, with downstream advisories from IBM and others.",
     links: [
@@ -146,6 +156,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Important · CVSS 8.7",
     ref: "CVE-2026-19625",
     credited: true,
+    cveScores: {
+      "CVE-2026-19625": "CVSS 8.7",
+    },
     tagline:
       "In multi-tenant Quarkus OIDC deployments, opaque access tokens are cached by token value alone — with no tenant discriminator — so a token introspected for one tenant is reused to authenticate it against another, defeating tenant isolation. Red Hat–assigned CVE, rated Important.",
     links: [
@@ -169,6 +182,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Important · CVSS 7.4",
     ref: "CVE-2026-19651",
     credited: true,
+    cveScores: {
+      "CVE-2026-19651": "CVSS 7.4",
+    },
     tagline:
       "The quarkus-spring-web compatibility layer resolves Spring @RequestHeader values from the URL query string, so an unauthenticated caller who cannot set a trusted request header can pass it as a query parameter instead — bypassing header-based authorization. Fixed in Quarkus 3.39.2 and up; credited.",
     links: [
@@ -256,6 +272,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Moderate · CVSS 6.5",
     ref: "CVE-2026-89044",
     credited: true,
+    cveScores: {
+      "CVE-2026-89044": "CVSS 6.5",
+    },
     tagline:
       "Netty's HTTP/1 decoder validated Transfer-Encoding by suffix-matching the raw header value instead of parsing the coding list, so variants such as \"chunked, xchunked\" or a multi-line header slipped past the rejection rule — desynchronising a front-end/back-end pair into request smuggling. Fixed in 4.1.138.Final and 4.2.18.Final; credited.",
     links: [
@@ -279,6 +298,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-93491",
     credited: true,
+    cveScores: {
+      "CVE-2026-100656": "CVSS 8.7 (v4.0)",
+    },
     tagline:
       "HttpServerCodec packs the first 32 pipelined request methods into a single long, then spills every one after that into an unbounded queue. A client that pipelines requests while withholding reads on its own end grows that queue without limit, driving unbounded heap growth. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
@@ -306,6 +328,10 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93494",
     credited: true,
+    cveScores: {
+      "CVE-2026-93494": "CVSS 7.5",
+      "CVE-2026-100657": "CVSS 8.7 (v4.0)",
+    },
     tagline:
       "Once a STOMP frame's declared content-length is satisfied, the decoder parks an allocator buffer in an instance field to await the single NUL byte that ends the frame. If that byte never arrives nothing releases it, so a peer leaks one buffer per connection — reclaimed by neither GC nor disconnect. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
@@ -333,6 +359,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93563",
     credited: true,
+    cveScores: {
+      "CVE-2026-93563": "CVSS 7.5",
+    },
     tagline:
       "SmtpResponseDecoder collects multi-line SMTP response detail lines into a list with no size or count limit, so a malicious or compromised server can stream continuation lines indefinitely while withholding the final line and exhaust the client's heap. Fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
@@ -355,6 +384,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Moderate · CVSS 5.3",
     ref: "CVE-2026-93564",
     credited: true,
+    cveScores: {
+      "CVE-2026-93564": "CVSS 5.3",
+    },
     tagline:
       "When PROXY-protocol v2 parsing hits a malformed sibling TLV after a nested SSL TLV, the error path releases only the top level of a tree-shaped TLV list. Grandchild TLVs stay pinned, so repeated crafted connections exhaust pooled memory. Reported as an incomplete fix of the earlier patch; fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
@@ -378,6 +410,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93575",
     credited: true,
+    cveScores: {
+      "CVE-2026-93575": "CVSS 7.5",
+    },
     tagline:
       "The MQTT decoder validates a packet's Remaining Length against the configured size limits but never checks the Properties Length against it. A packet declaring a small Remaining Length and an enormous Properties Length drives the decoder to buffer and re-parse huge property data, exhausting memory and CPU. Reported as an incomplete fix of CVE-2026-44248; fixed in 4.1.138.Final and 4.2.18.Final.",
     links: [
@@ -401,6 +436,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-87742",
     credited: true,
+    cveScores: {
+      "CVE-2026-87742": "CVSS 7.5",
+    },
     tagline:
       "A @WebSocket endpoint on the documented default execution model buffers inbound messages with no bound and never applies read backpressure, so one connection streaming faster than the handler drains exhausts the JVM heap. Fixed by bounding the per-connection processing queue; credited.",
     links: [
@@ -426,6 +464,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-87743",
     credited: true,
+    cveScores: {
+      "CVE-2026-87743": "CVSS 7.5",
+    },
     tagline:
       "Paths are normalized differently by the Quarkus HTTP security matcher than by the request dispatchers behind it, so an unauthenticated attacker can craft a URL the matcher treats as public while the router dispatches it to a protected endpoint. Reported as an incomplete fix for CVE-2026-50559; credited.",
     links: [
@@ -450,6 +491,9 @@ export const DISCLOSURES: Disclosure[] = [
     severity: "Moderate · CVSS 6.1",
     ref: "CVE-2026-93432",
     credited: true,
+    cveScores: {
+      "CVE-2026-93432": "CVSS 6.1",
+    },
     tagline:
       "When the {#eval} section helper renders a sub-template it fails to pass along the parent template's content type, so Qute's default HTML and JSON escaping never applies and untrusted data is emitted raw — reaching cross-site scripting and JSON injection. Its own sibling str:eval preserves the content type correctly.",
     links: [
@@ -702,6 +746,11 @@ export function cveIdsOf(d: Disclosure): string[] {
   return ids;
 }
 
+/** The published CVSS for one identifier, if a citable source gives one. */
+export function cveScoreOf(d: Disclosure, id: string): string | undefined {
+  return d.cveScores?.[id];
+}
+
 /** The canonical record URL for one CVE id on a row. */
 function cveUrlOf(d: Disclosure, id: string): string {
   return (
@@ -721,6 +770,6 @@ export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
   cveIdsOf(d).map((id) => ({
     id,
     url: cveUrlOf(d, id),
-    label: cveChipLabel(d.severity),
+    label: cveScoreOf(d, id),
   })),
 );
