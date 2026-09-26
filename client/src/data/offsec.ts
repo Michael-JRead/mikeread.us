@@ -688,18 +688,39 @@ function cveChipLabel(severity?: string): string | undefined {
 }
 
 /**
- * Published CVEs, derived from DISCLOSURES so the homepage "CVEs Discovered"
- * strip and this ledger can never drift: add a `CVE published` row above and it
- * surfaces in both places automatically, in the same order.
+ * Every CVE identifier carried by a row, in order: the `ref` first, then any
+ * further CVE ids that appear among its public records. A finding occasionally
+ * receives two identifiers when a vendor CNA and a coordinating CNA each assign
+ * one to the same report; both are real published records, so both are shown.
+ */
+export function cveIdsOf(d: Disclosure): string[] {
+  const ids: string[] = [];
+  if (d.ref?.startsWith("CVE-")) ids.push(d.ref);
+  for (const l of d.links ?? []) {
+    if (l.label.startsWith("CVE-") && !ids.includes(l.label)) ids.push(l.label);
+  }
+  return ids;
+}
+
+/** The canonical record URL for one CVE id on a row. */
+function cveUrlOf(d: Disclosure, id: string): string {
+  return (
+    d.links?.find((l) => l.label === id)?.url ?? `https://www.cve.org/CVERecord?id=${id}`
+  );
+}
+
+/**
+ * Published CVE records, derived from DISCLOSURES so the homepage "CVEs
+ * Discovered" strip and this ledger can never drift: add a `CVE published` row
+ * above and it surfaces in both places automatically, in the same order. One
+ * entry per identifier, so a finding tracked under two ids contributes both.
  */
 export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
-  (d): d is Disclosure & { ref: string } =>
-    d.status === "CVE published" && !!d.ref && d.ref.startsWith("CVE-"),
-).map((d) => {
-  const canonical = d.links?.find((l) => l.label === d.ref) ?? d.links?.[0];
-  return {
-    id: d.ref,
-    url: canonical?.url ?? d.url ?? `https://www.cve.org/CVERecord?id=${d.ref}`,
+  (d) => d.status === "CVE published",
+).flatMap((d) =>
+  cveIdsOf(d).map((id) => ({
+    id,
+    url: cveUrlOf(d, id),
     label: cveChipLabel(d.severity),
-  };
-});
+  })),
+);

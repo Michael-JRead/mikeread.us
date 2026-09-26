@@ -20,6 +20,7 @@ import { SITE_META } from "@/data/siteContent";
 import {
   DISCLOSURES,
   VENDORS,
+  cveIdsOf,
   type Disclosure,
   type DisclosureStatus,
   type VendorInfo,
@@ -205,10 +206,21 @@ function FeaturedCveCard({ cve }: { cve: Disclosure }) {
           <span className="font-mono text-[11px] uppercase tracking-wider text-rose-300">CVE Published</span>
           {cve.credited && <CreditedChip />}
         </div>
-        {cve.ref && (
-          <span className="font-mono text-sm md:text-base text-rose-200 font-bold whitespace-nowrap">
-            {cve.ref}
+        {cveIdsOf(cve).length > 0 ? (
+          <span className="flex flex-wrap justify-end gap-x-2 font-mono text-sm md:text-base font-bold text-rose-200">
+            {cveIdsOf(cve).map((id, i) => (
+              <Fragment key={id}>
+                {i > 0 && <span className="text-rose-500/50" aria-hidden="true">·</span>}
+                <span className="whitespace-nowrap">{id}</span>
+              </Fragment>
+            ))}
           </span>
+        ) : (
+          cve.ref && (
+            <span className="font-mono text-sm md:text-base text-rose-200 font-bold whitespace-nowrap">
+              {cve.ref}
+            </span>
+          )
         )}
       </div>
 
@@ -307,8 +319,13 @@ function severityWeight(d: Disclosure): number {
 function PublishedRecordRow({ d }: { d: Disclosure }) {
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-b border-slate-800/70 last:border-0 hover:bg-slate-900/40 transition-colors">
-      <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap shrink-0">
-        {d.ref}
+      <span className="flex flex-wrap gap-x-2 font-mono text-[12px] font-semibold text-rose-300 shrink-0">
+        {(cveIdsOf(d).length > 0 ? cveIdsOf(d) : [d.ref ?? ""]).map((id, i) => (
+          <Fragment key={id}>
+            {i > 0 && <span className="text-rose-500/50" aria-hidden="true">·</span>}
+            <span className="whitespace-nowrap">{id}</span>
+          </Fragment>
+        ))}
       </span>
       <span className="flex-1 min-w-[15rem] text-sm font-medium leading-snug text-white">
         {d.short ?? d.title}
@@ -329,6 +346,9 @@ function PublishedRecordRow({ d }: { d: Disclosure }) {
 /** Section 01 — metrics, the published-CVE hero, and the pending-CVE pipeline. */
 function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
+  // Counted per identifier: a couple of findings carry two CVE ids because a
+  // vendor CNA and a coordinating CNA each assigned one to the same report.
+  const cveIdCount = published.reduce((n, d) => n + cveIdsOf(d).length, 0);
   // Lead with the most severe findings as full cards; the rest stay one-line records,
   // so the section scales as the ledger grows instead of becoming a wall of cards.
   const ranked = [...published].sort(
@@ -358,7 +378,7 @@ function DisclosureHighlights() {
       {/* Summary metrics strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
         <MetricTile label="Disclosures" value={DISCLOSURES.length} />
-        <MetricTile label="CVE Published" value={published.length} accent="rose" />
+        <MetricTile label="CVE Published" value={cveIdCount} accent="rose" />
         <MetricTile label="Fixes Merged" value={merged} accent="emerald" />
         <MetricTile label="Vendors" value={vendorsCount} />
       </div>
