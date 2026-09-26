@@ -206,6 +206,9 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-1333",
     type: "Regular-expression denial of service (algorithmic complexity)",
     status: "CVE published",
+    // Severity per the CVE record as imported into the GitHub Advisory
+    // Database (GHSA-c9m2-388v-p4rq); no numeric CVSS published there.
+    severity: "Moderate",
     ref: "CVE-2026-75880",
     credited: true,
     tagline:
@@ -227,6 +230,9 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-502",
     type: "Deserialization of untrusted data",
     status: "CVE published",
+    // Severity per the CVE record as imported into the GitHub Advisory
+    // Database (GHSA-73q3-xq4g-44wj); no numeric CVSS published there.
+    severity: "Moderate",
     ref: "CVE-2026-57822",
     credited: true,
     tagline:
@@ -248,6 +254,9 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-306",
     type: "Missing authentication / authorization for a critical function",
     status: "CVE published",
+    // Severity per the CVE record as imported into the GitHub Advisory
+    // Database (GHSA-593h-2v8w-vxpx); no numeric CVSS published there.
+    severity: "High",
     ref: "CVE-2026-49362",
     credited: true,
     tagline:
@@ -295,7 +304,9 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-770",
     type: "Uncontrolled resource consumption (unauthenticated DoS)",
     status: "CVE published",
-    severity: "High · CVSS 8.7 (v4.0)",
+    // GHSA-pvjx-v7vp-62vq rates this High and publishes no CVSS vector; the
+    // 8.7 (v4.0) belongs to the sibling record and is keyed under it below.
+    severity: "High",
     ref: "CVE-2026-93491",
     credited: true,
     cveScores: {
@@ -721,16 +732,6 @@ export interface PublishedCve {
   label?: string;
 }
 
-// Compact chip label: prefer the "CVSS x.y" fragment of a severity string,
-// else the leading severity word ("Important"), else nothing.
-function cveChipLabel(severity?: string): string | undefined {
-  if (!severity) return undefined;
-  const cvss = severity.match(/CVSS\s+[\d.]+/i);
-  if (cvss) return cvss[0];
-  const lead = severity.split("·")[0].trim();
-  return lead || undefined;
-}
-
 /**
  * Every CVE identifier carried by a row, in order: the `ref` first, then any
  * further CVE ids that appear among its public records. A finding occasionally
@@ -752,7 +753,7 @@ export function cveScoreOf(d: Disclosure, id: string): string | undefined {
 }
 
 /** The canonical record URL for one CVE id on a row. */
-function cveUrlOf(d: Disclosure, id: string): string {
+export function cveUrlOf(d: Disclosure, id: string): string {
   return (
     d.links?.find((l) => l.label === id)?.url ?? `https://www.cve.org/CVERecord?id=${id}`
   );

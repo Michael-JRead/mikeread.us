@@ -22,6 +22,7 @@ import {
   VENDORS,
   cveIdsOf,
   cveScoreOf,
+  cveUrlOf,
   type Disclosure,
   type DisclosureStatus,
   type VendorInfo,
@@ -99,32 +100,33 @@ function VendorChip({ vendor }: { vendor: string }) {
   );
 }
 
-function CreditedChip() {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/40 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-300 whitespace-nowrap">
-      ✓ credited
-    </span>
-  );
-}
-
-/** Row of link chips to a finding's public records; falls back to a plain ref label. */
+/**
+ * Row of link chips to a finding's public records; falls back to a plain ref
+ * label. Rows that already render each CVE identifier as its own link pass
+ * `hideCveIds`, so the identifiers are not repeated here and everything else —
+ * NVD, every GHSA, vendor errata — is shown in full rather than truncated.
+ */
 function RecordLinkChips({
   d,
   tone = "slate",
-  max,
+  hideCveIds = false,
+  justify = "start",
 }: {
   d: Disclosure;
   tone?: "slate" | "rose";
-  /** Cap the number of chips (compact rows) — the hero shows the full set. */
-  max?: number;
+  hideCveIds?: boolean;
+  /** Where a wrapped set of chips settles inside its column. */
+  justify?: "start" | "end";
 }) {
-  const links = max ? recordLinks(d).slice(0, max) : recordLinks(d);
+  const links = hideCveIds
+    ? recordLinks(d).filter((l) => !l.label.startsWith("CVE-"))
+    : recordLinks(d);
   const chipClass =
     tone === "rose"
       ? "border-rose-500/40 text-rose-200 hover:border-rose-400/70 hover:text-rose-100"
       : "border-slate-600/60 text-slate-300 hover:border-red-400/60 hover:text-red-200";
-  if (recordLinks(d).length === 0) {
-    if (!d.ref) return null;
+  if (links.length === 0) {
+    if (hideCveIds || !d.ref) return null;
     return (
       <span className="inline-flex items-center rounded-md border border-slate-700/60 bg-slate-950/40 px-2.5 py-1 font-mono text-[11px] text-slate-400">
         {d.ref}
@@ -132,7 +134,9 @@ function RecordLinkChips({
     );
   }
   return (
-    <div className="flex flex-wrap gap-2">
+    <div
+      className={`flex flex-wrap gap-2 ${justify === "end" ? "md:justify-end" : ""}`}
+    >
       {links.map((l) => (
         <a
           key={l.url}
@@ -236,6 +240,10 @@ function MetricTile({
 // Numeric weight for ordering published findings by how serious they are: use the
 // CVSS score when the row carries one, otherwise rank the vendor's severity word.
 function severityWeight(d: Disclosure): number {
+  const scored = Object.values(d.cveScores ?? {})
+    .map((v) => parseFloat(v.match(/([\d.]+)/)?.[1] ?? ""))
+    .filter((n) => !Number.isNaN(n));
+  if (scored.length > 0) return Math.max(...scored);
   const m = d.severity?.match(/CVSS\s+([\d.]+)/i);
   if (m) return parseFloat(m[1]);
   const s = (d.severity ?? "").toLowerCase();
@@ -255,16 +263,27 @@ function severityWeight(d: Disclosure): number {
 function PublishedRecordRow({ d }: { d: Disclosure }) {
   const ids = cveIdsOf(d).length > 0 ? cveIdsOf(d) : d.ref ? [d.ref] : [];
   return (
-    <li className="grid gap-x-5 gap-y-2.5 border-b border-slate-800/70 px-4 py-4 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[13.5rem_minmax(0,1fr)_auto] md:items-start">
+    <li className="grid gap-x-5 gap-y-2.5 border-b border-slate-800/70 px-4 py-4 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[13.5rem_minmax(0,1fr)_minmax(0,24rem)] md:items-start">
       {/* Identifiers, each with the score its own record publishes */}
       <div className="flex flex-col gap-1">
         {ids.map((id) => {
           const score = cveScoreOf(d, id);
           return (
             <div key={id} className="flex flex-wrap items-baseline gap-x-2">
-              <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap">
-                {id}
-              </span>
+              {id.startsWith("CVE-") ? (
+                <a
+                  href={cveUrlOf(d, id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[12px] font-semibold whitespace-nowrap text-rose-300 transition-colors hover:text-rose-200 hover:underline"
+                >
+                  {id}
+                </a>
+              ) : (
+                <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap">
+                  {id}
+                </span>
+              )}
               {score && (
                 <span className="font-mono text-[10px] text-slate-500 whitespace-nowrap">{score}</span>
               )}
@@ -299,22 +318,20 @@ function PublishedRecordRow({ d }: { d: Disclosure }) {
         </div>
       </div>
 
-      {/* Public records */}
-      <div className="md:justify-self-end">
-        <RecordLinkChips d={d} max={3} />
-      </div>
+      {/* The rest of the public record — the CVE ids themselves link from the left */}
+      <RecordLinkChips d={d} hideCveIds justify="end" />
     </li>
   );
 }
 
-/** Section 01 — metrics, the published-CVE hero, and the pending-CVE pipeline. */
+/** Section 01 — metrics, the published-CVE record list, and the pending-CVE pipeline. */
 function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
   // Counted per identifier: a couple of findings carry two CVE ids because a
   // vendor CNA and a coordinating CNA each assigned one to the same report.
   const cveIdCount = published.reduce((n, d) => n + cveIdsOf(d).length, 0);
-  // Lead with the most severe findings as full cards; the rest stay one-line records,
-  // so the section scales as the ledger grows instead of becoming a wall of cards.
+  // One uniform row per finding, most severe first — no card is privileged over
+  // another, so the section keeps scaling as the ledger grows.
   const ranked = [...published].sort(
     (a, b) =>
       severityWeight(b) - severityWeight(a) ||
@@ -382,24 +399,69 @@ function DisclosureHighlights() {
   );
 }
 
-/** One finding inside an expanded vendor panel — a single scannable row; the link is the detail. */
+/**
+ * One finding inside an expanded vendor panel. Mirrors the main record list:
+ * every CVE identifier is shown with the score its own record publishes, and
+ * the identifiers themselves are the links — so nothing is truncated away and
+ * no score is paired with the wrong id.
+ */
 function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
+  const ids = cveIdsOf(d);
   return (
-    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 border-b border-slate-800/70 last:border-0 hover:bg-slate-900/40 transition-colors">
-      <div className="flex items-start gap-2.5 flex-1 min-w-[240px]">
-        <span className="mt-0.5">{statusIcon(d.status)}</span>
-        <span className="text-sm text-white font-medium leading-snug">
-          {d.short ?? stripVendorPrefix(d.title, vendor)}
-        </span>
+    <li className="grid gap-x-5 gap-y-2 border-b border-slate-800/70 px-4 py-3.5 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] md:items-start">
+      <div className="min-w-0">
+        <div className="flex items-start gap-2.5">
+          <span className="mt-0.5">{statusIcon(d.status)}</span>
+          <span className="text-sm font-medium leading-snug text-white">
+            {d.short ?? stripVendorPrefix(d.title, vendor)}
+          </span>
+        </div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 pl-[1.55rem] font-mono text-[10px] text-slate-500">
+          {ids.map((id, i) => {
+            const score = cveScoreOf(d, id);
+            return (
+              <span key={id} className="inline-flex items-baseline gap-1.5">
+                {i > 0 && (
+                  <span className="text-slate-600" aria-hidden="true">
+                    /
+                  </span>
+                )}
+                <a
+                  href={cveUrlOf(d, id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-semibold text-rose-300 transition-colors hover:text-rose-200"
+                >
+                  {id}
+                </a>
+                {score && <span className="text-slate-500">{score}</span>}
+              </span>
+            );
+          })}
+          {ids.length > 0 && d.cwe && <span aria-hidden="true">·</span>}
+          {d.cwe && <span className="text-red-400/90">{d.cwe}</span>}
+          {d.severity && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-rose-300/90">{d.severity.split("·")[0].trim()}</span>
+            </>
+          )}
+          {d.credited && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-emerald-400">✓ credited</span>
+            </>
+          )}
+        </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2 ml-auto">
-        {d.cwe && <span className="font-mono text-[11px] text-red-400/90 whitespace-nowrap">{d.cwe}</span>}
-        {d.severity && <span className="font-mono text-[11px] text-rose-300 whitespace-nowrap">{d.severity}</span>}
-        {d.credited && <CreditedChip />}
-        <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap ${statusBadgeClass(d.status)}`}>
+
+      <div className="flex flex-col items-start gap-2 md:items-end">
+        <span
+          className={`inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadgeClass(d.status)}`}
+        >
           {d.status}
         </span>
-        <RecordLinkChips d={d} max={2} />
+        <RecordLinkChips d={d} hideCveIds justify="end" />
       </div>
     </li>
   );
@@ -407,7 +469,9 @@ function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
 
 function VendorStatChips({ rows }: { rows: Disclosure[] }) {
   const merged = rows.filter((d) => d.status === "Merged").length;
-  const published = rows.filter((d) => d.status === "CVE published").length;
+  const published = rows
+    .filter((d) => d.status === "CVE published")
+    .reduce((n, d) => n + Math.max(cveIdsOf(d).length, 1), 0);
   const pendingCves = rows.filter((d) => d.status === "Confirmed — CVE pending").length;
   const credited = rows.filter((d) => d.credited).length;
   const chip = "inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider whitespace-nowrap";
