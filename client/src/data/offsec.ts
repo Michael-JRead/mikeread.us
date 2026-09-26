@@ -286,13 +286,14 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93491" },
       { label: "GHSA-pvjx-v7vp-62vq", url: "https://github.com/netty/netty/security/advisories/GHSA-pvjx-v7vp-62vq" },
       { label: "CVE-2026-100656", url: "https://www.cve.org/CVERecord?id=CVE-2026-100656" },
+      { label: "GHSA-g3wj-wqf3-65v6", url: "https://github.com/advisories/GHSA-g3wj-wqf3-65v6" },
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "The per-connection method-tracking overflow queue in HttpServerCodec has no cap, so an unauthenticated client pipelining HTTP/1.1 requests faster than it reads responses grows it without bound until the heap is exhausted",
       "The same defect class had already been fixed weeks earlier in the sibling HttpContentEncoder (CVE-2026-59899), which gained a maxPipelineDepth cap; HttpServerCodec — the codec essentially every Netty HTTP/1.1 server uses — never received the equivalent bound",
       "Affects netty-codec-http through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
-      "A second identifier, CVE-2026-100656, was later assigned to the same defect (CWE-770, CVSS 4.0 8.7) and is listed here as an additional record, not a separate finding",
+      "Tracked under two identifiers, CVE-2026-93491 and CVE-2026-100656; both records trace back to the advisory that credits me, and both are linked here",
     ],
   },
   {
@@ -312,12 +313,14 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93494" },
       { label: "GHSA-ghg5-c4jg-8q5j", url: "https://github.com/netty/netty/security/advisories/GHSA-ghg5-c4jg-8q5j" },
       { label: "CVE-2026-100657", url: "https://www.cve.org/CVERecord?id=CVE-2026-100657" },
+      { label: "GHSA-7788-q3h4-2xcf", url: "https://github.com/advisories/GHSA-7788-q3h4-2xcf" },
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "A remote peer that sends a complete, well-formed STOMP body but omits its terminating NUL byte pins one allocator buffer per connection, with no path that ever releases it (CVSS 7.5)",
       "Affects netty-codec-stomp through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
-      "A second identifier, CVE-2026-100657, was later assigned to the same defect (scored 8.7 under CVSS 4.0) and is listed here as an additional record, not a separate finding",
+      "Tracked under two identifiers, CVE-2026-93494 and CVE-2026-100657; both records trace back to the advisory that credits me, and both are linked here",
+      "Scored 7.5 under CVSS 3.1 and 8.7 under CVSS 4.0 across the two records",
     ],
   },
   {
