@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-09-25T14:35:22.395Z",
-  "generatedAt": "2026-09-25T14:35:22.395Z",
-  "commit": "bbc33ca",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/36148459182",
+  "fetchedAt": "2026-09-26T13:44:21.900Z",
+  "generatedAt": "2026-09-26T13:44:21.900Z",
+  "commit": "9250a7a",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/36246143921",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 566,
+    "ranking": 565,
     "points": 460,
     "user_owns": 50,
     "system_owns": 50,
@@ -25,13 +25,13 @@
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 854
+    "total": 855
   },
   "challengeCategories": [
     {
       "name": "Reversing",
       "solved": 10,
-      "total": 101,
+      "total": 102,
       "percentage": 10
     },
     {
