@@ -304,12 +304,11 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-770",
     type: "Uncontrolled resource consumption (unauthenticated DoS)",
     status: "CVE published",
-    // GHSA-pvjx-v7vp-62vq rates this High and publishes no CVSS vector; the
-    // 8.7 (v4.0) belongs to the sibling record and is keyed under it below.
-    severity: "High",
+    severity: "High · CVSS 7.5",
     ref: "CVE-2026-93491",
     credited: true,
     cveScores: {
+      "CVE-2026-93491": "CVSS 7.5",
       "CVE-2026-100656": "CVSS 8.7 (v4.0)",
     },
     tagline:
@@ -327,6 +326,7 @@ export const DISCLOSURES: Disclosure[] = [
       "The same defect class had already been fixed weeks earlier in the sibling HttpContentEncoder (CVE-2026-59899), which gained a maxPipelineDepth cap; HttpServerCodec — the codec essentially every Netty HTTP/1.1 server uses — never received the equivalent bound",
       "Affects netty-codec-http through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
       "Tracked under two identifiers, CVE-2026-93491 and CVE-2026-100656; both records trace back to the advisory that credits me, and both are linked here",
+      "Scored 7.5 under CVSS 3.1 and 8.7 under CVSS 4.0 across the two records",
     ],
   },
   {
@@ -392,11 +392,11 @@ export const DISCLOSURES: Disclosure[] = [
     vendor: "Netty",
     type: "Missing release of resource (reference-count leak) — incomplete-fix report",
     status: "CVE published",
-    severity: "Moderate · CVSS 5.3",
+    severity: "High · CVSS 7.5",
     ref: "CVE-2026-93564",
     credited: true,
     cveScores: {
-      "CVE-2026-93564": "CVSS 5.3",
+      "CVE-2026-93564": "CVSS 7.5",
     },
     tagline:
       "When PROXY-protocol v2 parsing hits a malformed sibling TLV after a nested SSL TLV, the error path releases only the top level of a tree-shaped TLV list. Grandchild TLVs stay pinned, so repeated crafted connections exhaust pooled memory. Reported as an incomplete fix of the earlier patch; fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -407,7 +407,7 @@ export const DISCLOSURES: Disclosure[] = [
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
-      "The flatten-aware release helper on the malformed-TLV error path does not reach TLVs nested inside child SSL TLVs, so each crafted connection pins pooled ByteBufs that are never returned to the allocator (CVSS 5.3)",
+      "The flatten-aware release helper on the malformed-TLV error path does not reach TLVs nested inside child SSL TLVs, so each crafted connection pins pooled ByteBufs that are never returned to the allocator (CVSS 7.5)",
       "Identified as an incomplete fix of the project's earlier reference-leak patch; affects netty-codec-haproxy through 4.1.137.Final and 4.2.17.Final, fixed in 4.1.138.Final and 4.2.18.Final",
     ],
   },
