@@ -327,8 +327,9 @@ function PublishedRecordRow({ d }: { d: Disclosure }) {
 /** Section 01 — metrics, the published-CVE record list, and the pending-CVE pipeline. */
 function DisclosureHighlights() {
   const published = DISCLOSURES.filter((d) => d.status === "CVE published");
-  // Counted per identifier: a couple of findings carry two CVE ids because a
-  // vendor CNA and a coordinating CNA each assigned one to the same report.
+  // Counted per identifier rather than per row. Today those numbers agree, but
+  // a finding picks up a second id whenever two CNAs assign one to the same
+  // report, and the heading below says so explicitly when they diverge.
   const cveIdCount = published.reduce((n, d) => n + cveIdsOf(d).length, 0);
   // One uniform row per finding, most severe first — no card is privileged over
   // another, so the section keeps scaling as the ledger grows.
@@ -368,8 +369,12 @@ function DisclosureHighlights() {
           <div className="mb-3 flex flex-wrap items-center gap-x-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
             <span className="font-bold text-rose-400">{cveIdCount}</span>
             <span>published CVE {cveIdCount === 1 ? "record" : "records"}</span>
-            <span aria-hidden="true">·</span>
-            <span>{ranked.length} distinct findings</span>
+            {cveIdCount !== ranked.length && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{ranked.length} distinct findings</span>
+              </>
+            )}
           </div>
           <ul className="overflow-hidden rounded-lg border border-rose-500/20 bg-slate-950/40 backdrop-blur-sm">
             {ranked.map((d) => (

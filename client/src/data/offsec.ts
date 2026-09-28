@@ -306,10 +306,11 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93491",
+    // A second id was once assigned to this report by another CNA and was
+    // rejected as a duplicate of this one; it is deliberately not listed.
     credited: true,
     cveScores: {
       "CVE-2026-93491": "CVSS 7.5",
-      "CVE-2026-100656": "CVSS 8.7 (v4.0)",
     },
     tagline:
       "HttpServerCodec packs the first 32 pipelined request methods into a single long, then spills every one after that into an unbounded queue. A client that pipelines requests while withholding reads on its own end grows that queue without limit, driving unbounded heap growth. Fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -317,16 +318,12 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "CVE-2026-93491", url: "https://www.cve.org/CVERecord?id=CVE-2026-93491" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93491" },
       { label: "GHSA-pvjx-v7vp-62vq", url: "https://github.com/netty/netty/security/advisories/GHSA-pvjx-v7vp-62vq" },
-      { label: "CVE-2026-100656", url: "https://www.cve.org/CVERecord?id=CVE-2026-100656" },
-      { label: "GHSA-g3wj-wqf3-65v6", url: "https://github.com/advisories/GHSA-g3wj-wqf3-65v6" },
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "The per-connection method-tracking overflow queue in HttpServerCodec has no cap, so an unauthenticated client pipelining HTTP/1.1 requests faster than it reads responses grows it without bound until the heap is exhausted",
       "The same defect class had already been fixed weeks earlier in the sibling HttpContentEncoder (CVE-2026-59899), which gained a maxPipelineDepth cap; HttpServerCodec — the codec essentially every Netty HTTP/1.1 server uses — never received the equivalent bound",
       "Affects netty-codec-http through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
-      "Tracked under two identifiers, CVE-2026-93491 and CVE-2026-100656; both records trace back to the advisory that credits me, and both are linked here",
-      "Scored 7.5 under CVSS 3.1 and 8.7 under CVSS 4.0 across the two records",
     ],
   },
   {
@@ -338,10 +335,11 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93494",
+    // A second id was once assigned to this report by another CNA and was
+    // rejected as a duplicate of this one; it is deliberately not listed.
     credited: true,
     cveScores: {
       "CVE-2026-93494": "CVSS 7.5",
-      "CVE-2026-100657": "CVSS 8.7 (v4.0)",
     },
     tagline:
       "Once a STOMP frame's declared content-length is satisfied, the decoder parks an allocator buffer in an instance field to await the single NUL byte that ends the frame. If that byte never arrives nothing releases it, so a peer leaks one buffer per connection — reclaimed by neither GC nor disconnect. Fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -349,15 +347,11 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "CVE-2026-93494", url: "https://www.cve.org/CVERecord?id=CVE-2026-93494" },
       { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-93494" },
       { label: "GHSA-ghg5-c4jg-8q5j", url: "https://github.com/netty/netty/security/advisories/GHSA-ghg5-c4jg-8q5j" },
-      { label: "CVE-2026-100657", url: "https://www.cve.org/CVERecord?id=CVE-2026-100657" },
-      { label: "GHSA-7788-q3h4-2xcf", url: "https://github.com/advisories/GHSA-7788-q3h4-2xcf" },
     ],
     summary: [
       "Reported to the Netty project under coordinated disclosure",
       "A remote peer that sends a complete, well-formed STOMP body but omits its terminating NUL byte pins one allocator buffer per connection, with no path that ever releases it (CVSS 7.5)",
       "Affects netty-codec-stomp through 4.1.137.Final and 4.2.0–4.2.17.Final; fixed in 4.1.138.Final and 4.2.18.Final",
-      "Tracked under two identifiers, CVE-2026-93494 and CVE-2026-100657; both records trace back to the advisory that credits me, and both are linked here",
-      "Scored 7.5 under CVSS 3.1 and 8.7 under CVSS 4.0 across the two records",
     ],
   },
   {
@@ -736,7 +730,9 @@ export interface PublishedCve {
  * Every CVE identifier carried by a row, in order: the `ref` first, then any
  * further CVE ids that appear among its public records. A finding occasionally
  * receives two identifiers when a vendor CNA and a coordinating CNA each assign
- * one to the same report; both are real published records, so both are shown.
+ * one to the same report; while both records stand, both are shown. Once one is
+ * rejected as a duplicate it comes out of `links` and stops being counted, so
+ * every row currently carries exactly one id.
  */
 export function cveIdsOf(d: Disclosure): string[] {
   const ids: string[] = [];
@@ -763,7 +759,8 @@ export function cveUrlOf(d: Disclosure, id: string): string {
  * Published CVE records, derived from DISCLOSURES so the homepage "CVEs
  * Discovered" strip and this ledger can never drift: add a `CVE published` row
  * above and it surfaces in both places automatically, in the same order. One
- * entry per identifier, so a finding tracked under two ids contributes both.
+ * entry per identifier, so a finding that is genuinely tracked under two live
+ * ids would contribute both.
  */
 export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
   (d) => d.status === "CVE published",
