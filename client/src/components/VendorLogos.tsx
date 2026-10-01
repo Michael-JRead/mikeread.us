@@ -77,6 +77,8 @@ export const VENDOR_LOGOS: Record<string, FC<LogoProps>> = {
   spring: SpringBootLogo,
   keycloak: KeycloakLogo,
   tomcat: ApacheTomcatLogo,
+  // The feather is httpd's own mark — the ASF adopted it from this project.
+  httpd: ApacheLogo,
   pulsar: ApachePulsarLogo,
   cassandra: ApacheCassandraLogo,
   hibernate: HibernateLogo,

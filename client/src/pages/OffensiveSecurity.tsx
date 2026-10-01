@@ -351,8 +351,8 @@ function DisclosureHighlights() {
         Responsible Disclosure &amp; Research
       </h2>
       <p className="text-gray-400 mb-6 max-w-3xl">
-        Original vulnerability research across the Java ecosystem — responsibly disclosed,
-        vendor-confirmed, and backed by public records.
+        Original vulnerability research across widely deployed open-source infrastructure —
+        responsibly disclosed, vendor-confirmed, and backed by public records.
       </p>
 
       {/* Summary metrics strip */}

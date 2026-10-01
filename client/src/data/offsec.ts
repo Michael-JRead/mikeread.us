@@ -113,6 +113,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The most widely deployed Java servlet container and web server.",
     brand: "#F8DC75",
   },
+  {
+    key: "httpd",
+    match: "Apache HTTP Server",
+    name: "Apache HTTP Server",
+    org: "Apache Software Foundation",
+    blurb: "The web server the open web was built on, and the project the Apache Foundation grew out of.",
+    brand: "#D22128",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -533,6 +541,33 @@ export const DISCLOSURES: Disclosure[] = [
       "Discovered and responsibly disclosed privately to the Apache Tomcat security team",
       "With ocspSoftFail=false, an UNKNOWN OCSP verdict should fail the handshake; instead the signed UNKNOWN response was treated as acceptable, so CLIENT_CERT authentication did not fail as expected and revocation checking was effectively skipped",
       "Confirmed as a residual of the earlier CVE-2026-34500 soft-fail fix; affects Tomcat 9.0.92–9.0.121, 10.1.22–10.1.59 and 11.0.0-M14–11.0.25, fixed in 9.0.122, 10.1.60 and 11.0.26",
+    ],
+  },
+  {
+    title:
+      "Apache HTTP Server: mod_ssl SSLRequire reaches restricted ap_expr file functions from .htaccess",
+    short: "SSLRequire reaches restricted ap_expr file() from .htaccess",
+    vendor: "Apache HTTP Server",
+    cwe: "CWE-269",
+    type: "Improper privilege management — incomplete-fix report",
+    status: "CVE published",
+    // Apache publishes a textual severity for httpd rather than a CVSS vector;
+    // the record for this one reads "low".
+    severity: "Low",
+    ref: "CVE-2026-59797",
+    credited: true,
+    tagline:
+      "CVE-2026-44119 restricted ap_expr's file functions in .htaccess centrally, but mod_ssl parses SSLRequire's expression without passing through that restriction. A site author granted AllowOverride AuthConfig could use SSLRequire file(...) as a boolean oracle and read any file the httpd runtime user can — while Require expr with the identical call, in the same .htaccess, at the same override level, was correctly refused. Fixed in 2.4.69.",
+    links: [
+      { label: "CVE-2026-59797", url: "https://www.cve.org/CVERecord?id=CVE-2026-59797" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-59797" },
+      { label: "Apache advisory", url: "https://httpd.apache.org/security/vulnerabilities_24.html" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache HTTP Server security team",
+      "ssl_cmd_SSLRequire() calls ap_expr_parse() directly and never sets AP_EXPR_FLAG_RESTRICTED_FILE_FUNC — the flag the central path sets whenever an expression is parsed in .htaccess context — leaving SSLRequire as the one configuration directive that parsed an ap_expr expression outside the restriction",
+      "Demonstrated full content recovery of a mode-0600 file owned by the httpd runtime user from a single .htaccess at AllowOverride AuthConfig: 25 of 25 characters in 828 requests, with no privilege beyond writing that one file",
+      "Reported as an incomplete fix of CVE-2026-44119, whose own commit subject was \"restrict per-dir file funcs centrally\"; affects 2.4.0 through 2.4.68, fixed in 2.4.69 by r1938672",
     ],
   },
   {
