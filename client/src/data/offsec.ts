@@ -121,6 +121,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The web server the open web was built on, and the project the Apache Foundation grew out of.",
     brand: "#D22128",
   },
+  {
+    key: "gitea",
+    match: "Gitea",
+    name: "Gitea",
+    org: "Gitea",
+    blurb: "The self-hosted Git service and CI platform behind a large share of private forges.",
+    brand: "#609926",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -568,6 +576,35 @@ export const DISCLOSURES: Disclosure[] = [
       "ssl_cmd_SSLRequire() calls ap_expr_parse() directly and never sets AP_EXPR_FLAG_RESTRICTED_FILE_FUNC — the flag the central path sets whenever an expression is parsed in .htaccess context — leaving SSLRequire as the one configuration directive that parsed an ap_expr expression outside the restriction",
       "Demonstrated full content recovery of a mode-0600 file owned by the httpd runtime user from a single .htaccess at AllowOverride AuthConfig: 25 of 25 characters in 828 requests, with no privilege beyond writing that one file",
       "Reported as an incomplete fix of CVE-2026-44119, whose own commit subject was \"restrict per-dir file funcs centrally\"; affects 2.4.0 through 2.4.68, fixed in 2.4.69 by r1938672",
+    ],
+  },
+  {
+    title:
+      "Gitea Actions: fork pull-request approval decided by the triggering user, not the PR author",
+    short: "Fork-PR workflow approval bypass via maintainer-triggered pull_request events",
+    vendor: "Gitea",
+    cwe: "CWE-441 / CWE-863",
+    type: "Confused deputy / incorrect authorization (CI approval bypass)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7",
+    ref: "CVE-2026-94205",
+    credited: true,
+    cveScores: {
+      "CVE-2026-94205": "CVSS 8.7",
+    },
+    tagline:
+      "Gitea Actions decided whether a fork pull request needed approval from whoever triggered the event rather than from the PR author — so an ordinary maintainer triage action, such as adding a label, created the run unapproved while the workflow definition was still read from the fork head. Fork-controlled CI code then ran on the base repository's runners. Fixed in 28.0.0.",
+    links: [
+      { label: "CVE-2026-94205", url: "https://www.cve.org/CVERecord?id=CVE-2026-94205" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-94205" },
+      { label: "GHSA-xh39-mxw9-34pp", url: "https://github.com/go-gitea/gitea/security/advisories/GHSA-xh39-mxw9-34pp" },
+      { label: "PR #39399", url: "https://github.com/go-gitea/gitea/pull/39399" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Gitea security team",
+      "The approval gate for fork pull requests keyed on the actor who raised the event instead of the pull request author, so any pull_request sub-event a maintainer raised during routine triage — labelling, assigning — satisfied it",
+      "The workflow definition was still taken from the fork head, so the effect was fork-controlled workflow code executing on the base repository's runners with no explicit approval, wherever Actions is enabled and a runner is registered",
+      "Affects Gitea through 1.27.3; fixed in 28.0.0 by PR #39399",
     ],
   },
   {
