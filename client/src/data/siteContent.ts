@@ -590,6 +590,7 @@ export const CERTIFICATIONS: CertificationItem[] = [
   { name: "GIAC Strategic Planning, Policy, and Leadership", shortName: "GSTRT", issuer: "GIAC", year: "Active", status: "Active", category: "Management", badgeSrc: "/assets/certs/gstrt.png" },
   { name: "GIAC Defensible Security Architect", shortName: "GDSA", issuer: "GIAC", year: "Active", status: "Active", category: "Professional", badgeSrc: "/assets/certs/gdsa.png" },
   { name: "GIAC Certified Incident Handler", shortName: "GCIH", issuer: "GIAC", year: "Active", status: "Active", category: "Incident Response", badgeSrc: "/assets/certs/gcih.png" },
+  { name: "GIAC Certified Intrusion Analyst", shortName: "GCIA", issuer: "GIAC", year: "Active", status: "Active", category: "Incident Response", badgeSrc: "/assets/certs/gcia.png" },
   { name: "GIAC Penetration Tester", shortName: "GPEN", issuer: "GIAC", year: "Active", status: "Active", category: "Offensive", badgeSrc: "/assets/certs/gpen.png" },
   { name: "GIAC Cloud Penetration Tester", shortName: "GCPN", issuer: "GIAC", year: "Active", status: "Active", category: "Cloud", badgeSrc: "/assets/certs/gcpn.png" },
   { name: "GIAC Web Application Penetration Tester", shortName: "GWAPT", issuer: "GIAC", year: "Active", status: "Active", category: "Offensive", badgeSrc: "/assets/certs/gwapt.png" },

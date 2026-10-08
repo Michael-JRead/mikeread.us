@@ -53,6 +53,9 @@ const BADGES = {
   gstrt: [
     "https://www.credly.com/org/global-information-assurance-certification-giac/badge/giac-strategic-planning-policy-and-leadership-gstrt",
   ],
+  gcia: [
+    "https://www.credly.com/org/global-information-assurance-certification-giac/badge/giac-certified-intrusion-analyst-gcia",
+  ],
 };
 
 const UA =
