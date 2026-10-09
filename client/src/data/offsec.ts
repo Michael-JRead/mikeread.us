@@ -53,6 +53,11 @@ export interface VendorInfo {
   blurb: string;
   /** Brand tint for the logo mark (hex). */
   brand: string;
+  /**
+   * Monogram shown when no logo is mapped. Defaults to the first two letters of
+   * `name`, which reads badly for "Apache …" products — set it explicitly there.
+   */
+  mono?: string;
 }
 
 // Card order on the page — largest body of work first.
@@ -128,6 +133,15 @@ export const VENDORS: VendorInfo[] = [
     org: "Gitea",
     blurb: "The self-hosted Git service and CI platform behind a large share of private forges.",
     brand: "#609926",
+  },
+  {
+    key: "cxf",
+    match: "Apache CXF",
+    name: "Apache CXF",
+    org: "Apache Software Foundation",
+    blurb: "The JAX-RS and JAX-WS services framework under a long tail of enterprise Java web services.",
+    brand: "#6EA8DC",
+    mono: "CX",
   },
 ];
 
@@ -605,6 +619,59 @@ export const DISCLOSURES: Disclosure[] = [
       "The approval gate for fork pull requests keyed on the actor who raised the event instead of the pull request author, so any pull_request sub-event a maintainer raised during routine triage — labelling, assigning — satisfied it",
       "The workflow definition was still taken from the fork head, so the effect was fork-controlled workflow code executing on the base repository's runners with no explicit approval, wherever Actions is enabled and a runner is registered",
       "Affects Gitea through 1.27.3; fixed in 28.0.0 by PR #39399",
+    ],
+  },
+  {
+    title: "Apache CXF: quadratic ReDoS in the JAX-RS FIQL search-expression parser",
+    short: "Quadratic ReDoS in the JAX-RS FIQL search parser (FiqlParser)",
+    vendor: "Apache CXF",
+    type: "Regular-expression denial of service (quadratic backtracking)",
+    status: "CVE published",
+    // Apache publishes a textual severity for CXF; this record reads "low" and
+    // carries no CVSS vector and no CWE, so neither is shown.
+    severity: "Low",
+    ref: "CVE-2026-86463",
+    credited: true,
+    tagline:
+      "FiqlParser located a comparison operator with a greedy [\\p{ASCII}]+(op) pattern and Matcher.find(). Given a search value with no operator in it, the greedy prefix swallowed the whole input, failed, and find() restarted from every index — O(n²) backtracking with no length bound. One 8 KB _s query cost about a second of CPU, roughly 1,000× a same-length valid query. Fixed by capping FIQL expressions at 4 KiB.",
+    links: [
+      { label: "CVE-2026-86463", url: "https://www.cve.org/CVERecord?id=CVE-2026-86463" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-86463" },
+      { label: "Apache advisory", url: "https://lists.apache.org/thread.html/mv5qfmd27gkbvt3k6by9db5bolrsbgy1" },
+      { label: "PR #3443", url: "https://github.com/apache/cxf/pull/3443" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache CXF security team",
+      "FiqlParser's comparator pattern [\\p{ASCII}]+(=gt=|=ge=|=lt=|=le=|==|!=), driven by Matcher.find(), backtracks quadratically on any value containing no operator; the pattern had been unchanged since about 2015 and nothing bounded the expression length",
+      "Reproduced end to end through SearchContextImpl on the released 4.2.3 jars: 8,000 characters cost ~966 ms and 16,000 cost ~4.5 s against ~4 ms for a same-length valid query",
+      "Affects cxf-rt-rs-extension-search before 3.6.13, 4.0.0 before 4.1.9 and 4.2.0 before 4.2.4; fixed by PR #3443, which caps FIQL expressions at 4 KiB by default",
+    ],
+  },
+  {
+    title:
+      "Apache CXF: attachment header size and count limits bypassable — unbounded-heap DoS",
+    short: "Attachment header size and count limits bypassable via repeated headers",
+    vendor: "Apache CXF",
+    type: "Uncontrolled resource consumption (unauthenticated memory-exhaustion DoS) — incomplete-fix report",
+    status: "CVE published",
+    severity: "Low",
+    ref: "CVE-2026-107937",
+    credited: true,
+    tagline:
+      "CXF's multipart/MTOM part-header guards counted the wrong thing. The count limit (default 500) was checked against distinct header names rather than header lines, so a part repeating one header name never tripped it, and the size limit applied per physical line rather than to an assembled header value. An unauthenticated multipart request grew the heap without bound — one 16 MB body exhausted a 128 MB heap. Reported as an incomplete fix of CVE-2026-50645.",
+    links: [
+      { label: "CVE-2026-107937", url: "https://www.cve.org/CVERecord?id=CVE-2026-107937" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-107937" },
+      { label: "Apache advisory", url: "https://lists.apache.org/thread.html/x9twtpv3d04qj83t6w9xkh9y2q28zztj" },
+      { label: "PR #3430", url: "https://github.com/apache/cxf/pull/3430" },
+      { label: "PR #3425", url: "https://github.com/apache/cxf/pull/3425" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache CXF security team",
+      "AttachmentDeserializerUtil.loadPartHeaders() keyed headers into a name-keyed map and compared map size — distinct names — against attachment-headers-max-count, so a part whose every header line shared one name kept the count at 1 while its value list grew with every line",
+      "Traced as an incomplete fix: CVE-2026-50645 added the guard in 4.2.2, and the CVE-2026-64958 follow-up in 4.2.3 bounded attachment count rather than header lines, leaving the guarding code byte-identical through 4.2.3 and main",
+      "Demonstrated on the released 4.2.3 jar with default configuration: a single 16 MB request raised OutOfMemoryError in the CXF parse path on a 128 MB heap",
+      "Affects cxf-core before 3.6.13, 4.0.0 before 4.1.9 and 4.2.0 before 4.2.4; fixed by PR #3430 (header count) and PR #3425 (header size)",
     ],
   },
   {

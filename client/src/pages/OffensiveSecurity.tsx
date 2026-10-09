@@ -174,7 +174,7 @@ function VendorLogoTile({
           className={`font-mono font-bold ${size === "md" ? "text-base" : "text-[11px]"}`}
           style={{ color: vendor.brand }}
         >
-          {vendor.name.slice(0, 2).toUpperCase()}
+          {vendor.mono ?? vendor.name.slice(0, 2).toUpperCase()}
         </span>
       )}
     </div>
