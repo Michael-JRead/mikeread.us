@@ -1,15 +1,15 @@
 {
-  "fetchedAt": "2026-10-09T16:09:32.486Z",
-  "generatedAt": "2026-10-09T16:09:32.486Z",
-  "commit": "e441037",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/37957029464",
+  "fetchedAt": "2026-10-10T15:20:42.049Z",
+  "generatedAt": "2026-10-10T15:20:42.049Z",
+  "commit": "e038fd7",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/38063211858",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 654,
-    "points": 373,
+    "ranking": 657,
+    "points": 324,
     "user_owns": 50,
     "system_owns": 50,
     "user_bloods": 0,
@@ -18,14 +18,14 @@
     "team": "SystemZero",
     "current_rank_progress": 0,
     "next_rank": "Elite Hacker",
-    "next_rank_points": 21.644000000000002,
-    "rank_ownership": 30.92,
+    "next_rank_points": 20.146,
+    "rank_ownership": 28.78,
     "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 856
+    "total": 857
   },
   "challengeCategories": [
     {
@@ -79,8 +79,8 @@
     {
       "name": "Hardware",
       "solved": 12,
-      "total": 43,
-      "percentage": 28
+      "total": 44,
+      "percentage": 27
     },
     {
       "name": "GamePwn",
