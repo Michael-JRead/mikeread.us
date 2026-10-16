@@ -71,6 +71,14 @@ export const VENDORS: VendorInfo[] = [
     brand: "#4695EB",
   },
   {
+    key: "vertx",
+    match: "Eclipse Vert.x",
+    name: "Eclipse Vert.x",
+    org: "Eclipse Foundation",
+    blurb: "The reactive, event-driven toolkit for the JVM — and the engine underneath Quarkus.",
+    brand: "#782A90",
+  },
+  {
     key: "kafka",
     match: "Apache Kafka",
     name: "Apache Kafka",
@@ -672,6 +680,324 @@ export const DISCLOSURES: Disclosure[] = [
       "Traced as an incomplete fix: CVE-2026-50645 added the guard in 4.2.2, and the CVE-2026-64958 follow-up in 4.2.3 bounded attachment count rather than header lines, leaving the guarding code byte-identical through 4.2.3 and main",
       "Demonstrated on the released 4.2.3 jar with default configuration: a single 16 MB request raised OutOfMemoryError in the CXF parse path on a 128 MB heap",
       "Affects cxf-core before 3.6.13, 4.0.0 before 4.1.9 and 4.2.0 before 4.2.4; fixed by PR #3430 (header count) and PR #3425 (header size)",
+    ],
+  },
+  // Eclipse Vert.x — twelve findings published together in October 2026.
+  // Scores are each CVE record's own CVSS 4.0 vector. The GHSAs carry separate
+  // CVSS 3.1 scores that differ (e.g. 5.9 Moderate against the record's 8.2 High
+  // for CVE-2026-102462); as with CVE-2026-93564, the identifier's record wins.
+  // None of the records lists a CWE, and only GHSA-rm5c-2c7f-gc5g does (CWE-93).
+  {
+    title: "Vert.x DB2 client: unsafe Java deserialization of UDT column data from a malicious or man-in-the-middle DRDA server",
+    short: "DRDA UDT column bytes deserialized via unfiltered ObjectInputStream → RCE/DoS",
+    vendor: "Eclipse Vert.x",
+    type: "Deserialization of untrusted data (client-side; RCE with a classpath gadget chain, otherwise DoS)",
+    status: "CVE published",
+    severity: "Critical · CVSS 9.2 (v4.0)",
+    ref: "CVE-2026-102469",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102469": "CVSS 9.2 (v4.0)",
+    },
+    tagline:
+      "The Vert.x DB2 client's DRDA protocol code deserializes User Defined Type (UDT) column data with a bare ObjectInputStream.readObject() call and no ObjectInputFilter or class allowlist. A legitimate DB2 server never sends the FDOCA 0x50 UDT type, but a malicious or man-in-the-middle DRDA server can return a 0x50-tagged column and have attacker-controlled bytes deserialized on the event loop before application code sees them — remote code execution if a gadget chain is on the classpath, denial of service otherwise. TLS is off by default, which makes the man-in-the-middle position practical. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102469", url: "https://www.cve.org/CVERecord?id=CVE-2026-102469" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102469" },
+      { label: "GHSA-j4vf-w939-pgxf", url: "https://github.com/eclipse-vertx/vertx-sql-client/security/advisories/GHSA-j4vf-w939-pgxf" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "When a result set column is tagged with FDOCA LID 0x50 (UDT), the DRDA decoding code passes the column bytes to ObjectInputStream.readObject() with no ObjectInputFilter or class allowlist, on the Vert.x event loop and before application code can inspect or reject the row",
+      "Needs a malicious DRDA server or a man-in-the-middle on the client connection (TLS is disabled by default); DB2 does not support this UDT type, so no legitimate server sends it. RCE needs a Java deserialization gadget chain on the application classpath; without one, crafted object graphs can cause denial of service",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x core: incomplete SSL context cache key lets the HTTP client receive a context with weaker SSL properties than requested",
+    short: "Incomplete SSL context cache key → HTTP client reuses weaker SSL context",
+    vendor: "Eclipse Vert.x",
+    type: "Incomplete cache key leading to weakened SSL validation (hostname validation bypass)",
+    status: "CVE published",
+    severity: "Critical · CVSS 9.1 (v4.0)",
+    ref: "CVE-2026-102476",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102476": "CVSS 9.1 (v4.0)",
+    },
+    tagline:
+      "The Vert.x HTTP client caches SSL contexts for efficiency, but the cache key does not capture all of the requested SSL properties. A client that asks for a context can therefore be handed a cached one with weaker settings, for example one that ignores hostname validation when validation was requested. Where an application uses differing SSL options, connections can run without the hostname check they asked for, which exposes them to a man-in-the-middle. Fixed in 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102476", url: "https://www.cve.org/CVERecord?id=CVE-2026-102476" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102476" },
+      { label: "GHSA-2vhw-4xwj-r38v", url: "https://github.com/eclipse-vertx/vert.x/security/advisories/GHSA-2vhw-4xwj-r38v" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The HTTP client caches SSL contexts, but the cache key does not fully reflect the requested SSL properties. A lookup can return a context with weaker properties than the caller asked for, such as one that ignores hostname validation when validation was requested",
+      "Reachable when an application's HTTP client uses differing SSL settings, so that a weaker context is already cached when a stricter one is requested. Exploiting the skipped hostname check requires a man-in-the-middle position on the connection",
+      "Fixed in 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x JSON Schema: quadratic-time uniqueItems validation allows CPU-exhaustion denial of service",
+    short: "uniqueItems validation O(n²) pairwise comparison → CPU exhaustion",
+    vendor: "Eclipse Vert.x",
+    type: "Algorithmic complexity denial of service (quadratic CPU consumption)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-102461",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102461": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "vertx-json-schema validated the uniqueItems keyword with an O(n²) pairwise comparison loop that had no short-circuit or size limit, so CPU cost grows with the square of the array length. A remote, unauthenticated client whose JSON is validated against a schema using uniqueItems can submit a moderately sized array and tie up CPU, denying service; vertx-web-openapi-router, vertx-web-validation and vertx-openapi depend on vertx-json-schema and are also affected. Fixed in vertx-json-schema 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102461", url: "https://www.cve.org/CVERecord?id=CVE-2026-102461" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102461" },
+      { label: "GHSA-4m87-8qfr-8p8m", url: "https://github.com/eclipse-vertx/vertx-json-schema/security/advisories/GHSA-4m87-8qfr-8p8m" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The uniqueItems keyword check in io.vertx:vertx-json-schema uses an O(n²) pairwise comparison loop with no short-circuit or size limit, so CPU time grows quadratically with array length",
+      "A remote, unauthenticated attacker can trigger it by submitting a moderately sized JSON array that the application validates against a schema using uniqueItems. The dependent modules io.vertx:vertx-web-openapi-router, io.vertx:vertx-web-validation and io.vertx:vertx-openapi are also affected",
+      "Fixed in vertx-json-schema 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x core: WebSocket frame and message decompression has no maximum allocation (zip-bomb DoS)",
+    short: "WebSocket decompression has no maximum allocation → zip-bomb DoS",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (decompression bomb, memory exhaustion DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-102467",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102467": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "The vertx-core WebSocket implementation sets no limit on the number of bytes it allocates when decompressing frames or messages. A WebSocket peer can therefore send a small compressed payload that inflates without bound (a zip bomb) and exhausts the receiving Vert.x endpoint's memory. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102467", url: "https://www.cve.org/CVERecord?id=CVE-2026-102467" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102467" },
+      { label: "GHSA-h722-h6c2-6j3c", url: "https://github.com/eclipse-vertx/vert.x/security/advisories/GHSA-h722-h6c2-6j3c" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The vertx-core WebSocket implementation sets no limit on the number of bytes it allocates when decompressing frames or messages",
+      "A WebSocket peer that sends compressed frames or messages can deliver a zip bomb: a small payload that inflates into an unbounded allocation and denies service to the receiving endpoint",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x HTTP Proxy: body transformer interceptor does not correctly enforce its max buffered bytes limit",
+    short: "Body transformer max-buffered-bytes limit not enforced → unbounded heap growth",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (server-side heap exhaustion DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-102475",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102475": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "The Vert.x HTTP proxy's body transformer interceptor relies on a max buffered bytes limit to keep the buffer for each request bounded, but that check was not correctly enforced. On a proxy configured with an intercepting body transformer, a client sending requests through it can force the server to allocate heap indefinitely. Fixed in 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102475", url: "https://www.cve.org/CVERecord?id=CVE-2026-102475" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102475" },
+      { label: "GHSA-mjwh-5qfp-hjgc", url: "https://github.com/eclipse-vertx/vertx-http-proxy/security/advisories/GHSA-mjwh-5qfp-hjgc" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The proxy's body transformer interceptor relies on a max buffered bytes limit to bound the buffer held for each request. That check was not correctly enforced, so the buffered body could grow without limit and the server could be forced to allocate heap indefinitely",
+      "Reachable only when the proxy uses an intercepting body transformer. Any client that can send requests through such a proxy can trigger it",
+      "Fixed in 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x gRPC Server: per-message size limit applies only to compressed bytes, enabling compression bomb memory exhaustion",
+    short: "gRPC max message size enforced on compressed bytes → decompression bomb",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (server-side decompression bomb / memory exhaustion DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-102477",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102477": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "A vertx-grpc-server endpoint checks its configurable per-message maximum size against the bytes received, so for a compressed message the limit bounds only the compressed size and not the decompressed content. A client that can send messages to the endpoint can submit a small compressed payload that expands well beyond the configured limit, forcing the server to allocate the excess memory. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102477", url: "https://www.cve.org/CVERecord?id=CVE-2026-102477" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102477" },
+      { label: "GHSA-4wvq-75mw-q6cg", url: "https://github.com/eclipse-vertx/vertx-grpc/security/advisories/GHSA-4wvq-75mw-q6cg" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The gRPC endpoint's configurable per-message maximum size is applied to the received bytes; for a compressed message this bounds only the compressed size, so the decompressed content can be far larger than the configured limit",
+      "Reachable by any client that can send a compressed gRPC message to an endpoint built on io.vertx:vertx-grpc-server; a small compression-bomb payload makes the server allocate memory well past the configured maximum",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x core: HTTP/1.x decoder canonicalizes crafted header names such as Content-Xength as Content-Length, enabling request smuggling",
+    short: "HTTP/1.x decoder lenient header-name canonicalization → request smuggling",
+    vendor: "Eclipse Vert.x",
+    type: "HTTP request smuggling (lenient canonicalization of well-known header names in the HTTP/1.x decoder)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-102479",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102479": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "The Vert.x HTTP/1.x decoder canonicalizes well-known HTTP header names, but crafted names are also mapped onto entries in that list — a header named Content-Xength, for example, is interpreted as Content-Length. An attacker who can send HTTP/1.x requests can use the misread header for request smuggling. Fixed in 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102479", url: "https://www.cve.org/CVERecord?id=CVE-2026-102479" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102479" },
+      { label: "GHSA-ch7p-g5pm-3gqx", url: "https://github.com/eclipse-vertx/vert.x/security/advisories/GHSA-ch7p-g5pm-3gqx" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The Vert.x HTTP/1.x decoder canonicalizes well-known HTTP header names. Crafted names that are not on that list are also mapped onto it, so a header named Content-Xength, for example, is interpreted as Content-Length",
+      "The misread header can be used for HTTP request smuggling by an attacker who can send HTTP/1.x requests that reach the decoder",
+      "Fixed in 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x MSSQL client: unbounded TDS message reassembly exhausts client direct memory",
+    short: "MSSQL TDS message decoder unbounded packet reassembly → direct-memory OOM",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (client-side direct-memory OOM DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.2 (v4.0)",
+    ref: "CVE-2026-102462",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102462": "CVSS 8.2 (v4.0)",
+    },
+    tagline:
+      "The vertx-mssql-client TDS message decoder aggregates inbound TDS packets into a composite direct-memory buffer with no cumulative size limit. A malicious, compromised or man-in-the-middle SQL Server can keep sending packets without setting the END_OF_MESSAGE status flag and drive the client into an out-of-memory crash. This happens before authentication completes. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102462", url: "https://www.cve.org/CVERecord?id=CVE-2026-102462" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102462" },
+      { label: "GHSA-fg6c-83v6-vhq4", url: "https://github.com/eclipse-vertx/vertx-sql-client/security/advisories/GHSA-fg6c-83v6-vhq4" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The TDS message decoder in io.vertx:vertx-mssql-client aggregates inbound TDS packets into a composite direct-memory buffer with no cumulative size limit",
+      "A malicious, compromised or man-in-the-middle SQL Server can stream TDS packets without setting the END_OF_MESSAGE status flag. This causes unbounded direct-memory allocation and an out-of-memory crash on the client, before authentication completes",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x PostgreSQL client: unbounded array allocation in DataTypeCodec.binaryDecodeArray lets a malicious server crash the client",
+    short: "DataTypeCodec.binaryDecodeArray unbounded array allocation → client OOM",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (client-side OOM DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.2 (v4.0)",
+    ref: "CVE-2026-102463",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102463": "CVSS 8.2 (v4.0)",
+    },
+    tagline:
+      "DataTypeCodec.binaryDecodeArray in vertx-pg-client sizes a Java array from a server-declared 32-bit dimension count with no upper bound. A malicious or compromised PostgreSQL server, or an on-path attacker on an unencrypted connection, can send a crafted DataRow message that makes the client attempt a multi-gigabyte heap allocation and crash with an OutOfMemoryError. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102463", url: "https://www.cve.org/CVERecord?id=CVE-2026-102463" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102463" },
+      { label: "GHSA-xqmh-8fhj-48fp", url: "https://github.com/eclipse-vertx/vertx-sql-client/security/advisories/GHSA-xqmh-8fhj-48fp" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The binary array decoder (DataTypeCodec.binaryDecodeArray) reads a 32-bit array dimension count declared by the server and allocates a Java array of that size without checking it against any upper bound",
+      "Reachable from a malicious or compromised PostgreSQL server, or an on-path attacker intercepting an unencrypted connection, by sending a crafted DataRow message with an excessively large dimension value; the client attempts a multi-gigabyte allocation and fails with an OutOfMemoryError",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x Redis client: heap exhaustion via unbounded RESP array, push and attribute allocation",
+    short: "RESP parser unbounded array/push/attribute pre-allocation → heap exhaustion",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (client-side OOM DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.2 (v4.0)",
+    ref: "CVE-2026-102465",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102465": "CVSS 8.2 (v4.0)",
+    },
+    tagline:
+      "The Vert.x Redis client's RESP parser pre-allocates arrays to the array, push or attribute length a server declares, with no upper bound. A malicious or compromised Redis server, or a man-in-the-middle on the connection, can send a crafted RESP response that declares an extremely large length and forces a massive heap allocation. The resulting OutOfMemoryError crashes the Vert.x event loop thread and denies service to every connection and verticle sharing that loop. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102465", url: "https://www.cve.org/CVERecord?id=CVE-2026-102465" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102465" },
+      { label: "GHSA-4wf9-p5hg-98w5", url: "https://github.com/vert-x3/vertx-redis-client/security/advisories/GHSA-4wf9-p5hg-98w5" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "The RESP parser pre-allocates arrays to the length a server declares for an array, push or attribute response and enforces no upper bound, so one crafted response that declares an extremely large length triggers a massive heap allocation",
+      "Client-side: the attacker has to be the Redis server the application connects to (malicious or compromised) or sit in a man-in-the-middle position. The resulting OutOfMemoryError crashes the Vert.x event loop thread and denies service to every connection and verticle sharing that loop",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x MySQL client: uncapped server-declared column count allocation crashes the event loop with OutOfMemoryError",
+    short: "Uncapped server-declared column count array allocation → event loop OOM",
+    vendor: "Eclipse Vert.x",
+    type: "Uncontrolled resource consumption (client-side OOM DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 8.2 (v4.0)",
+    ref: "CVE-2026-102466",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102466": "CVSS 8.2 (v4.0)",
+    },
+    tagline:
+      "The Vert.x MySQL client pre-allocates the column-definition array for a result set from the column count the server declares, with no upper bound. A malicious or compromised MySQL server, or a man-in-the-middle, can send a result set packet declaring an extremely large column count and force a massive heap allocation; the resulting OutOfMemoryError crashes the Netty event loop thread and denies service to every connection and verticle in the application. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102466", url: "https://www.cve.org/CVERecord?id=CVE-2026-102466" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102466" },
+      { label: "GHSA-9jxp-x3fr-ffqh", url: "https://github.com/eclipse-vertx/vertx-sql-client/security/advisories/GHSA-9jxp-x3fr-ffqh" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "io.vertx:vertx-mysql-client sizes the column-definition array for a result set directly from the server-declared column count with no upper-bound check, so a single crafted result set packet triggers a massive heap allocation and an OutOfMemoryError",
+      "Requires a malicious or compromised MySQL server, or an attacker in a man-in-the-middle position on the client-server connection; the OutOfMemoryError crashes the Netty event loop thread, taking down all connections and verticles in the Vert.x application",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x Mail Client: CRLF injection in MailMessage and MailAttachment headers allows manipulation of outgoing SMTP messages",
+    short: "MailMessage/MailAttachment header CRLF injection → SMTP message tampering",
+    vendor: "Eclipse Vert.x",
+    cwe: "CWE-93",
+    type: "CRLF injection (SMTP header injection)",
+    status: "CVE published",
+    severity: "Medium · CVSS 6.9 (v4.0)",
+    ref: "CVE-2026-102471",
+    credited: true,
+    cveScores: {
+      "CVE-2026-102471": "CVSS 6.9 (v4.0)",
+    },
+    tagline:
+      "vertx-mail-client wrote header names and values from MailMessage.addHeader()/setHeaders() and MailAttachment.addHeader()/setHeaders(), plus attachment metadata such as setContentType() and setContentId(), into the SMTP DATA section without stripping CR or LF. Separately, Utils.mustEncode(char) let a bare LF in a From display name skip Q-encoding. Anyone who can influence those values through an application, such as a web form or API that feeds MailMessage, can inject headers like Bcc or Reply-To or prepend body content to outgoing mail. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
+    links: [
+      { label: "CVE-2026-102471", url: "https://www.cve.org/CVERecord?id=CVE-2026-102471" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-102471" },
+      { label: "GHSA-rm5c-2c7f-gc5g", url: "https://github.com/vert-x3/vertx-mail-client/security/advisories/GHSA-rm5c-2c7f-gc5g" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "Header names and values passed to MailMessage.addHeader()/setHeaders() and MailAttachment.addHeader()/setHeaders() are written verbatim into the SMTP DATA section. MailAttachment.setContentType(), setDisposition(), setDescription() and setContentId() go into MIME part headers without validation, and Utils.mustEncode(char) lets a bare LF in a From display name bypass Q-encoding",
+      "Exploitable when an application passes attacker-influenced header names, header values or attachment metadata to the mail client, for example from a web form or API. An embedded CR/LF can add headers such as Bcc, Reply-To or Content-Type, or prepend body content, which redirects copies of mail, spoofs headers or alters message structure",
+      "Fixed in 4.5.35, 5.1.10 and 5.2.1",
     ],
   },
   {
