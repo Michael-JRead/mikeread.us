@@ -151,6 +151,14 @@ export const VENDORS: VendorInfo[] = [
     brand: "#6EA8DC",
     mono: "CX",
   },
+  {
+    key: "pulsar",
+    match: "Apache Pulsar",
+    name: "Apache Pulsar",
+    org: "Apache Software Foundation",
+    blurb: "The multi-tenant, geo-replicated messaging and streaming platform.",
+    brand: "#35A7E0",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -998,6 +1006,62 @@ export const DISCLOSURES: Disclosure[] = [
       "Header names and values passed to MailMessage.addHeader()/setHeaders() and MailAttachment.addHeader()/setHeaders() are written verbatim into the SMTP DATA section. MailAttachment.setContentType(), setDisposition(), setDescription() and setContentId() go into MIME part headers without validation, and Utils.mustEncode(char) lets a bare LF in a From display name bypass Q-encoding",
       "Exploitable when an application passes attacker-influenced header names, header values or attachment metadata to the mail client, for example from a web form or API. An embedded CR/LF can add headers such as Bcc, Reply-To or Content-Type, or prepend body content, which redirects copies of mail, spoofs headers or alters message structure",
       "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title:
+      "Apache Pulsar Manager: unauthenticated superuser creation, unauthenticated admin-API proxying and disclosure of the Pulsar admin credential",
+    short: "Pulsar Manager: unauthenticated admin takeover and Pulsar admin-credential disclosure",
+    vendor: "Apache Pulsar",
+    cwe: "CWE-306",
+    type: "Missing authentication for a critical function — end-of-life component, no fix",
+    status: "CVE published",
+    severity: "Critical · CVSS 10.0 (v4.0)",
+    ref: "CVE-2026-105944",
+    credited: true,
+    cveScores: {
+      "CVE-2026-105944": "CVSS 10.0 (v4.0)",
+    },
+    tagline:
+      "Pulsar Manager left its initial-superuser operation open without authentication even after initialization, so anyone who could reach it could create an administrator account. Its proxy to the Pulsar admin API skipped its own authentication, attached the configured Pulsar admin credential to every forwarded request, and let the requester choose the destination — so the credential itself could be sent to an attacker's host. The Pulsar PMC has retired Pulsar Manager; there is no fix, and deployments should be removed.",
+    links: [
+      { label: "CVE-2026-105944", url: "https://www.cve.org/CVERecord?id=CVE-2026-105944" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-105944" },
+      { label: "Apache advisory", url: "https://pulsar.apache.org/security/CVE-2026-105944/" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache Pulsar security team",
+      "The operation that creates the initial superuser account requires no authentication and stays available after initialization, so anyone who can reach Pulsar Manager 0.3.0 or later can add an administrator at any time — and every account in those versions has full administrative privileges",
+      "Requests Pulsar Manager proxies to the Pulsar admin API bypass its authentication and carry its configured admin credential, and the requester chooses the destination, so an unauthenticated user can run the admin operations that credential permits and have the credential sent to a host they control",
+      "Affects every release, 0.1.0 through 0.4.0. The Pulsar PMC has retired Pulsar Manager and will not fix these issues; operators should remove deployments and replace any Pulsar credential or token signing key it held",
+    ],
+  },
+  {
+    title:
+      "Apache Pulsar: missing authorization of the shadow-topic source allows cross-tenant message disclosure and deletion of source topic data",
+    short: "Shadow-topic source never authorized → cross-tenant message read and ledger deletion",
+    vendor: "Apache Pulsar",
+    cwe: "CWE-862",
+    type: "Missing authorization (cross-tenant data disclosure and destruction)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-105937",
+    credited: true,
+    cveScores: {
+      "CVE-2026-105937": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "A shadow topic reads another topic's managed ledger, chosen by the reserved PULSAR.SHADOW_SOURCE property. The admin REST API authorized the caller against the topic being created or updated but never against the source it named, so a tenant admin in one tenant could bind a topic to a persistent topic in any other tenant and consume its retained messages. The shadow topic's own retention and deletion then applied to the source's ledgers, permanently destroying the other tenant's data. Fixed in 4.0.14 and 4.2.5.",
+    links: [
+      { label: "CVE-2026-105937", url: "https://www.cve.org/CVERecord?id=CVE-2026-105937" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-105937" },
+      { label: "Apache advisory", url: "https://pulsar.apache.org/security/CVE-2026-105937/" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache Pulsar security team",
+      "Topic creation and topic-property updates accepted PULSAR.SHADOW_SOURCE while authorizing the caller only against their own topic; the SHADOW_TOPIC policy check existed only on the source-side shadow-topics API, so these paths never consulted the source tenant",
+      "With the default authorization provider, an admin of their own tenant needed no permission on the source topic, namespace or tenant to read another tenant's retained messages, register new schema versions under its schema, and have the shadow topic's retention, trimming, offloading and deletion destroy the source's ledgers in BookKeeper and tiered storage — unacknowledged messages included",
+      "Affects 3.0.0 before 4.0.14 and 4.1.0 before 4.2.5. The fixed versions disable shadow topics by default behind enableShadowTopics, require superuser for cross-tenant binding, and stop a shadow topic from deleting or trimming its source's data",
     ],
   },
   {
