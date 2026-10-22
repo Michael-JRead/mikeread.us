@@ -159,6 +159,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The multi-tenant, geo-replicated messaging and streaming platform.",
     brand: "#35A7E0",
   },
+  {
+    key: "freerdp",
+    match: "FreeRDP",
+    name: "FreeRDP",
+    org: "FreeRDP project",
+    blurb: "The open-source Remote Desktop Protocol client and library behind most Linux RDP clients.",
+    brand: "#4FA3D9",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -1062,6 +1070,37 @@ export const DISCLOSURES: Disclosure[] = [
       "Topic creation and topic-property updates accepted PULSAR.SHADOW_SOURCE while authorizing the caller only against their own topic; the SHADOW_TOPIC policy check existed only on the source-side shadow-topics API, so these paths never consulted the source tenant",
       "With the default authorization provider, an admin of their own tenant needed no permission on the source topic, namespace or tenant to read another tenant's retained messages, register new schema versions under its schema, and have the shadow topic's retention, trimming, offloading and deletion destroy the source's ledgers in BookKeeper and tiered storage — unacknowledged messages included",
       "Affects 3.0.0 before 4.0.14 and 4.1.0 before 4.2.5. The fixed versions disable shadow topics by default behind enableShadowTopics, require superuser for cross-tenant binding, and stop a shadow topic from deleting or trimming its source's data",
+    ],
+  },
+  {
+    title:
+      "FreeRDP: drdynvc frees a pool-owned stream with the owned-stream deallocator — one-PDU client-side use-after-free",
+    short: "drdynvc frees a pool-owned stream with the wrong deallocator → client use-after-free",
+    vendor: "FreeRDP",
+    cwe: "CWE-416 / CWE-762",
+    type: "Use after free (mismatched memory-management routine, client-side)",
+    status: "CVE published",
+    // The record carries CVSS 4.0 7.1 High and CVSS 3.1 6.5 Medium; the GHSA
+    // agrees on the 3.1 score. The 4.0 vector is shown, as for the other rows.
+    severity: "High · CVSS 7.1 (v4.0)",
+    ref: "CVE-2026-114042",
+    credited: true,
+    cveScores: {
+      "CVE-2026-114042": "CVSS 7.1 (v4.0)",
+    },
+    tagline:
+      "The drdynvc channel takes its reassembly buffer from a stream pool, but a hardening change in 3.32.0 made its length-mismatch error path free that buffer with Stream_Free — the owned-stream deallocator — instead of returning it with Stream_Release. A malicious RDP server sends one Virtual Channel PDU whose totalLength is smaller than the chunk it carries; the client rejects it and disconnects, and teardown then reads the already-freed stream. Fixed in 3.32.1.",
+    links: [
+      { label: "CVE-2026-114042", url: "https://www.cve.org/CVERecord?id=CVE-2026-114042" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-114042" },
+      { label: "GHSA-5xjc-c64q-m8r6", url: "https://github.com/FreeRDP/FreeRDP/security/advisories/GHSA-5xjc-c64q-m8r6" },
+      { label: "VulnCheck", url: "https://www.vulncheck.com/advisories/freerdp-3.32.0-use-after-free-via-drdynvc-virtual-channel-pdu" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the FreeRDP project",
+      "In channels/drdynvc/client/drdynvc_main.c the reassembly buffer drdynvc->data_in comes from StreamPool_Take, but the length-mismatch error path released it with Stream_Free(…, TRUE) rather than Stream_Release — traced to commit 2362eb9885a2, which added a correct bare return in four other channels",
+      "One well-formed PDU with totalLength smaller than its chunk (for example 1 against a 64-byte chunk) passes the TPKT framing check; on disconnect, StreamPool_Free → StreamPool_Clear → discard_entry reads isAllocatedStream from the freed stream, which AddressSanitizer reports as a use-after-free",
+      "Fixed in 3.32.1",
     ],
   },
   {
