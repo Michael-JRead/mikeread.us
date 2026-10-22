@@ -167,6 +167,14 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The open-source Remote Desktop Protocol client and library behind most Linux RDP clients.",
     brand: "#4FA3D9",
   },
+  {
+    key: "openbao",
+    match: "OpenBao",
+    name: "OpenBao",
+    org: "OpenSSF",
+    blurb: "The open-source, community-governed fork of HashiCorp Vault for secrets management.",
+    brand: "#336D5C",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -1101,6 +1109,37 @@ export const DISCLOSURES: Disclosure[] = [
       "In channels/drdynvc/client/drdynvc_main.c the reassembly buffer drdynvc->data_in comes from StreamPool_Take, but the length-mismatch error path released it with Stream_Free(…, TRUE) rather than Stream_Release — traced to commit 2362eb9885a2, which added a correct bare return in four other channels",
       "One well-formed PDU with totalLength smaller than its chunk (for example 1 against a 64-byte chunk) passes the TPKT framing check; on disconnect, StreamPool_Free → StreamPool_Clear → discard_entry reads isAllocatedStream from the freed stream, which AddressSanitizer reports as a use-after-free",
       "Fixed in 3.32.1",
+    ],
+  },
+  {
+    title:
+      "OpenBao: policy-cache key built with path.Join lets a crafted policy name resolve to another namespace's ACL policy",
+    short: "Traversal in a policy name collides with another namespace's cached ACL policy",
+    vendor: "OpenBao",
+    cwe: "CWE-24 / CWE-863",
+    type: "Incorrect authorization via path traversal in a cache key (cross-namespace privilege escalation)",
+    status: "CVE published",
+    // The record carries CVSS 4.0 7.5 High (PR:H) and CVSS 3.1 6.6 Medium; the
+    // GHSA scores CVSS 4.0 7.7 with PR:L. The record's 4.0 vector is shown.
+    severity: "High · CVSS 7.5 (v4.0)",
+    ref: "CVE-2026-115365",
+    credited: true,
+    cveScores: {
+      "CVE-2026-115365": "CVSS 7.5 (v4.0)",
+    },
+    tagline:
+      "OpenBao's policy store keyed its in-memory ACL cache on path.Join(namespace UUID, policy name) and never checked the name for traversal. The root namespace's UUID is a public constant, so a tenant admin who could set policy names on users in its own namespace could attach a policy named ../00000000-0000-0000-0000-000000000000/default — which resolved to the root namespace's cached policy before the storage layer's traversal guard was ever reached. Fixed in 2.6.3.",
+    links: [
+      { label: "CVE-2026-115365", url: "https://www.cve.org/CVERecord?id=CVE-2026-115365" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-115365" },
+      { label: "GHSA-mjch-vcw3-hhmf", url: "https://github.com/openbao/openbao/security/advisories/GHSA-mjch-vcw3-hhmf" },
+      { label: "VulnCheck", url: "https://www.vulncheck.com/advisories/openbao-2.3.0-before-2.6.3-incorrect-authorization-via-policy-cache-namespace-traversal" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the OpenBao project",
+      "sanitizeName only lowercased and trimmed the name, and cacheKey built the LRU key with path.Join(ns.UUID, name), so a leading ../ consumed the namespace UUID and the attacker supplied the replacement; the cache hit returned before storage, so the IsRelativePath guard that rejects the same string on the request path never ran",
+      "Demonstrated on the released 2.6.2 image from an ordinary tenant-admin grant inside a child namespace: a token wrote and read back the root namespace's cubbyhole, and with an operator policy resident in the cache it read a root-namespace secret and listed the root ACL policy names; the root-policy variant granted root inside the tenant's own namespace",
+      "Fixed in 2.6.3; setting disable_cache = true is the documented workaround",
     ],
   },
   {
