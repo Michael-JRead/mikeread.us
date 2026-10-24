@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-10-23T14:12:48.887Z",
-  "generatedAt": "2026-10-23T14:12:48.887Z",
-  "commit": "3e02f9d",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/39967673243",
+  "fetchedAt": "2026-10-24T13:18:11.811Z",
+  "generatedAt": "2026-10-24T13:18:11.811Z",
+  "commit": "bab3925",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/40097534744",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 751,
+    "ranking": 769,
     "points": 270,
     "user_owns": 50,
     "system_owns": 50,
@@ -25,7 +25,7 @@
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 858
+    "total": 860
   },
   "challengeCategories": [
     {
@@ -37,7 +37,7 @@
     {
       "name": "Crypto",
       "solved": 82,
-      "total": 132,
+      "total": 133,
       "percentage": 62
     },
     {
@@ -49,7 +49,7 @@
     {
       "name": "Web",
       "solved": 16,
-      "total": 172,
+      "total": 173,
       "percentage": 9
     },
     {
