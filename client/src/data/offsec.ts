@@ -1525,10 +1525,9 @@ export function cveUrlOf(d: Disclosure, id: string): string {
 
 /**
  * Published CVE records, derived from DISCLOSURES so the homepage "CVEs
- * Discovered" strip and this ledger can never drift: add a `CVE published` row
- * above and it surfaces in both places automatically, in the same order. One
- * entry per identifier, so a finding that is genuinely tracked under two live
- * ids would contribute both.
+ * Discovered" counter and this ledger can never drift: add a `CVE published`
+ * row above and the count moves with it. One entry per identifier, so a
+ * finding that is genuinely tracked under two live ids would contribute both.
  */
 export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
   (d) => d.status === "CVE published",

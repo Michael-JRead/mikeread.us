@@ -1,6 +1,7 @@
 import { SITE_META, HERO_STATS } from "@/data/siteContent";
 import { PUBLISHED_CVES } from "@/data/offsec";
-import { ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import { Link } from "wouter";
 import HackTheBoxIcon from "./HackTheBoxIcon";
 import ScrambleText from "./ScrambleText";
 
@@ -94,30 +95,25 @@ export default function HeroSection() {
               </a>
             </div>
 
+            {/* One counter rather than every id: the full ledger lives on the
+                Offensive Security page, and this links straight to it. */}
             {PUBLISHED_CVES.length > 0 && (
-              <div>
-                <div className="inline-flex items-center gap-2 font-mono text-xs tracking-wide text-slate-300 mb-3">
-                  <ShieldCheck size={14} className="text-red-400" aria-hidden="true" />
-                  CVEs Discovered
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {PUBLISHED_CVES.map((cve) => (
-                    <a
-                      key={cve.id}
-                      href={cve.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${cve.id} — view record (opens in a new tab)`}
-                      className="group inline-flex items-center gap-2 rounded-lg border border-red-500/40 bg-slate-900/50 px-3 py-1.5 font-mono text-sm text-red-300 hover:border-red-400/70 hover:text-red-200 hover:bg-slate-900/70 transition-colors backdrop-blur-sm"
-                    >
-                      <span>{cve.id}</span>
-                      {cve.label && <span className="text-red-500/50" aria-hidden="true">·</span>}
-                      {cve.label && <span className="text-slate-400 text-xs">{cve.label}</span>}
-                      <ExternalLink size={13} className="opacity-70 group-hover:opacity-100" aria-hidden="true" />
-                    </a>
-                  ))}
-                </div>
-              </div>
+              <Link
+                href="/offensive-security#published-cves"
+                aria-label={`${PUBLISHED_CVES.length} CVEs discovered — view all published CVE records`}
+                className="group inline-flex items-center gap-3 rounded-lg border border-red-500/40 bg-slate-900/50 px-4 py-2.5 backdrop-blur-sm transition-colors hover:border-red-400/70 hover:bg-slate-900/70"
+              >
+                <ShieldCheck size={16} className="text-red-400" aria-hidden="true" />
+                <span className="font-mono text-xs tracking-wide text-slate-300">CVEs Discovered</span>
+                <span className="font-mono text-xl font-bold leading-none text-red-300 tabular-nums">
+                  {PUBLISHED_CVES.length}
+                </span>
+                <ArrowRight
+                  size={15}
+                  className="text-red-400 transition-transform group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </Link>
             )}
           </div>
 

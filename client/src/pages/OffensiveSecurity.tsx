@@ -363,9 +363,10 @@ function DisclosureHighlights() {
         <MetricTile label="Vendors" value={vendorsCount} />
       </div>
 
-      {/* Every published finding, one row each, most severe first */}
+      {/* Every published finding, one row each, most severe first. The homepage
+          CVE counter links here by id. */}
       {ranked.length > 0 && (
-        <div className="mb-8">
+        <div id="published-cves" className="mb-8 scroll-mt-24">
           <div className="mb-3 flex flex-wrap items-center gap-x-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
             <span className="font-bold text-rose-400">{cveIdCount}</span>
             <span>published CVE {cveIdCount === 1 ? "record" : "records"}</span>
@@ -730,7 +731,15 @@ export default function OffensiveSecurity() {
   useEffect(() => {
     const prev = document.title;
     document.title = "Offensive Security — Michael Read";
-    window.scrollTo(0, 0);
+    // Land on an anchored section when the link carries one (the homepage CVE
+    // counter links to #published-cves); otherwise start at the top. Deferred a
+    // frame so the lazily loaded page has laid out before measuring.
+    const id = window.location.hash.slice(1);
+    requestAnimationFrame(() => {
+      const target = id ? document.getElementById(id) : null;
+      if (target) target.scrollIntoView();
+      else window.scrollTo(0, 0);
+    });
     return () => {
       document.title = prev;
     };
