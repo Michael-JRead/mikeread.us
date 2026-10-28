@@ -175,6 +175,15 @@ export const VENDORS: VendorInfo[] = [
     blurb: "The open-source, community-governed fork of HashiCorp Vault for secrets management.",
     brand: "#336D5C",
   },
+  {
+    key: "jackson",
+    match: "Jackson",
+    name: "Jackson",
+    org: "FasterXML",
+    blurb: "The de-facto JSON and binary data-format library for Java.",
+    brand: "#C0CA33",
+    mono: "JK",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -1140,6 +1149,35 @@ export const DISCLOSURES: Disclosure[] = [
       "sanitizeName only lowercased and trimmed the name, and cacheKey built the LRU key with path.Join(ns.UUID, name), so a leading ../ consumed the namespace UUID and the attacker supplied the replacement; the cache hit returned before storage, so the IsRelativePath guard that rejects the same string on the request path never ran",
       "Demonstrated on the released 2.6.2 image from an ordinary tenant-admin grant inside a child namespace: a token wrote and read back the root namespace's cubbyhole, and with an operator policy resident in the cache it read a root-namespace secret and listed the root ACL policy names; the root-policy variant granted root inside the tenant's own namespace",
       "Fixed in 2.6.3; setting disable_cache = true is the documented workaround",
+    ],
+  },
+  {
+    title:
+      "Jackson Smile async parser: unbounded eager byte[] allocation for raw binary allows OutOfMemoryError denial of service",
+    short: "Async Smile parser allocates an attacker-declared raw-binary length up front → ~2 GB OOM",
+    vendor: "Jackson",
+    cwe: "CWE-789",
+    type: "Memory allocation with excessive size value (unauthenticated DoS)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "CVE-2026-104895",
+    credited: true,
+    cveScores: {
+      "CVE-2026-104895": "CVSS 7.5",
+    },
+    tagline:
+      "Jackson's non-blocking Smile parser read a raw-binary value's length prefix from the input and allocated a byte[] of that size before reading the body — no upper bound, and no overflow guard. About ten bytes of Smile could force a ~2 GB allocation and an OutOfMemoryError, and an overflowing length threw NegativeArraySizeException outside the parser's exception contract. It is the same class as CVE-2020-28491 in the CBOR parser, whose guard never reached async Smile. Fixed in 2.18.12, 2.21.8, 2.22.4, 3.1.8 and 3.2.4.",
+    links: [
+      { label: "CVE-2026-104895", url: "https://www.cve.org/CVERecord?id=CVE-2026-104895" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-104895" },
+      { label: "GHSA-h3c2-2m49-r49w", url: "https://github.com/FasterXML/jackson-dataformats-binary/security/advisories/GHSA-h3c2-2m49-r49w" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Jackson project",
+      "On the raw-binary marker 0xFD, NonBlockingByteArrayParser._decodeVInt() computed (value << 6) + (i & 0x3F) without the (value >>> 25) != 0 overflow guard the blocking SmileParser._readUnsignedVInt has, and _startRawBinary allocated the declared length immediately",
+      "A Smile feed of about ten bytes forced an eager ~2 GB allocation on reactive or asynchronous Smile endpoints; a length crafted to overflow int threw NegativeArraySizeException, a RuntimeException that is not a JacksonException. Either crashed the request or processing thread, with no privileges required",
+      "Same class as CVE-2020-28491, fixed in the CBOR parser with a LONGEST_NON_CHUNKED_BINARY guard that the async Smile parser never received",
+      "Fixed in jackson-dataformat-smile 2.18.12, 2.21.8 and 2.22.4, and in 3.1.8 and 3.2.4 for Jackson 3",
     ],
   },
   {
