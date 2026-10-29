@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
+import { HAS_BLOG_POSTS } from "@/content/blog/count";
 
 // Only anchor items (#foo) participate in scrollspy; route items (/foo) don't.
 const isAnchor = (href: string) => href.startsWith("#");
 const isRoute = (href: string) => href.startsWith("/");
-const SECTION_IDS = NAV_ITEMS.filter((item) => isAnchor(item.href)).map((item) =>
+// The Blog link appears once a post is published, so the nav never points at an
+// empty page.
+const ITEMS = NAV_ITEMS.filter((item) => item.href !== "/blog" || HAS_BLOG_POSTS);
+const SECTION_IDS = ITEMS.filter((item) => isAnchor(item.href)).map((item) =>
   item.href.replace("#", "")
 );
 
@@ -51,7 +55,7 @@ export default function Navbar() {
   // An item is "active" when its anchor matches the observed section, OR when
   // its route matches the current location.
   const isItemActive = (href: string) =>
-    isRoute(href) ? location === href : active === href.replace("#", "");
+    isRoute(href) ? location === href || location.startsWith(`${href}/`) : active === href.replace("#", "");
 
   const handleNavClick = () => setIsOpen(false);
 
@@ -75,18 +79,19 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-red-900/50 shadow-sm">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <a href={onHome ? "#hero" : "/"} className="flex items-center gap-2 font-bold text-xl text-white hover:text-red-300 transition-colors">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-6">
+        {/* Logo. Between xl and 2xl the desktop links need the room, so only the
+            monogram shows there. */}
+        <a href={onHome ? "#hero" : "/"} className="flex shrink-0 items-center gap-2 font-bold text-xl text-white hover:text-red-300 transition-colors">
           <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center text-white font-bold text-sm">
             {SITE_META.initials}
           </div>
-          <span className="hidden sm:inline">{SITE_META.fullName}</span>
+          <span className="hidden sm:inline xl:hidden 2xl:inline whitespace-nowrap">{SITE_META.fullName}</span>
         </a>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-5">
-          {NAV_ITEMS.map((item) => {
+        <div className="hidden xl:flex items-center gap-4 2xl:gap-5">
+          {ITEMS.map((item) => {
             const isActive = isItemActive(item.href);
             return (
               <a
@@ -104,7 +109,7 @@ export default function Navbar() {
         </div>
 
         {/* CTA Button */}
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden xl:flex items-center gap-4">
           <a
             href={`mailto:${SITE_META.email}`}
             className="whitespace-nowrap px-5 py-2 border border-red-500/60 text-red-300 rounded-lg hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors font-mono text-xs uppercase tracking-[0.12em]"
@@ -120,7 +125,7 @@ export default function Navbar() {
           aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isOpen}
           aria-controls="mobile-nav"
-          className="lg:hidden p-2 text-slate-100 hover:bg-red-950/60 rounded-lg transition-colors"
+          className="xl:hidden p-2 text-slate-100 hover:bg-red-950/60 rounded-lg transition-colors"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -128,9 +133,9 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div id="mobile-nav" className="lg:hidden border-t border-red-900/50 bg-slate-950/95">
+        <div id="mobile-nav" className="xl:hidden border-t border-red-900/50 bg-slate-950/95">
           <div className="container mx-auto px-4 py-3 flex flex-col">
-            {NAV_ITEMS.map((item, i) => {
+            {ITEMS.map((item, i) => {
               const isActive = isItemActive(item.href);
               return (
                 <a

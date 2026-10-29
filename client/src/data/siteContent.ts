@@ -161,6 +161,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Projects", href: "#portfolio" },
   { label: "Offensive Security", href: "/offensive-security" },
   { label: "Hack The Box", href: "/hackthebox" },
+  { label: "Blog", href: "/blog" },
   { label: "Case Studies", href: "#case-studies" },
   { label: "Certifications", href: "#certifications" },
   { label: "Contact", href: "#contact" },

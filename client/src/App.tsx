@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 const OffensiveSecurity = lazy(() => import("./pages/OffensiveSecurity"));
 const HackTheBox = lazy(() => import("./pages/HackTheBox"));
 const WalkthroughPage = lazy(() => import("./pages/WalkthroughPage"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 // Old walkthrough URLs used to live under /offensive-security/walkthroughs/:slug.
 // Walkthroughs moved under /hackthebox/walkthroughs/:slug when the HTB page split
@@ -30,6 +32,8 @@ function Router() {
         <Route path="/offensive-security" component={OffensiveSecurity} />
         <Route path="/hackthebox" component={HackTheBox} />
         <Route path="/hackthebox/walkthroughs/:slug" component={WalkthroughPage} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/offensive-security/walkthroughs/:slug" component={LegacyWalkthroughRedirect} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />

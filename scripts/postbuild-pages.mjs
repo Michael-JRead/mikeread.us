@@ -110,6 +110,37 @@ if (!Array.isArray(summaries) || summaries.length === 0) {
   process.exit(1);
 }
 
+// --- Load published blog posts ------------------------------------------------
+// Parsed with client/src/lib/blog.ts, the same validator the site uses, so a
+// post that renders on the site gets the same title, summary and slug here. A
+// malformed post throws and fails the build rather than silently vanishing.
+async function loadBlogPosts() {
+  const entry = path.join(root, "client/src/lib/blog.ts");
+  const outfile = path.join(os.tmpdir(), `blog-lib-${process.pid}.mjs`);
+  await build({
+    entryPoints: [entry],
+    outfile,
+    bundle: false, // blog.ts has no runtime imports
+    format: "esm",
+    platform: "node",
+    logLevel: "silent",
+  });
+  try {
+    const { parsePost, sortPosts } = await import(pathToFileURL(outfile).href);
+    const dir = path.join(root, "client/src/content/blog");
+    const files = fs.existsSync(dir)
+      ? fs.readdirSync(dir).filter((f) => f.endsWith(".md")) // drafts/ is a folder, so skipped
+      : [];
+    return sortPosts(
+      files.map((f) => parsePost(f.replace(/\.md$/, ""), fs.readFileSync(path.join(dir, f), "utf8")))
+    );
+  } finally {
+    fs.rmSync(outfile, { force: true });
+  }
+}
+
+const posts = await loadBlogPosts();
+
 // 404.html is the GitHub Pages SPA fallback — keep the home page's metadata.
 fs.copyFileSync(indexPath, notFoundPath);
 console.log(
@@ -140,6 +171,22 @@ for (const s of summaries) {
   });
 }
 
+if (posts.length > 0) {
+  routes.push({
+    route: "blog",
+    title: "Blog — Vulnerability Research & Disclosure Notes | Michael Read",
+    description:
+      "Notes on vulnerability research, coordinated disclosure, and the security work behind Michael Read's published CVEs.",
+  });
+  for (const post of posts) {
+    routes.push({
+      route: `blog/${post.slug}`,
+      title: `${post.title} | Michael Read`,
+      description: post.summary,
+    });
+  }
+}
+
 for (const { route, title, description } of routes) {
   const url = `${ORIGIN}/${route}`;
   const dir = path.join(outDir, route);
@@ -162,6 +209,8 @@ const sitemapUrls = [
     loc: `${ORIGIN}/hackthebox/walkthroughs/${s.slug}`,
     priority: "0.7",
   })),
+  ...(posts.length > 0 ? [{ loc: `${ORIGIN}/blog`, priority: "0.8" }] : []),
+  ...posts.map(p => ({ loc: `${ORIGIN}/blog/${p.slug}`, priority: "0.7" })),
 ];
 
 const sitemap =
@@ -181,3 +230,44 @@ console.log(`Generated dist/public/sitemap.xml (${sitemapUrls.length} URLs).`);
 const robots = `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`;
 fs.writeFileSync(path.join(outDir, "robots.txt"), robots);
 console.log("Generated dist/public/robots.txt.");
+
+// --- rss.xml -------------------------------------------------------------------
+// Always written, so the <link rel="alternate"> in index.html never 404s; an
+// empty channel is valid RSS.
+const xml = (v) =>
+  String(v)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+const rssItems = posts
+  .map((p) => {
+    const link = `${ORIGIN}/blog/${p.slug}`;
+    return (
+      `    <item>\n` +
+      `      <title>${xml(p.title)}</title>\n` +
+      `      <link>${link}</link>\n` +
+      `      <guid isPermaLink="true">${link}</guid>\n` +
+      `      <pubDate>${new Date(`${p.date}T12:00:00Z`).toUTCString()}</pubDate>\n` +
+      `      <description>${xml(plain(p.summary))}</description>\n` +
+      p.tags.map((t) => `      <category>${xml(t)}</category>\n`).join("") +
+      `    </item>`
+    );
+  })
+  .join("\n");
+const rss =
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n` +
+  `  <channel>\n` +
+  `    <title>Michael Read — Blog</title>\n` +
+  `    <link>${ORIGIN}/blog</link>\n` +
+  `    <description>Notes on vulnerability research, coordinated disclosure, and the security work behind published CVEs.</description>\n` +
+  `    <language>en-us</language>\n` +
+  `    <atom:link href="${ORIGIN}/rss.xml" rel="self" type="application/rss+xml" />\n` +
+  (posts.length > 0 ? `    <lastBuildDate>${new Date(`${posts[0].date}T12:00:00Z`).toUTCString()}</lastBuildDate>\n` : "") +
+  (rssItems ? rssItems + "\n" : "") +
+  `  </channel>\n` +
+  `</rss>\n`;
+fs.writeFileSync(path.join(outDir, "rss.xml"), rss);
+console.log(`Generated dist/public/rss.xml (${posts.length} ${posts.length === 1 ? "post" : "posts"}).`);
