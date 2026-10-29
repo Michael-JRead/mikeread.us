@@ -82,10 +82,12 @@ export function parsePost(slug: string, raw: string): BlogPost {
     return v;
   };
   const date = str("date");
-  if (!DATE.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`))) {
+  // Round-trip the date: Date.parse accepts 2026-02-31 and rolls it into March.
+  const parsed = new Date(`${date}T00:00:00Z`);
+  if (!DATE.test(date) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) {
     throw new Error(`${file}: "date" must be a real date written YYYY-MM-DD, got "${date}"`);
   }
-  const tags = data.tags === undefined ? [] : Array.isArray(data.tags) ? data.tags : [data.tags];
+  const tags = (Array.isArray(data.tags) ? data.tags : [data.tags ?? ""]).filter(Boolean);
   if (!body.trim()) throw new Error(`${file}: the post has no body`);
   return {
     slug,

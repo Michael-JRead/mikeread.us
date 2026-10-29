@@ -5,8 +5,9 @@ import { Link } from "wouter";
 
 // Renders a blog post body. react-markdown does not render raw HTML and drops
 // unsafe URL schemes (javascript: and the like), so a post can only produce the
-// elements mapped below. GFM adds tables, strikethrough, task lists and
-// autolinked URLs.
+// elements mapped below. GFM adds tables, strikethrough, task lists, footnotes
+// and autolinked URLs. Overrides pass through the attributes GFM sets (ids and
+// aria labels on footnotes, task-list classes) and drop react-markdown's `node`.
 
 function textOf(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -24,31 +25,53 @@ function anchorId(children: ReactNode): string {
     .replace(/\s+/g, "-");
 }
 
+/**
+ * Root-relative links to pages of this site navigate in-app. Files (/rss.xml,
+ * /assets/blog/x.png) and links to a #section load normally, so the browser
+ * fetches the file or scrolls to the section.
+ */
+function isAppRoute(href: string): boolean {
+  if (!href.startsWith("/") || href.startsWith("//") || href.includes("#")) return false;
+  const lastSegment = href.split("?")[0].split("/").pop() ?? "";
+  return !lastSegment.includes(".");
+}
+
 const components: Components = {
-  h1: ({ children }) => (
-    <h2 id={anchorId(children)} className="mt-14 mb-5 scroll-mt-24 text-3xl font-bold tracking-tight text-white">
+  h1: ({ node: _node, id, className, children, ...rest }) => (
+    <h2
+      {...rest}
+      id={id ?? anchorId(children)}
+      className={`mt-14 mb-5 text-3xl font-bold tracking-tight text-white ${className ?? ""}`}
+    >
       {children}
     </h2>
   ),
-  h2: ({ children }) => (
-    <h2 id={anchorId(children)} className="mt-14 mb-5 scroll-mt-24 text-2xl md:text-3xl font-bold tracking-tight text-white">
+  h2: ({ node: _node, id, className, children, ...rest }) => (
+    <h2
+      {...rest}
+      id={id ?? anchorId(children)}
+      className={`mt-14 mb-5 text-2xl md:text-3xl font-bold tracking-tight text-white ${className ?? ""}`}
+    >
       {children}
     </h2>
   ),
-  h3: ({ children }) => (
-    <h3 id={anchorId(children)} className="mt-10 mb-4 scroll-mt-24 text-xl font-semibold text-white">
+  h3: ({ node: _node, id, className, children, ...rest }) => (
+    <h3
+      {...rest}
+      id={id ?? anchorId(children)}
+      className={`mt-10 mb-4 text-xl font-semibold text-white ${className ?? ""}`}
+    >
       {children}
     </h3>
   ),
   h4: ({ children }) => <h4 className="mt-8 mb-3 text-lg font-semibold text-slate-100">{children}</h4>,
   p: ({ children }) => <p className="mb-6 text-[1.05rem] leading-[1.8] text-gray-300">{children}</p>,
-  a: ({ href = "", children }) => {
-    const internal = href.startsWith("/") && !href.startsWith("//");
+  a: ({ node: _node, href = "", className: _className, children, ...rest }) => {
     const cls =
       "text-red-300 underline decoration-red-500/40 underline-offset-4 transition-colors hover:text-red-200 hover:decoration-red-300";
     // An unsafe URL arrives here emptied; show the text rather than a dead link.
     if (!href) return <>{children}</>;
-    if (internal) {
+    if (isAppRoute(href)) {
       return (
         <Link href={href} className={cls}>
           {children}
@@ -58,6 +81,7 @@ const components: Components = {
     const external = /^https?:\/\//.test(href);
     return (
       <a
+        {...rest}
         href={href}
         className={cls}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -68,8 +92,12 @@ const components: Components = {
   },
   strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
   em: ({ children }) => <em className="italic text-gray-200">{children}</em>,
-  ul: ({ children }) => (
-    <ul className="mb-6 list-disc space-y-2 pl-6 text-[1.05rem] leading-[1.75] text-gray-300 marker:text-red-400">
+  // Task lists (- [ ] item) carry their own checkboxes, so they drop the bullets.
+  ul: ({ node: _node, className, children, ...rest }) => (
+    <ul
+      {...rest}
+      className={`mb-6 list-disc space-y-2 pl-6 text-[1.05rem] leading-[1.75] text-gray-300 marker:text-red-400 [&.contains-task-list]:list-none [&.contains-task-list]:pl-1 ${className ?? ""}`}
+    >
       {children}
     </ul>
   ),
@@ -78,7 +106,17 @@ const components: Components = {
       {children}
     </ol>
   ),
-  li: ({ children }) => <li className="pl-1">{children}</li>,
+  li: ({ node: _node, className, children, ...rest }) => (
+    <li {...rest} className={`pl-1 ${className ?? ""}`}>
+      {children}
+    </li>
+  ),
+  // GFM wraps footnotes in a <section>; set it apart from the body.
+  section: ({ node: _node, className, children, ...rest }) => (
+    <section {...rest} className={`mt-14 border-t border-slate-800 pt-6 ${className ?? ""}`}>
+      {children}
+    </section>
+  ),
   blockquote: ({ children }) => (
     <blockquote className="mb-6 border-l-2 border-red-500/60 bg-slate-900/40 py-1 pl-5 pr-3 text-gray-200 [&>p]:mb-3 [&>p]:text-gray-200">
       {children}
@@ -119,7 +157,8 @@ const components: Components = {
 
 export default function MarkdownArticle({ markdown }: { markdown: string }) {
   return (
-    <div className="min-w-0">
+    // Anything a link can target (headings, footnotes) clears the sticky navbar.
+    <div className="min-w-0 [&_[id]]:scroll-mt-24">
       <Markdown remarkPlugins={[remarkGfm]} components={components}>
         {markdown}
       </Markdown>

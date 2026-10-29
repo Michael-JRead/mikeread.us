@@ -17,7 +17,13 @@ export default function BlogPost() {
     if (!post) return;
     const prev = document.title;
     document.title = `${post.title} — Michael Read`;
-    window.scrollTo(0, 0);
+    // A link to a #section lands on that heading; otherwise start at the top.
+    const id = window.location.hash.slice(1);
+    requestAnimationFrame(() => {
+      const target = id ? document.getElementById(id) : null;
+      if (target) target.scrollIntoView();
+      else window.scrollTo(0, 0);
+    });
     return () => {
       document.title = prev;
     };

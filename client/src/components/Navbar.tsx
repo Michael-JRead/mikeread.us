@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
-import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
-import { HAS_BLOG_POSTS } from "@/content/blog/count";
+import { SITE_META } from "@/data/siteContent";
+import { SITE_NAV as ITEMS, isAnchor, isRoute, navHref } from "@/lib/nav";
 
 // Only anchor items (#foo) participate in scrollspy; route items (/foo) don't.
-const isAnchor = (href: string) => href.startsWith("#");
-const isRoute = (href: string) => href.startsWith("/");
-// The Blog link appears once a post is published, so the nav never points at an
-// empty page.
-const ITEMS = NAV_ITEMS.filter((item) => item.href !== "/blog" || HAS_BLOG_POSTS);
 const SECTION_IDS = ITEMS.filter((item) => isAnchor(item.href)).map((item) =>
   item.href.replace("#", "")
 );
@@ -46,12 +41,7 @@ export default function Navbar() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   // Scrollspy only applies on the single-page home; elsewhere nothing is active.
   const active = onHome ? activeSection : "";
-  // Anchor items (#foo) jump home first when viewed from another route; route
-  // items (/foo) are used verbatim.
-  const to = (href: string) => {
-    if (isRoute(href)) return href;
-    return onHome ? href : `/${href}`;
-  };
+  const to = (href: string) => navHref(href, onHome);
   // An item is "active" when its anchor matches the observed section, OR when
   // its route matches the current location.
   const isItemActive = (href: string) =>

@@ -1,4 +1,5 @@
-import { NAV_ITEMS, SITE_META } from "@/data/siteContent";
+import { SITE_META } from "@/data/siteContent";
+import { SITE_NAV, navHref } from "@/lib/nav";
 import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
 import { useLocation } from "wouter";
 import HackTheBoxIcon from "./HackTheBoxIcon";
@@ -6,7 +7,7 @@ import HackTheBoxIcon from "./HackTheBoxIcon";
 export default function Footer() {
   const [location] = useLocation();
   const onHome = location === "/";
-  const to = (href: string) => (onHome ? href : `/${href}`);
+  const to = (href: string) => navHref(href, onHome);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -35,7 +36,7 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold mb-4 text-white">Quick Links</h4>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                {NAV_ITEMS.map((item) => (
+                {SITE_NAV.map((item) => (
                   <li key={item.href}>
                     <a href={to(item.href)} className="text-gray-400 hover:text-red-400 transition-colors">
                       {item.label}

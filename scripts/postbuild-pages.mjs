@@ -32,50 +32,57 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
+function collapse(s) {
+  return String(s).replace(/\s+/g, " ").trim();
+}
+
 // Meta descriptions are plain prose: drop the inline-markdown tokens the walkthrough
 // summaries carry (backticks, ** emphasis) and collapse whitespace.
 function plain(s) {
-  return String(s)
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/\s+/g, " ")
-    .trim();
+  return collapse(
+    String(s)
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+  );
 }
 
-function applyMeta(html, { title, description, url }) {
+// `markdown: false` keeps a description's * and ` characters, for text that the
+// site shows literally (blog summaries). Every replacement is a function so a
+// "$&" or "$'" in a title is inserted as written, not read as a replace pattern.
+function applyMeta(html, { title, description, url, markdown = true }) {
   const t = esc(title);
-  const d = esc(plain(description));
+  const d = esc(markdown ? plain(description) : collapse(description));
   const u = esc(url);
   return html
-    .replace(/<title>[^<]*<\/title>/, `<title>${t}</title>`)
+    .replace(/<title>[^<]*<\/title>/, () => `<title>${t}</title>`)
     .replace(
       /<link rel="canonical" href="[^"]*" \/>/,
-      `<link rel="canonical" href="${u}" />`
+      () => `<link rel="canonical" href="${u}" />`
     )
     .replace(
       /<meta name="description" content="[^"]*" \/>/,
-      `<meta name="description" content="${d}" />`
+      () => `<meta name="description" content="${d}" />`
     )
     .replace(
       /<meta property="og:title" content="[^"]*" \/>/,
-      `<meta property="og:title" content="${t}" />`
+      () => `<meta property="og:title" content="${t}" />`
     )
     .replace(
       /<meta property="og:description" content="[^"]*" \/>/,
-      `<meta property="og:description" content="${d}" />`
+      () => `<meta property="og:description" content="${d}" />`
     )
     .replace(
       /<meta property="og:url" content="[^"]*" \/>/,
-      `<meta property="og:url" content="${u}" />`
+      () => `<meta property="og:url" content="${u}" />`
     )
     .replace(
       /<meta name="twitter:title" content="[^"]*" \/>/,
-      `<meta name="twitter:title" content="${t}" />`
+      () => `<meta name="twitter:title" content="${t}" />`
     )
     .replace(
       /<meta name="twitter:description" content="[^"]*" \/>/,
-      `<meta name="twitter:description" content="${d}" />`
+      () => `<meta name="twitter:description" content="${d}" />`
     );
 }
 
@@ -129,7 +136,9 @@ async function loadBlogPosts() {
     const { parsePost, sortPosts } = await import(pathToFileURL(outfile).href);
     const dir = path.join(root, "client/src/content/blog");
     const files = fs.existsSync(dir)
-      ? fs.readdirSync(dir).filter((f) => f.endsWith(".md")) // drafts/ is a folder, so skipped
+      ? // Match the site's import.meta.glob("./*.md"): drafts/ is a folder and
+        // dotfiles (editor lock files) are skipped.
+        fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("."))
       : [];
     return sortPosts(
       files.map((f) => parsePost(f.replace(/\.md$/, ""), fs.readFileSync(path.join(dir, f), "utf8")))
@@ -183,15 +192,16 @@ if (posts.length > 0) {
       route: `blog/${post.slug}`,
       title: `${post.title} | Michael Read`,
       description: post.summary,
+      markdown: false,
     });
   }
 }
 
-for (const { route, title, description } of routes) {
+for (const { route, title, description, markdown } of routes) {
   const url = `${ORIGIN}/${route}`;
   const dir = path.join(outDir, route);
   fs.mkdirSync(dir, { recursive: true });
-  const html = applyMeta(baseHtml, { title, description, url });
+  const html = applyMeta(baseHtml, { title, description, url, markdown });
   fs.writeFileSync(path.join(dir, "index.html"), html);
   console.log(
     `Generated dist/public/${route}/index.html (with per-route metadata).`
@@ -250,7 +260,7 @@ const rssItems = posts
       `      <link>${link}</link>\n` +
       `      <guid isPermaLink="true">${link}</guid>\n` +
       `      <pubDate>${new Date(`${p.date}T12:00:00Z`).toUTCString()}</pubDate>\n` +
-      `      <description>${xml(plain(p.summary))}</description>\n` +
+      `      <description>${xml(collapse(p.summary))}</description>\n` +
       p.tags.map((t) => `      <category>${xml(t)}</category>\n`).join("") +
       `    </item>`
     );
