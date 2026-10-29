@@ -189,6 +189,37 @@ export const VENDORS: VendorInfo[] = [
 // All rows are the owner's real, externally verifiable upstream security work.
 export const DISCLOSURES: Disclosure[] = [
   {
+    title:
+      "Quarkus REST Data Panache: a non-security @MethodProperties silently drops class-level rolesAllowed → anonymous access",
+    short: "@MethodProperties silently drops class-level rolesAllowed → unauthenticated endpoint",
+    vendor: "Quarkus / Red Hat",
+    cwe: "CWE-425",
+    type: "Missing authorization — security requirement dropped by code generation",
+    status: "CVE published",
+    severity: "Important · CVSS 9.1",
+    ref: "CVE-2026-87744",
+    credited: true,
+    cveScores: {
+      "CVE-2026-87744": "CVSS 9.1",
+    },
+    tagline:
+      "Quarkus REST Data Panache generates CRUD endpoints whose access is restricted by @ResourceProperties(rolesAllowed). Customizing one operation with @MethodProperties without re-declaring the roles made the code generator silently drop the class-level security requirement, so that endpoint defaulted to permissive, unauthenticated access under the default configuration. Fixed in Red Hat build of Quarkus 3.27.6 and 3.33.4.",
+    links: [
+      { label: "CVE-2026-87744", url: "https://www.cve.org/CVERecord?id=CVE-2026-87744" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-87744" },
+      { label: "Red Hat", url: "https://access.redhat.com/security/cve/CVE-2026-87744" },
+      { label: "RHSA-2026:83082", url: "https://access.redhat.com/errata/RHSA-2026:83082" },
+      { label: "RHSA-2026:83520", url: "https://access.redhat.com/errata/RHSA-2026:83520" },
+      { label: "RHBZ#2530524", url: "https://bugzilla.redhat.com/show_bug.cgi?id=2530524" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Quarkus security team",
+      "When an operation is customized with @MethodProperties and its roles are not re-declared, the code generator drops the class-level @ResourceProperties(rolesAllowed) requirement for that operation",
+      "The generated endpoint then defaults to permissive, unauthenticated access, exposing it to unauthorized information disclosure or data modification; reproduced on a packaged Quarkus 3.39.1 application under the default security configuration",
+      "Fixed in Red Hat build of Quarkus 3.27.6 and 3.33.4 (RHSA-2026:83082, RHSA-2026:83520)",
+    ],
+  },
+  {
     title: "Quarkus REST multipart part-header memory-exhaustion DoS",
     short: "REST multipart part-header memory-exhaustion DoS",
     vendor: "Quarkus / Red Hat",
