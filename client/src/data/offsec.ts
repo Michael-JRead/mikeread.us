@@ -184,6 +184,15 @@ export const VENDORS: VendorInfo[] = [
     brand: "#C0CA33",
     mono: "JK",
   },
+  {
+    key: "nodeforge",
+    match: "node-forge",
+    name: "node-forge",
+    org: "Digital Bazaar",
+    blurb: "The pure-JavaScript TLS, X.509 and cryptography toolkit used across the npm ecosystem.",
+    brand: "#E0874A",
+    mono: "NF",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -1209,6 +1218,34 @@ export const DISCLOSURES: Disclosure[] = [
       "A Smile feed of about ten bytes forced an eager ~2 GB allocation on reactive or asynchronous Smile endpoints; a length crafted to overflow int threw NegativeArraySizeException, a RuntimeException that is not a JacksonException. Either crashed the request or processing thread, with no privileges required",
       "Same class as CVE-2020-28491, fixed in the CBOR parser with a LONGEST_NON_CHUNKED_BINARY guard that the async Smile parser never received",
       "Fixed in jackson-dataformat-smile 2.18.12, 2.21.8 and 2.22.4, and in 3.1.8 and 3.2.4 for Jackson 3",
+    ],
+  },
+  {
+    title:
+      "node-forge: asn1.fromDer drops its maxDepth limit when decoding BIT STRING contents → ASN.1 resource exhaustion",
+    short: "BIT STRING sub-parse drops maxDepth → unbounded ASN.1 recursion and memory",
+    vendor: "node-forge",
+    cwe: "CWE-674 / CWE-400",
+    type: "Uncontrolled recursion and resource consumption (unauthenticated DoS; incomplete fix)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "CVE-2026-119191",
+    credited: true,
+    cveScores: {
+      "CVE-2026-119191": "CVSS 7.5",
+    },
+    tagline:
+      "node-forge decodes BIT STRING contents as ASN.1 by default, and that speculative sub-parse rebuilt its options without maxDepth — so the recursion limit added for CVE-2025-66031 switched off for everything beneath the first BIT STRING, even with the limit lowered globally and per call. About 15 KB of DER nesting 3,000 BIT STRINGs parsed to depth 3,000, holding a Node process for seconds and about a gigabyte of memory per request; an X.509 signatureValue is itself a BIT STRING, so certificate parsing reaches it. Fixed in 1.4.1.",
+    links: [
+      { label: "CVE-2026-119191", url: "https://www.cve.org/CVERecord?id=CVE-2026-119191" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-119191" },
+      { label: "GHSA-rhr8-3pm8-cq29", url: "https://github.com/digitalbazaar/forge/security/advisories/GHSA-rhr8-3pm8-cq29" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to Digital Bazaar",
+      "The CVE-2025-66031 fix added one depth guard to _fromDer, but the speculative BIT STRING decode recursed with a fresh options literal, { strict: true, decodeBitStrings: true }, that omitted maxDepth. depth >= undefined is never true, and that literal became the options for the whole subtree below it, so neither asn1.maxDepth nor the per-call maxDepth applied",
+      "Against 1.4.0 with the limit set to 8 both ways, a 14,887-byte body of 3,000 nested BIT STRINGs parsed to depth 3,000 in about 4–14 seconds with roughly 1.1 GB resident, while a larger 12,000-deep SEQUENCE control was rejected in milliseconds; pki.certificateFromPem was reachable the same way",
+      "Fixed in node-forge 1.4.1",
     ],
   },
   // Apache Kafka — five findings published together on 2026-10-28. Apache publishes
