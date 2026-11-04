@@ -755,11 +755,14 @@ export const DISCLOSURES: Disclosure[] = [
       "Affects cxf-core before 3.6.13, 4.0.0 before 4.1.9 and 4.2.0 before 4.2.4; fixed by PR #3430 (header count) and PR #3425 (header size)",
     ],
   },
-  // Eclipse Vert.x — twelve findings published together in October 2026.
-  // Scores are each CVE record's own CVSS 4.0 vector. The GHSAs carry separate
-  // CVSS 3.1 scores that differ (e.g. 5.9 Moderate against the record's 8.2 High
-  // for CVE-2026-102462); as with CVE-2026-93564, the identifier's record wins.
-  // None of the records lists a CWE, and only GHSA-rm5c-2c7f-gc5g does (CWE-93).
+  // Eclipse Vert.x — twelve findings published together in October 2026, and a
+  // thirteenth (vertx-stomp, CVE-2026-118487) in November.
+  // Scores are each CVE record's own CVSS vector: 4.0 for the October records,
+  // 3.1 for CVE-2026-118487. The October GHSAs carry separate CVSS 3.1 scores that
+  // differ (e.g. 5.9 Moderate against the record's 8.2 High for CVE-2026-102462);
+  // as with CVE-2026-93564, the identifier's record wins. None of the October
+  // records lists a CWE, and only GHSA-rm5c-2c7f-gc5g does (CWE-93);
+  // CVE-2026-118487's record lists CWE-770.
   {
     title: "Vert.x DB2 client: unsafe Java deserialization of UDT column data from a malicious or man-in-the-middle DRDA server",
     short: "DRDA UDT column bytes deserialized via unfiltered ObjectInputStream → RCE/DoS",
@@ -1071,6 +1074,33 @@ export const DISCLOSURES: Disclosure[] = [
       "Header names and values passed to MailMessage.addHeader()/setHeaders() and MailAttachment.addHeader()/setHeaders() are written verbatim into the SMTP DATA section. MailAttachment.setContentType(), setDisposition(), setDescription() and setContentId() go into MIME part headers without validation, and Utils.mustEncode(char) lets a bare LF in a From display name bypass Q-encoding",
       "Exploitable when an application passes attacker-influenced header names, header values or attachment metadata to the mail client, for example from a web form or API. An embedded CR/LF can add headers such as Bcc, Reply-To or Content-Type, or prepend body content, which redirects copies of mail, spoofs headers or alters message structure",
       "Fixed in 4.5.35, 5.1.10 and 5.2.1",
+    ],
+  },
+  {
+    title: "Vert.x STOMP: FrameParser never bounds its line buffer, so a peer that withholds the newline exhausts the heap",
+    short: "FrameParser's RecordParser has no maxRecordSize → newline-free stream exhausts the heap",
+    vendor: "Eclipse Vert.x",
+    cwe: "CWE-770",
+    type: "Allocation of resources without limits (unauthenticated DoS against server or client)",
+    status: "CVE published",
+    severity: "High · CVSS 7.5",
+    ref: "CVE-2026-118487",
+    credited: true,
+    cveScores: {
+      "CVE-2026-118487": "CVSS 7.5",
+    },
+    tagline:
+      "vertx-stomp's FrameParser built its RecordParser without a maxRecordSize, so a peer that streams bytes without ever sending a newline makes the parser buffer them indefinitely, until the JVM heap runs out and the process crashes. Both ends are exposed: a malicious client can take down a STOMP server before or after authenticating, and a malicious server can do the same to a client that connects to it. Fixed in 4.5.36 and 5.2.3.",
+    links: [
+      { label: "CVE-2026-118487", url: "https://www.cve.org/CVERecord?id=CVE-2026-118487" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-118487" },
+      { label: "GHSA-cchp-hff9-j7q7", url: "https://github.com/vert-x3/vertx-stomp/security/advisories/GHSA-cchp-hff9-j7q7" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Eclipse Vert.x project",
+      "FrameParser creates its newline-delimited RecordParser without calling maxRecordSize, so bytes that never include a newline accumulate in the parser's buffer with no upper bound",
+      "Reachable from either end of a connection: a malicious client against a STOMP server, before or after authentication, and a malicious server against a connecting client. Sustained streaming exhausts the JVM heap and crashes the process",
+      "Affects 4.0.0 through 4.5.35 and 5.0.0 through 5.2.2; fixed in 4.5.36 and 5.2.3",
     ],
   },
   {
