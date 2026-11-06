@@ -100,4 +100,5 @@ export const VENDOR_LOGOS: Record<string, FC<LogoProps>> = {
   gitea: GiteaLogo,
   vertx: VertxLogo,
   openbao: OpenbaoLogo,
+  james: ApacheLogo,
 };

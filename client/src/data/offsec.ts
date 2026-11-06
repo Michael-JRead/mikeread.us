@@ -193,6 +193,15 @@ export const VENDORS: VendorInfo[] = [
     brand: "#E0874A",
     mono: "NF",
   },
+  {
+    key: "james",
+    match: "Apache James",
+    name: "Apache James",
+    org: "Apache Software Foundation",
+    blurb: "The modular Java mail server, and Mime4J, the MIME parsing library underneath it.",
+    brand: "#C99A5B",
+    mono: "JM",
+  },
 ];
 
 // All rows are the owner's real, externally verifiable upstream security work.
@@ -1278,6 +1287,40 @@ export const DISCLOSURES: Disclosure[] = [
       "Fixed in node-forge 1.4.1",
     ],
   },
+  // One report, two identifiers: Apache assigned CVE-2026-85108 to the Mime4J
+  // library and CVE-2026-85111 to James server, which ships it. The Mime4J record
+  // carries only Apache's textual "important"; the James record scores CVSS 4.0 8.7.
+  {
+    title:
+      "Apache James / Mime4J: no limit on the number of MIME parts lets one small inbound message exhaust the mail server's heap",
+    short: "Unbounded MIME part count under PERMISSIVE parsing → 3.5 MB message OOMs the mail server",
+    vendor: "Apache James",
+    cwe: "CWE-770",
+    type: "Allocation of resources without limits (unauthenticated DoS over inbound SMTP)",
+    status: "CVE published",
+    severity: "High · CVSS 8.7 (v4.0)",
+    ref: "CVE-2026-85108",
+    credited: true,
+    cveScores: {
+      "CVE-2026-85111": "CVSS 8.7 (v4.0)",
+    },
+    tagline:
+      "Mime4J's MimeConfig had no limit on how many MIME parts a message may contain, or how deeply they nest, in any profile, and James parses untrusted inbound mail with the fully permissive profile, building an object graph for every part. An unauthenticated sender could deliver a 3.5 MB message of 500,000 empty parts to a local mailbox and exhaust the JVM heap, leaving mail delivery down until a restart, while an ordinary 23 MB message went through fine. Fixed in Mime4J 0.8.15 and James 3.9.1.",
+    links: [
+      { label: "CVE-2026-85108", url: "https://www.cve.org/CVERecord?id=CVE-2026-85108" },
+      { label: "CVE-2026-85111", url: "https://www.cve.org/CVERecord?id=CVE-2026-85111" },
+      { label: "NVD (Mime4J)", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-85108" },
+      { label: "NVD (James)", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-85111" },
+      { label: "Mime4J advisory", url: "https://lists.apache.org/thread.html/twktm00gmc8lt7tlqrrj16xw7kzbx16s" },
+      { label: "James advisory", url: "https://lists.apache.org/thread.html/j1bql696qvg935lp8zo0m626jp9n0h8q" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache James project",
+      "Mime4J's MimeConfig had no part-count or nesting-depth limit in any profile, and James's MessageParserImpl parses untrusted inbound mail with MimeConfig.PERMISSIVE, building the full recursive DOM: one BodyPart, Header and BodyDescriptor set per part, with large bodies spooled to disk, so the cost tracks the number of parts rather than the size of the message",
+      "Demonstrated end to end against the apache/james 3.9.0 image over unauthenticated SMTP: a 3.5 MB message of 500,000 empty parts to a local recipient raised OutOfMemoryError in the delivery path and left mail delivery down until a restart, while a larger 23 MB single-part control was delivered normally. maxmessagesize does not help at any usable value",
+      "Two identifiers: CVE-2026-85108 for the Mime4J library and CVE-2026-85111 for James server. Fixed in Mime4J 0.8.15, which enforces new limits with safer defaults, and James 3.9.1",
+    ],
+  },
   // Apache Kafka — five findings published together on 2026-10-28. Apache publishes
   // a textual severity for Kafka and no CVSS vector, so these rows carry no score.
   {
@@ -1594,11 +1637,11 @@ export interface PublishedCve {
 
 /**
  * Every CVE identifier carried by a row, in order: the `ref` first, then any
- * further CVE ids that appear among its public records. A finding occasionally
- * receives two identifiers when a vendor CNA and a coordinating CNA each assign
- * one to the same report; while both records stand, both are shown. Once one is
- * rejected as a duplicate it comes out of `links` and stops being counted, so
- * every row currently carries exactly one id.
+ * further CVE ids that appear among its public records. A finding can carry two
+ * identifiers: when a project assigns one per affected product (Apache James did
+ * for Mime4J and James server), or when a vendor CNA and a coordinating CNA each
+ * assign one to the same report. While both records stand, both are shown; one
+ * rejected as a duplicate comes out of `links` and stops being counted.
  */
 export function cveIdsOf(d: Disclosure): string[] {
   const ids: string[] = [];
