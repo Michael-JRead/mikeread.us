@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-11-06T16:43:54.486Z",
-  "generatedAt": "2026-11-06T16:43:54.486Z",
-  "commit": "bd09019",
-  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/42255052962",
+  "fetchedAt": "2026-11-07T15:38:20.436Z",
+  "generatedAt": "2026-11-07T15:38:20.436Z",
+  "commit": "28b0dca",
+  "runUrl": "https://github.com/Michael-JRead/mikeread.us/actions/runs/42387332446",
   "userId": 1704613,
   "profile": {
     "name": "SojuPunisher",
     "avatar": "/assets/htb-avatar.png",
     "rank": "Pro Hacker",
-    "ranking": 810,
+    "ranking": 816,
     "points": 227,
     "user_owns": 50,
     "system_owns": 50,
@@ -18,14 +18,14 @@
     "team": "SystemZero",
     "current_rank_progress": 0,
     "next_rank": "Elite Hacker",
-    "next_rank_points": 15.323,
-    "rank_ownership": 21.89,
+    "next_rank_points": 15.799000000000001,
+    "rank_ownership": 22.57,
     "rank_requirement": 45
   },
   "activity": [],
   "challenges": {
     "solved": 213,
-    "total": 861
+    "total": 862
   },
   "challengeCategories": [
     {
@@ -103,7 +103,7 @@
     {
       "name": "Coding",
       "solved": 2,
-      "total": 18,
+      "total": 19,
       "percentage": 11
     },
     {
