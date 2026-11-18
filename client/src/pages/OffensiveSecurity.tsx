@@ -23,6 +23,9 @@ import {
   cveIdsOf,
   cveScoreOf,
   cveUrlOf,
+  cvssRating,
+  type CvssRating,
+  type CvssScore,
   type Disclosure,
   type DisclosureStatus,
   type VendorInfo,
@@ -91,61 +94,88 @@ function recordLinks(d: Disclosure): { label: string; url: string }[] {
   return [];
 }
 
-// Small pill for the vendor cell — makes the vendor scannable without adding weight.
-function VendorChip({ vendor }: { vendor: string }) {
+// Score colour by CVSS band, so severity reads at a glance down the ledger.
+const RATING_TONE: Record<CvssRating, string> = {
+  Critical: "border-red-500/50 bg-red-500/15 text-red-200",
+  High: "border-orange-400/40 bg-orange-500/10 text-orange-200",
+  Medium: "border-amber-400/35 bg-amber-500/10 text-amber-200",
+  Low: "border-slate-600/60 bg-slate-800/50 text-slate-300",
+  None: "border-slate-700/60 bg-slate-900/50 text-slate-400",
+};
+
+/**
+ * One identifier's CVSS: the score and its band, then the CVSS version — marked
+ * CISA when the score is the one CISA added to the record because the issuing
+ * vendor rated the issue only in words.
+ */
+function CvssBadge({ score }: { score: CvssScore }) {
+  const rating = cvssRating(score.score);
   return (
-    <span className="inline-flex items-center rounded-md border border-slate-700 bg-slate-900/60 px-2 py-0.5 font-mono text-[11px] text-slate-300 whitespace-nowrap">
-      {vendor}
+    <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono text-[10px]">
+      <span className={`inline-flex items-baseline gap-1.5 rounded border px-1.5 py-px ${RATING_TONE[rating]}`}>
+        <span className="font-semibold tabular-nums">{score.score.toFixed(1)}</span>
+        <span className="uppercase tracking-wider">{rating}</span>
+      </span>
+      <span className="text-slate-500">
+        CVSS {score.version}
+        {score.source === "cisa" && (
+          <span
+            title={`Scored by CISA in the CVE record. The vendor rates it ${score.vendorRating ?? "in words only"}.`}
+            className="cursor-help"
+          >
+            {" "}
+            · CISA
+          </span>
+        )}
+      </span>
     </span>
   );
 }
 
 /**
- * Row of link chips to a finding's public records; falls back to a plain ref
- * label. Rows that already render each CVE identifier as its own link pass
- * `hideCveIds`, so the identifiers are not repeated here and everything else —
- * NVD, every GHSA, vendor errata — is shown in full rather than truncated.
+ * A CVE identifier, linked to its record, with the score that record publishes.
+ * `stacked` puts the score under the id from md up (the ledger's id column).
  */
-function RecordLinkChips({
-  d,
-  tone = "slate",
-  hideCveIds = false,
-  justify = "start",
-}: {
-  d: Disclosure;
-  tone?: "slate" | "rose";
-  hideCveIds?: boolean;
-  /** Where a wrapped set of chips settles inside its column. */
-  justify?: "start" | "end";
-}) {
-  const links = hideCveIds
-    ? recordLinks(d).filter((l) => !l.label.startsWith("CVE-"))
-    : recordLinks(d);
-  const chipClass =
-    tone === "rose"
-      ? "border-rose-500/40 text-rose-200 hover:border-rose-400/70 hover:text-rose-100"
-      : "border-slate-600/60 text-slate-300 hover:border-red-400/60 hover:text-red-200";
+function CveIdWithScore({ d, id, stacked = false }: { d: Disclosure; id: string; stacked?: boolean }) {
+  const score = cveScoreOf(d, id);
+  return (
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${stacked ? "md:flex-col md:items-start" : ""}`}>
+      <a
+        href={cveUrlOf(d, id)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-mono text-[12px] font-semibold whitespace-nowrap text-rose-300 transition-colors hover:text-rose-200 hover:underline"
+      >
+        {id}
+      </a>
+      {score && <CvssBadge score={score} />}
+    </div>
+  );
+}
+
+/**
+ * A finding's public records — NVD, advisories, errata, pull requests — as one
+ * quiet line of links. CVE identifiers are left out: rows link each one beside
+ * its score. A row with no record links falls back to its plain reference.
+ */
+function RecordLinks({ d }: { d: Disclosure }) {
+  const links = recordLinks(d).filter((l) => !l.label.startsWith("CVE-"));
   if (links.length === 0) {
-    if (hideCveIds || !d.ref) return null;
-    return (
-      <span className="inline-flex items-center rounded-md border border-slate-700/60 bg-slate-950/40 px-2.5 py-1 font-mono text-[11px] text-slate-400">
-        {d.ref}
-      </span>
-    );
+    if (!d.ref || d.ref.startsWith("CVE-")) return null;
+    return <span className="font-mono text-[11px] text-slate-500">{d.ref}</span>;
   }
   return (
-    <div
-      className={`flex flex-wrap gap-2 ${justify === "end" ? "md:justify-end" : ""}`}
-    >
+    <div className="flex flex-wrap gap-x-4 gap-y-1">
       {links.map((l) => (
         <a
           key={l.url}
           href={l.url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center gap-1.5 rounded-md border bg-slate-950/40 px-2.5 py-1 font-mono text-[11px] transition-colors ${chipClass}`}
+          className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-400 transition-colors hover:text-red-200"
         >
-          {l.label} <ExternalLink size={11} aria-hidden="true" />
+          {l.label}
+          <ExternalLink size={10} aria-hidden="true" className="opacity-60" />
         </a>
       ))}
     </div>
@@ -240,9 +270,7 @@ function MetricTile({
 // Numeric weight for ordering published findings by how serious they are: use the
 // CVSS score when the row carries one, otherwise rank the vendor's severity word.
 function severityWeight(d: Disclosure): number {
-  const scored = Object.values(d.cveScores ?? {})
-    .map((v) => parseFloat(v.match(/([\d.]+)/)?.[1] ?? ""))
-    .filter((n) => !Number.isNaN(n));
+  const scored = Object.values(d.cveScores ?? {}).map((s) => s.score);
   if (scored.length > 0) return Math.max(...scored);
   const m = d.severity?.match(/CVSS\s+([\d.]+)/i);
   if (m) return parseFloat(m[1]);
@@ -255,71 +283,33 @@ function severityWeight(d: Disclosure): number {
 }
 
 /**
- * One published finding, as a row. Three columns on desktop: every CVE
- * identifier with its own published CVSS, the finding itself with its class
- * line, and the public records. Uniform across the whole ledger — no card is
- * privileged over another.
+ * One published finding, as a row: every CVE identifier with the score its own
+ * record publishes, then the finding, its class and its public records.
+ * Uniform across the whole ledger — no row is privileged over another.
  */
 function PublishedRecordRow({ d }: { d: Disclosure }) {
-  const ids = cveIdsOf(d).length > 0 ? cveIdsOf(d) : d.ref ? [d.ref] : [];
   return (
-    <li className="grid gap-x-5 gap-y-2.5 border-b border-slate-800/70 px-4 py-4 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[13.5rem_minmax(0,1fr)_minmax(0,24rem)] md:items-start">
-      {/* Identifiers, each with the score its own record publishes */}
-      <div className="flex flex-col gap-1">
-        {ids.map((id) => {
-          const score = cveScoreOf(d, id);
-          return (
-            <div key={id} className="flex flex-wrap items-baseline gap-x-2">
-              {id.startsWith("CVE-") ? (
-                <a
-                  href={cveUrlOf(d, id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-[12px] font-semibold whitespace-nowrap text-rose-300 transition-colors hover:text-rose-200 hover:underline"
-                >
-                  {id}
-                </a>
-              ) : (
-                <span className="font-mono text-[12px] font-semibold text-rose-300 whitespace-nowrap">
-                  {id}
-                </span>
-              )}
-              {score && (
-                <span className="font-mono text-[10px] text-slate-500 whitespace-nowrap">{score}</span>
-              )}
-            </div>
-          );
-        })}
+    <li className="grid gap-x-6 gap-y-3 border-b border-slate-800/70 px-4 py-4 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[12rem_minmax(0,1fr)] md:px-5">
+      <div className="flex flex-col gap-2.5">
+        {cveIdsOf(d).map((id) => (
+          <CveIdWithScore key={id} d={d} id={id} stacked />
+        ))}
       </div>
-
-      {/* The finding, then its classification on one quiet line */}
       <div className="min-w-0">
         <p className="text-sm font-medium leading-snug text-white">{d.short ?? d.title}</p>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] text-slate-500">
+        <p className="mt-1 font-mono text-[10px] text-slate-500">
           <span className="text-slate-400">{d.vendor}</span>
           {d.cwe && (
             <>
-              <span aria-hidden="true">·</span>
+              <span aria-hidden="true"> · </span>
               <span className="text-red-400/90">{d.cwe}</span>
             </>
           )}
-          {d.severity && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span className="text-rose-300/90">{d.severity.split("·")[0].trim()}</span>
-            </>
-          )}
-          {d.credited && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span className="text-emerald-400">✓ credited</span>
-            </>
-          )}
+        </p>
+        <div className="mt-2">
+          <RecordLinks d={d} />
         </div>
       </div>
-
-      {/* The rest of the public record — the CVE ids themselves link from the left */}
-      <RecordLinkChips d={d} hideCveIds justify="end" />
     </li>
   );
 }
@@ -407,14 +397,15 @@ function DisclosureHighlights() {
 
 /**
  * One finding inside an expanded vendor panel. Mirrors the main record list:
- * every CVE identifier is shown with the score its own record publishes, and
- * the identifiers themselves are the links — so nothing is truncated away and
- * no score is paired with the wrong id.
+ * each CVE identifier links to its record beside the score that record
+ * publishes. Findings without a scored CVE keep the vendor's own rating.
  */
 function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
   const ids = cveIdsOf(d);
+  const scored = ids.some((id) => cveScoreOf(d, id));
+  const rating = !scored && d.severity ? d.severity.split("·")[0].trim() : undefined;
   return (
-    <li className="grid gap-x-5 gap-y-2 border-b border-slate-800/70 px-4 py-3.5 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] md:items-start">
+    <li className="grid gap-x-5 gap-y-2 border-b border-slate-800/70 px-4 py-3.5 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
       <div className="min-w-0">
         <div className="flex items-start gap-2.5">
           <span className="mt-0.5">{statusIcon(d.status)}</span>
@@ -422,53 +413,30 @@ function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
             {d.short ?? stripVendorPrefix(d.title, vendor)}
           </span>
         </div>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 pl-[1.55rem] font-mono text-[10px] text-slate-500">
-          {ids.map((id, i) => {
-            const score = cveScoreOf(d, id);
-            return (
-              <span key={id} className="inline-flex items-baseline gap-1.5">
-                {i > 0 && (
-                  <span className="text-slate-600" aria-hidden="true">
-                    /
-                  </span>
-                )}
-                <a
-                  href={cveUrlOf(d, id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] font-semibold text-rose-300 transition-colors hover:text-rose-200"
-                >
-                  {id}
-                </a>
-                {score && <span className="text-slate-500">{score}</span>}
-              </span>
-            );
-          })}
-          {ids.length > 0 && d.cwe && <span aria-hidden="true">·</span>}
-          {d.cwe && <span className="text-red-400/90">{d.cwe}</span>}
-          {d.severity && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span className="text-rose-300/90">{d.severity.split("·")[0].trim()}</span>
-            </>
+        <div className="mt-2 space-y-2 pl-[1.55rem]">
+          {(ids.length > 0 || d.cwe || rating) && (
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+              {ids.map((id) => (
+                <CveIdWithScore key={id} d={d} id={id} />
+              ))}
+              {(d.cwe || rating) && (
+                <p className="font-mono text-[10px] text-slate-500">
+                  {d.cwe && <span className="text-red-400/90">{d.cwe}</span>}
+                  {d.cwe && rating && <span aria-hidden="true"> · </span>}
+                  {rating && <span className="text-slate-400">{rating}</span>}
+                </p>
+              )}
+            </div>
           )}
-          {d.credited && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span className="text-emerald-400">✓ credited</span>
-            </>
-          )}
+          <RecordLinks d={d} />
         </div>
       </div>
 
-      <div className="flex flex-col items-start gap-2 md:items-end">
-        <span
-          className={`inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadgeClass(d.status)}`}
-        >
-          {d.status}
-        </span>
-        <RecordLinkChips d={d} hideCveIds justify="end" />
-      </div>
+      <span
+        className={`justify-self-start whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium md:justify-self-end ${statusBadgeClass(d.status)}`}
+      >
+        {d.status}
+      </span>
     </li>
   );
 }
@@ -479,7 +447,6 @@ function VendorStatChips({ rows }: { rows: Disclosure[] }) {
     .filter((d) => d.status === "CVE published")
     .reduce((n, d) => n + Math.max(cveIdsOf(d).length, 1), 0);
   const pendingCves = rows.filter((d) => d.status === "Confirmed — CVE pending").length;
-  const credited = rows.filter((d) => d.credited).length;
   const chip = "inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider whitespace-nowrap";
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -499,11 +466,6 @@ function VendorStatChips({ rows }: { rows: Disclosure[] }) {
       {merged > 0 && (
         <span className={`${chip} border-emerald-400/40 bg-emerald-500/10 text-emerald-300`}>
           {merged} merged
-        </span>
-      )}
-      {credited > 0 && (
-        <span className={`${chip} border-emerald-400/40 bg-emerald-500/10 text-emerald-300`}>
-          credited ×{credited}
         </span>
       )}
     </div>
@@ -715,9 +677,26 @@ const METHOD_TRACKS: {
   },
 ];
 
-// Tools split into what was BUILT vs OPERATED — an honest use/build distinction.
+// Tools split into what was BUILT, CONTRIBUTED to, and OPERATED — an honest
+// build/use distinction.
 const AUTHORED: { name: string; desc: string; url: string }[] = [
   { name: "SecretHound", desc: "Offline, zero-dependency loot analyzer — 300+ AD/Kerberos/ADCS detectors correlate dumps, potfiles & configs into a ranked, OSCP+-legal attack path", url: "https://github.com/Michael-JRead/Secrethound" },
+];
+const CONTRIBUTED: {
+  name: string;
+  desc: string;
+  url: string;
+  contribution: { label: string; url: string };
+}[] = [
+  {
+    name: "ARTEX",
+    desc: "Self-hosted AI pentesting platform — an LLM planner drives real tools, ties each finding to captured HTTP evidence, and gates actions behind scope rules and approvals",
+    url: "https://github.com/BaaRai/ARTEX",
+    contribution: {
+      label: "Merged PR #328 — provider-refusal reporting",
+      url: "https://github.com/BaaRai/ARTEX/pull/328",
+    },
+  },
 ];
 const OPERATED: { group: string; tools: string[] }[] = [
   { group: "recon", tools: ["nmap", "ffuf", "gobuster", "amass", "nuclei"] },
@@ -861,6 +840,40 @@ export default function OffensiveSecurity() {
                             </div>
                             <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{tool.desc}</p>
                           </a>
+                        ))}
+                      </div>
+                      {/* Contributed — the repo and the merged contribution are separate links */}
+                      <div className="flex items-center gap-2 mt-6 mb-3 text-red-300">
+                        <GitPullRequest size={16} />
+                        <span className="font-mono text-xs uppercase tracking-widest">contributed</span>
+                      </div>
+                      <div className="space-y-3">
+                        {CONTRIBUTED.map((tool) => (
+                          <div
+                            key={tool.name}
+                            className="p-4 rounded-lg border border-red-500/30 bg-slate-900/40 backdrop-blur-sm"
+                          >
+                            <a
+                              href={tool.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group flex items-center gap-2"
+                            >
+                              <Boxes size={16} className="text-red-400" />
+                              <span className="font-mono font-semibold text-white group-hover:text-red-300 transition-colors">{tool.name}</span>
+                              <ExternalLink size={12} className="text-slate-500 ml-auto" />
+                            </a>
+                            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{tool.desc}</p>
+                            <a
+                              href={tool.contribution.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-2.5 inline-flex items-center gap-1.5 font-mono text-[11px] text-emerald-300/90 hover:text-emerald-200 transition-colors"
+                            >
+                              <GitPullRequest size={12} aria-hidden="true" />
+                              {tool.contribution.label}
+                            </a>
+                          </div>
                         ))}
                       </div>
                     </div>

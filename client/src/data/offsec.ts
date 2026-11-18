@@ -22,14 +22,16 @@ export interface Disclosure {
   url?: string;
   /** Multiple labeled public records (CVE, NVD, vendor advisory, errata). */
   links?: { label: string; url: string }[];
-  credited?: boolean;
   /**
    * CVSS score per CVE identifier, keyed by id — a finding tracked under two
    * ids can be scored differently in each record (and under different CVSS
-   * versions). Ids absent from this map have no score published in a source we
-   * can cite, and render without one rather than borrowing another record's.
+   * versions). Each is the score in that identifier's own record: the issuing
+   * CNA's (its CVSS 4.0 score when it publishes both), or, where the CNA
+   * published only a word rating, the CVSS 3.1 score CISA added to the same
+   * record. Ids absent from this map render without a score rather than
+   * borrowing another record's.
    */
-  cveScores?: Record<string, string>;
+  cveScores?: Record<string, CvssScore>;
   /** One-line description used by compact renders (the CVE hero). */
   tagline?: string;
   /**
@@ -37,6 +39,35 @@ export interface Disclosure {
    * the page intentionally renders links instead of prose — readers click through.
    */
   summary?: string[];
+}
+
+/** A CVSS base score published for one CVE identifier. */
+export interface CvssScore {
+  score: number;
+  version: "3.1" | "4.0";
+  /**
+   * "cisa" when the issuing CNA published only a word rating and the score is
+   * the one CISA added to the same CVE record (its ADP container). The CNA's own
+   * rating is kept in `vendorRating`.
+   */
+  source?: "cisa";
+  vendorRating?: string;
+}
+
+export type CvssRating = "Critical" | "High" | "Medium" | "Low" | "None";
+
+/** The qualitative band CVSS 3.1 and 4.0 both define for a base score. */
+export function cvssRating(score: number): CvssRating {
+  if (score >= 9) return "Critical";
+  if (score >= 7) return "High";
+  if (score >= 4) return "Medium";
+  if (score > 0) return "Low";
+  return "None";
+}
+
+/** "CVSS 7.5" or "CVSS 8.7 (v4.0)". */
+export function formatCvss(s: CvssScore): string {
+  return `CVSS ${s.score.toFixed(1)}${s.version === "4.0" ? " (v4.0)" : ""}`;
 }
 
 /**
@@ -216,9 +247,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important · CVSS 9.1",
     ref: "CVE-2026-87744",
-    credited: true,
     cveScores: {
-      "CVE-2026-87744": "CVSS 9.1",
+      "CVE-2026-87744": { score: 9.1, version: "3.1" },
     },
     tagline:
       "Quarkus REST Data Panache generates CRUD endpoints whose access is restricted by @ResourceProperties(rolesAllowed). Customizing one operation with @MethodProperties without re-declaring the roles made the code generator silently drop the class-level security requirement, so that endpoint defaulted to permissive, unauthenticated access under the default configuration. Fixed in Red Hat build of Quarkus 3.27.6 and 3.33.4.",
@@ -246,9 +276,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important · CVSS 7.5",
     ref: "CVE-2026-16308",
-    credited: true,
     cveScores: {
-      "CVE-2026-16308": "CVSS 7.5",
+      "CVE-2026-16308": { score: 7.5, version: "3.1" },
     },
     tagline:
       "Unauthenticated multipart/form-data request exhausts the JVM heap in RESTEasy Reactive — fixed in Red Hat build of Quarkus 3.27.4.SP3, with downstream advisories from IBM and others.",
@@ -273,11 +302,11 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-524",
     type: "Cross-tenant authentication bypass (sensitive-cache reuse)",
     status: "CVE published",
-    severity: "Important · CVSS 8.7",
+    // IBM issued this record and scores it CVSS 3.1 5.3 (C:L); the record wins.
+    severity: "Medium · CVSS 5.3",
     ref: "CVE-2026-19625",
-    credited: true,
     cveScores: {
-      "CVE-2026-19625": "CVSS 8.7",
+      "CVE-2026-19625": { score: 5.3, version: "3.1" },
     },
     tagline:
       "In multi-tenant Quarkus OIDC deployments, opaque access tokens are cached by token value alone — with no tenant discriminator — so a token introspected for one tenant is reused to authenticate it against another, defeating tenant isolation. Red Hat–assigned CVE, rated Important.",
@@ -301,9 +330,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important · CVSS 7.4",
     ref: "CVE-2026-19651",
-    credited: true,
     cveScores: {
-      "CVE-2026-19651": "CVSS 7.4",
+      "CVE-2026-19651": { score: 7.4, version: "3.1" },
     },
     tagline:
       "The quarkus-spring-web compatibility layer resolves Spring @RequestHeader values from the URL query string, so an unauthenticated caller who cannot set a trusted request header can pass it as a query parameter instead — bypassing header-based authorization. Fixed in Quarkus 3.39.2 and up; credited.",
@@ -330,7 +358,9 @@ export const DISCLOSURES: Disclosure[] = [
     // Database (GHSA-c9m2-388v-p4rq); no numeric CVSS published there.
     severity: "Moderate",
     ref: "CVE-2026-75880",
-    credited: true,
+    cveScores: {
+      "CVE-2026-75880": { score: 6.5, version: "3.1", source: "cisa", vendorRating: "Moderate" },
+    },
     tagline:
       "The SQL92 LIKE operator in the JMS/Core message-selector engine compiled to a backtracking Java regex, so an authenticated client attaching a consumer with a crafted wildcard selector drove super-linear CPU per delivered message and occupied a shared broker thread. Fixed by the Artemis PMC with wildcard caps in the selector compiler.",
     links: [
@@ -354,7 +384,9 @@ export const DISCLOSURES: Disclosure[] = [
     // Database (GHSA-73q3-xq4g-44wj); no numeric CVSS published there.
     severity: "Moderate",
     ref: "CVE-2026-57822",
-    credited: true,
+    cveScores: {
+      "CVE-2026-57822": { score: 6.5, version: "3.1", source: "cisa", vendorRating: "Important" },
+    },
     tagline:
       "When the broker processes management-via-messaging requests, parameter processing triggers Java deserialization of a client-supplied object — reachable by a messaging client holding MANAGE permission. Reported after tracing the deserialization ahead of the per-operation management check.",
     links: [
@@ -378,7 +410,9 @@ export const DISCLOSURES: Disclosure[] = [
     // Database (GHSA-593h-2v8w-vxpx); no numeric CVSS published there.
     severity: "High",
     ref: "CVE-2026-49362",
-    credited: true,
+    cveScores: {
+      "CVE-2026-49362": { score: 7.5, version: "3.1", source: "cisa", vendorRating: "Important" },
+    },
     tagline:
       "An unauthenticated remote attacker could create arbitrary durable queues through the Core protocol, manipulating broker state and opening a denial-of-service path — the CREATE_QUEUE packet was handled on channel 1 before authentication and authorization were enforced.",
     links: [
@@ -398,11 +432,12 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-444",
     type: "HTTP request smuggling (inconsistent interpretation of requests)",
     status: "CVE published",
-    severity: "Moderate · CVSS 6.5",
+    // VulnCheck's record carries CVSS 4.0 6.9 and 3.1 6.5; the 4.0 score is shown,
+    // as for the other VulnCheck records.
+    severity: "Medium · CVSS 6.9 (v4.0)",
     ref: "CVE-2026-89044",
-    credited: true,
     cveScores: {
-      "CVE-2026-89044": "CVSS 6.5",
+      "CVE-2026-89044": { score: 6.9, version: "4.0" },
     },
     tagline:
       "Netty's HTTP/1 decoder validated Transfer-Encoding by suffix-matching the raw header value instead of parsing the coding list, so variants such as \"chunked, xchunked\" or a multi-line header slipped past the rejection rule — desynchronising a front-end/back-end pair into request smuggling. Fixed in 4.1.138.Final and 4.2.18.Final; credited.",
@@ -428,9 +463,8 @@ export const DISCLOSURES: Disclosure[] = [
     ref: "CVE-2026-93491",
     // A second id was once assigned to this report by another CNA and was
     // rejected as a duplicate of this one; it is deliberately not listed.
-    credited: true,
     cveScores: {
-      "CVE-2026-93491": "CVSS 7.5",
+      "CVE-2026-93491": { score: 7.5, version: "3.1" },
     },
     tagline:
       "HttpServerCodec packs the first 32 pipelined request methods into a single long, then spills every one after that into an unbounded queue. A client that pipelines requests while withholding reads on its own end grows that queue without limit, driving unbounded heap growth. Fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -457,9 +491,8 @@ export const DISCLOSURES: Disclosure[] = [
     ref: "CVE-2026-93494",
     // A second id was once assigned to this report by another CNA and was
     // rejected as a duplicate of this one; it is deliberately not listed.
-    credited: true,
     cveScores: {
-      "CVE-2026-93494": "CVSS 7.5",
+      "CVE-2026-93494": { score: 7.5, version: "3.1" },
     },
     tagline:
       "Once a STOMP frame's declared content-length is satisfied, the decoder parks an allocator buffer in an instance field to await the single NUL byte that ends the frame. If that byte never arrives nothing releases it, so a peer leaks one buffer per connection — reclaimed by neither GC nor disconnect. Fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -483,9 +516,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93563",
-    credited: true,
     cveScores: {
-      "CVE-2026-93563": "CVSS 7.5",
+      "CVE-2026-93563": { score: 7.5, version: "3.1" },
     },
     tagline:
       "SmtpResponseDecoder collects multi-line SMTP response detail lines into a list with no size or count limit, so a malicious or compromised server can stream continuation lines indefinitely while withholding the final line and exhaust the client's heap. Fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -508,9 +540,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93564",
-    credited: true,
     cveScores: {
-      "CVE-2026-93564": "CVSS 7.5",
+      "CVE-2026-93564": { score: 7.5, version: "3.1" },
     },
     tagline:
       "When PROXY-protocol v2 parsing hits a malformed sibling TLV after a nested SSL TLV, the error path releases only the top level of a tree-shaped TLV list. Grandchild TLVs stay pinned, so repeated crafted connections exhaust pooled memory. Reported as an incomplete fix of the earlier patch; fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -534,9 +565,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-93575",
-    credited: true,
     cveScores: {
-      "CVE-2026-93575": "CVSS 7.5",
+      "CVE-2026-93575": { score: 7.5, version: "3.1" },
     },
     tagline:
       "The MQTT decoder validates a packet's Remaining Length against the configured size limits but never checks the Properties Length against it. A packet declaring a small Remaining Length and an enormous Properties Length drives the decoder to buffer and re-parse huge property data, exhausting memory and CPU. Reported as an incomplete fix of CVE-2026-44248; fixed in 4.1.138.Final and 4.2.18.Final.",
@@ -560,9 +590,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-87742",
-    credited: true,
     cveScores: {
-      "CVE-2026-87742": "CVSS 7.5",
+      "CVE-2026-87742": { score: 7.5, version: "3.1" },
     },
     tagline:
       "A @WebSocket endpoint on the documented default execution model buffers inbound messages with no bound and never applies read backpressure, so one connection streaming faster than the handler drains exhausts the JVM heap. Fixed by bounding the per-connection processing queue; credited.",
@@ -588,9 +617,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-87743",
-    credited: true,
     cveScores: {
-      "CVE-2026-87743": "CVSS 7.5",
+      "CVE-2026-87743": { score: 7.5, version: "3.1" },
     },
     tagline:
       "Paths are normalized differently by the Quarkus HTTP security matcher than by the request dispatchers behind it, so an unauthenticated attacker can craft a URL the matcher treats as public while the router dispatches it to a protected endpoint. Reported as an incomplete fix for CVE-2026-50559; credited.",
@@ -615,9 +643,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Moderate · CVSS 6.1",
     ref: "CVE-2026-93432",
-    credited: true,
     cveScores: {
-      "CVE-2026-93432": "CVSS 6.1",
+      "CVE-2026-93432": { score: 6.1, version: "3.1" },
     },
     tagline:
       "When the {#eval} section helper renders a sub-template it fails to pass along the parent template's content type, so Qute's default HTML and JSON escaping never applies and untrusted data is emitted raw — reaching cross-site scripting and JSON injection. Its own sibling str:eval preserves the content type correctly.",
@@ -641,7 +668,9 @@ export const DISCLOSURES: Disclosure[] = [
     type: "Improper check for certificate revocation — incomplete-fix report",
     status: "CVE published",
     ref: "CVE-2026-86248",
-    credited: true,
+    cveScores: {
+      "CVE-2026-86248": { score: 9.8, version: "3.1", source: "cisa", vendorRating: "Moderate" },
+    },
     tagline:
       "In the OpenSSL-FFM connector, a signed OCSP response carrying certStatus=UNKNOWN was accepted for client-certificate authentication even with ocspSoftFail=false — the setting whose entire purpose is to refuse a certificate whose revocation status cannot be established. Reported as a residual of the CVE-2026-34500 soft-fail fix.",
     links: [
@@ -663,11 +692,13 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-269",
     type: "Improper privilege management — incomplete-fix report",
     status: "CVE published",
-    // Apache publishes a textual severity for httpd rather than a CVSS vector;
-    // the record for this one reads "low".
+    // Apache rates httpd issues in words ("low" here) rather than CVSS; the score
+    // shown is CISA's, from the same record.
     severity: "Low",
     ref: "CVE-2026-59797",
-    credited: true,
+    cveScores: {
+      "CVE-2026-59797": { score: 9.8, version: "3.1", source: "cisa", vendorRating: "Low" },
+    },
     tagline:
       "CVE-2026-44119 restricted ap_expr's file functions in .htaccess centrally, but mod_ssl parses SSLRequire's expression without passing through that restriction. A site author granted AllowOverride AuthConfig could use SSLRequire file(...) as a boolean oracle and read any file the httpd runtime user can — while Require expr with the identical call, in the same .htaccess, at the same override level, was correctly refused. Fixed in 2.4.69.",
     links: [
@@ -690,11 +721,12 @@ export const DISCLOSURES: Disclosure[] = [
     cwe: "CWE-441 / CWE-863",
     type: "Confused deputy / incorrect authorization (CI approval bypass)",
     status: "CVE published",
+    // Gitea issued the record without a score; its own advisory scores CVSS 3.1
+    // 8.7, which is used rather than CISA's ADP score on the record (9.8).
     severity: "High · CVSS 8.7",
     ref: "CVE-2026-94205",
-    credited: true,
     cveScores: {
-      "CVE-2026-94205": "CVSS 8.7",
+      "CVE-2026-94205": { score: 8.7, version: "3.1" },
     },
     tagline:
       "Gitea Actions decided whether a fork pull request needed approval from whoever triggered the event rather than from the PR author — so an ordinary maintainer triage action, such as adding a label, created the run unapproved while the workflow definition was still read from the fork head. Fork-controlled CI code then ran on the base repository's runners. Fixed in 28.0.0.",
@@ -717,11 +749,13 @@ export const DISCLOSURES: Disclosure[] = [
     vendor: "Apache CXF",
     type: "Regular-expression denial of service (quadratic backtracking)",
     status: "CVE published",
-    // Apache publishes a textual severity for CXF; this record reads "low" and
-    // carries no CVSS vector and no CWE, so neither is shown.
+    // Apache rates CXF issues in words ("low" here) and this record lists no CWE;
+    // the score shown is CISA's, from the same record.
     severity: "Low",
     ref: "CVE-2026-86463",
-    credited: true,
+    cveScores: {
+      "CVE-2026-86463": { score: 7.5, version: "3.1", source: "cisa", vendorRating: "Low" },
+    },
     tagline:
       "FiqlParser located a comparison operator with a greedy [\\p{ASCII}]+(op) pattern and Matcher.find(). Given a search value with no operator in it, the greedy prefix swallowed the whole input, failed, and find() restarted from every index — O(n²) backtracking with no length bound. One 8 KB _s query cost about a second of CPU, roughly 1,000× a same-length valid query. Fixed by capping FIQL expressions at 4 KiB.",
     links: [
@@ -746,7 +780,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Low",
     ref: "CVE-2026-107937",
-    credited: true,
+    cveScores: {
+      "CVE-2026-107937": { score: 7.5, version: "3.1", source: "cisa", vendorRating: "Low" },
+    },
     tagline:
       "CXF's multipart/MTOM part-header guards counted the wrong thing. The count limit (default 500) was checked against distinct header names rather than header lines, so a part repeating one header name never tripped it, and the size limit applied per physical line rather than to an assembled header value. An unauthenticated multipart request grew the heap without bound — one 16 MB body exhausted a 128 MB heap. Reported as an incomplete fix of CVE-2026-50645.",
     links: [
@@ -780,9 +816,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Critical · CVSS 9.2 (v4.0)",
     ref: "CVE-2026-102469",
-    credited: true,
     cveScores: {
-      "CVE-2026-102469": "CVSS 9.2 (v4.0)",
+      "CVE-2026-102469": { score: 9.2, version: "4.0" },
     },
     tagline:
       "The Vert.x DB2 client's DRDA protocol code deserializes User Defined Type (UDT) column data with a bare ObjectInputStream.readObject() call and no ObjectInputFilter or class allowlist. A legitimate DB2 server never sends the FDOCA 0x50 UDT type, but a malicious or man-in-the-middle DRDA server can return a 0x50-tagged column and have attacker-controlled bytes deserialized on the event loop before application code sees them — remote code execution if a gadget chain is on the classpath, denial of service otherwise. TLS is off by default, which makes the man-in-the-middle position practical. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -806,9 +841,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Critical · CVSS 9.1 (v4.0)",
     ref: "CVE-2026-102476",
-    credited: true,
     cveScores: {
-      "CVE-2026-102476": "CVSS 9.1 (v4.0)",
+      "CVE-2026-102476": { score: 9.1, version: "4.0" },
     },
     tagline:
       "The Vert.x HTTP client caches SSL contexts for efficiency, but the cache key does not capture all of the requested SSL properties. A client that asks for a context can therefore be handed a cached one with weaker settings, for example one that ignores hostname validation when validation was requested. Where an application uses differing SSL options, connections can run without the hostname check they asked for, which exposes them to a man-in-the-middle. Fixed in 5.1.10 and 5.2.1.",
@@ -832,9 +866,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-102461",
-    credited: true,
     cveScores: {
-      "CVE-2026-102461": "CVSS 8.7 (v4.0)",
+      "CVE-2026-102461": { score: 8.7, version: "4.0" },
     },
     tagline:
       "vertx-json-schema validated the uniqueItems keyword with an O(n²) pairwise comparison loop that had no short-circuit or size limit, so CPU cost grows with the square of the array length. A remote, unauthenticated client whose JSON is validated against a schema using uniqueItems can submit a moderately sized array and tie up CPU, denying service; vertx-web-openapi-router, vertx-web-validation and vertx-openapi depend on vertx-json-schema and are also affected. Fixed in vertx-json-schema 4.5.35, 5.1.10 and 5.2.1.",
@@ -858,9 +891,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-102467",
-    credited: true,
     cveScores: {
-      "CVE-2026-102467": "CVSS 8.7 (v4.0)",
+      "CVE-2026-102467": { score: 8.7, version: "4.0" },
     },
     tagline:
       "The vertx-core WebSocket implementation sets no limit on the number of bytes it allocates when decompressing frames or messages. A WebSocket peer can therefore send a small compressed payload that inflates without bound (a zip bomb) and exhausts the receiving Vert.x endpoint's memory. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -884,9 +916,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-102475",
-    credited: true,
     cveScores: {
-      "CVE-2026-102475": "CVSS 8.7 (v4.0)",
+      "CVE-2026-102475": { score: 8.7, version: "4.0" },
     },
     tagline:
       "The Vert.x HTTP proxy's body transformer interceptor relies on a max buffered bytes limit to keep the buffer for each request bounded, but that check was not correctly enforced. On a proxy configured with an intercepting body transformer, a client sending requests through it can force the server to allocate heap indefinitely. Fixed in 5.1.10 and 5.2.1.",
@@ -910,9 +941,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-102477",
-    credited: true,
     cveScores: {
-      "CVE-2026-102477": "CVSS 8.7 (v4.0)",
+      "CVE-2026-102477": { score: 8.7, version: "4.0" },
     },
     tagline:
       "A vertx-grpc-server endpoint checks its configurable per-message maximum size against the bytes received, so for a compressed message the limit bounds only the compressed size and not the decompressed content. A client that can send messages to the endpoint can submit a small compressed payload that expands well beyond the configured limit, forcing the server to allocate the excess memory. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -936,9 +966,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-102479",
-    credited: true,
     cveScores: {
-      "CVE-2026-102479": "CVSS 8.7 (v4.0)",
+      "CVE-2026-102479": { score: 8.7, version: "4.0" },
     },
     tagline:
       "The Vert.x HTTP/1.x decoder canonicalizes well-known HTTP header names, but crafted names are also mapped onto entries in that list — a header named Content-Xength, for example, is interpreted as Content-Length. An attacker who can send HTTP/1.x requests can use the misread header for request smuggling. Fixed in 5.1.10 and 5.2.1.",
@@ -962,9 +991,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.2 (v4.0)",
     ref: "CVE-2026-102462",
-    credited: true,
     cveScores: {
-      "CVE-2026-102462": "CVSS 8.2 (v4.0)",
+      "CVE-2026-102462": { score: 8.2, version: "4.0" },
     },
     tagline:
       "The vertx-mssql-client TDS message decoder aggregates inbound TDS packets into a composite direct-memory buffer with no cumulative size limit. A malicious, compromised or man-in-the-middle SQL Server can keep sending packets without setting the END_OF_MESSAGE status flag and drive the client into an out-of-memory crash. This happens before authentication completes. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -988,9 +1016,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.2 (v4.0)",
     ref: "CVE-2026-102463",
-    credited: true,
     cveScores: {
-      "CVE-2026-102463": "CVSS 8.2 (v4.0)",
+      "CVE-2026-102463": { score: 8.2, version: "4.0" },
     },
     tagline:
       "DataTypeCodec.binaryDecodeArray in vertx-pg-client sizes a Java array from a server-declared 32-bit dimension count with no upper bound. A malicious or compromised PostgreSQL server, or an on-path attacker on an unencrypted connection, can send a crafted DataRow message that makes the client attempt a multi-gigabyte heap allocation and crash with an OutOfMemoryError. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -1014,9 +1041,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.2 (v4.0)",
     ref: "CVE-2026-102465",
-    credited: true,
     cveScores: {
-      "CVE-2026-102465": "CVSS 8.2 (v4.0)",
+      "CVE-2026-102465": { score: 8.2, version: "4.0" },
     },
     tagline:
       "The Vert.x Redis client's RESP parser pre-allocates arrays to the array, push or attribute length a server declares, with no upper bound. A malicious or compromised Redis server, or a man-in-the-middle on the connection, can send a crafted RESP response that declares an extremely large length and forces a massive heap allocation. The resulting OutOfMemoryError crashes the Vert.x event loop thread and denies service to every connection and verticle sharing that loop. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -1040,9 +1066,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.2 (v4.0)",
     ref: "CVE-2026-102466",
-    credited: true,
     cveScores: {
-      "CVE-2026-102466": "CVSS 8.2 (v4.0)",
+      "CVE-2026-102466": { score: 8.2, version: "4.0" },
     },
     tagline:
       "The Vert.x MySQL client pre-allocates the column-definition array for a result set from the column count the server declares, with no upper bound. A malicious or compromised MySQL server, or a man-in-the-middle, can send a result set packet declaring an extremely large column count and force a massive heap allocation; the resulting OutOfMemoryError crashes the Netty event loop thread and denies service to every connection and verticle in the application. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -1067,9 +1092,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Medium · CVSS 6.9 (v4.0)",
     ref: "CVE-2026-102471",
-    credited: true,
     cveScores: {
-      "CVE-2026-102471": "CVSS 6.9 (v4.0)",
+      "CVE-2026-102471": { score: 6.9, version: "4.0" },
     },
     tagline:
       "vertx-mail-client wrote header names and values from MailMessage.addHeader()/setHeaders() and MailAttachment.addHeader()/setHeaders(), plus attachment metadata such as setContentType() and setContentId(), into the SMTP DATA section without stripping CR or LF. Separately, Utils.mustEncode(char) let a bare LF in a From display name skip Q-encoding. Anyone who can influence those values through an application, such as a web form or API that feeds MailMessage, can inject headers like Bcc or Reply-To or prepend body content to outgoing mail. Fixed in 4.5.35, 5.1.10 and 5.2.1.",
@@ -1094,9 +1118,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-118487",
-    credited: true,
     cveScores: {
-      "CVE-2026-118487": "CVSS 7.5",
+      "CVE-2026-118487": { score: 7.5, version: "3.1" },
     },
     tagline:
       "vertx-stomp's FrameParser built its RecordParser without a maxRecordSize, so a peer that streams bytes without ever sending a newline makes the parser buffer them indefinitely, until the JVM heap runs out and the process crashes. Both ends are exposed: a malicious client can take down a STOMP server before or after authenticating, and a malicious server can do the same to a client that connects to it. Fixed in 4.5.36 and 5.2.3.",
@@ -1122,9 +1145,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Critical · CVSS 10.0 (v4.0)",
     ref: "CVE-2026-105944",
-    credited: true,
     cveScores: {
-      "CVE-2026-105944": "CVSS 10.0 (v4.0)",
+      "CVE-2026-105944": { score: 10.0, version: "4.0" },
     },
     tagline:
       "Pulsar Manager left its initial-superuser operation open without authentication even after initialization, so anyone who could reach it could create an administrator account. Its proxy to the Pulsar admin API skipped its own authentication, attached the configured Pulsar admin credential to every forwarded request, and let the requester choose the destination — so the credential itself could be sent to an attacker's host. The Pulsar PMC has retired Pulsar Manager; there is no fix, and deployments should be removed.",
@@ -1150,9 +1172,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-105937",
-    credited: true,
     cveScores: {
-      "CVE-2026-105937": "CVSS 8.7 (v4.0)",
+      "CVE-2026-105937": { score: 8.7, version: "4.0" },
     },
     tagline:
       "A shadow topic reads another topic's managed ledger, chosen by the reserved PULSAR.SHADOW_SOURCE property. The admin REST API authorized the caller against the topic being created or updated but never against the source it named, so a tenant admin in one tenant could bind a topic to a persistent topic in any other tenant and consume its retained messages. The shadow topic's own retention and deletion then applied to the source's ledgers, permanently destroying the other tenant's data. Fixed in 4.0.14 and 4.2.5.",
@@ -1180,9 +1201,8 @@ export const DISCLOSURES: Disclosure[] = [
     // agrees on the 3.1 score. The 4.0 vector is shown, as for the other rows.
     severity: "High · CVSS 7.1 (v4.0)",
     ref: "CVE-2026-114042",
-    credited: true,
     cveScores: {
-      "CVE-2026-114042": "CVSS 7.1 (v4.0)",
+      "CVE-2026-114042": { score: 7.1, version: "4.0" },
     },
     tagline:
       "The drdynvc channel takes its reassembly buffer from a stream pool, but a hardening change in 3.32.0 made its length-mismatch error path free that buffer with Stream_Free — the owned-stream deallocator — instead of returning it with Stream_Release. A malicious RDP server sends one Virtual Channel PDU whose totalLength is smaller than the chunk it carries; the client rejects it and disconnects, and teardown then reads the already-freed stream. Fixed in 3.32.1.",
@@ -1211,9 +1231,8 @@ export const DISCLOSURES: Disclosure[] = [
     // GHSA scores CVSS 4.0 7.7 with PR:L. The record's 4.0 vector is shown.
     severity: "High · CVSS 7.5 (v4.0)",
     ref: "CVE-2026-115365",
-    credited: true,
     cveScores: {
-      "CVE-2026-115365": "CVSS 7.5 (v4.0)",
+      "CVE-2026-115365": { score: 7.5, version: "4.0" },
     },
     tagline:
       "OpenBao's policy store keyed its in-memory ACL cache on path.Join(namespace UUID, policy name) and never checked the name for traversal. The root namespace's UUID is a public constant, so a tenant admin who could set policy names on users in its own namespace could attach a policy named ../00000000-0000-0000-0000-000000000000/default — which resolved to the root namespace's cached policy before the storage layer's traversal guard was ever reached. Fixed in 2.6.3.",
@@ -1240,9 +1259,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-104895",
-    credited: true,
     cveScores: {
-      "CVE-2026-104895": "CVSS 7.5",
+      "CVE-2026-104895": { score: 7.5, version: "3.1" },
     },
     tagline:
       "Jackson's non-blocking Smile parser read a raw-binary value's length prefix from the input and allocated a byte[] of that size before reading the body — no upper bound, and no overflow guard. About ten bytes of Smile could force a ~2 GB allocation and an OutOfMemoryError, and an overflowing length threw NegativeArraySizeException outside the parser's exception contract. It is the same class as CVE-2020-28491 in the CBOR parser, whose guard never reached async Smile. Fixed in 2.18.12, 2.21.8, 2.22.4, 3.1.8 and 3.2.4.",
@@ -1269,9 +1287,8 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 7.5",
     ref: "CVE-2026-119191",
-    credited: true,
     cveScores: {
-      "CVE-2026-119191": "CVSS 7.5",
+      "CVE-2026-119191": { score: 7.5, version: "3.1" },
     },
     tagline:
       "node-forge decodes BIT STRING contents as ASN.1 by default, and that speculative sub-parse rebuilt its options without maxDepth — so the recursion limit added for CVE-2025-66031 switched off for everything beneath the first BIT STRING, even with the limit lowered globally and per call. About 15 KB of DER nesting 3,000 BIT STRINGs parsed to depth 3,000, holding a Node process for seconds and about a gigabyte of memory per request; an X.509 signatureValue is itself a BIT STRING, so certificate parsing reaches it. Fixed in 1.4.1.",
@@ -1289,7 +1306,8 @@ export const DISCLOSURES: Disclosure[] = [
   },
   // One report, two identifiers: Apache assigned CVE-2026-85108 to the Mime4J
   // library and CVE-2026-85111 to James server, which ships it. The Mime4J record
-  // carries only Apache's textual "important"; the James record scores CVSS 4.0 8.7.
+  // carries Apache's word rating "important" and CISA's CVSS 3.1 7.5; the James
+  // record scores CVSS 4.0 8.7.
   {
     title:
       "Apache James / Mime4J: no limit on the number of MIME parts lets one small inbound message exhaust the mail server's heap",
@@ -1300,9 +1318,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "High · CVSS 8.7 (v4.0)",
     ref: "CVE-2026-85108",
-    credited: true,
     cveScores: {
-      "CVE-2026-85111": "CVSS 8.7 (v4.0)",
+      "CVE-2026-85108": { score: 7.5, version: "3.1", source: "cisa", vendorRating: "Important" },
+      "CVE-2026-85111": { score: 8.7, version: "4.0" },
     },
     tagline:
       "Mime4J's MimeConfig had no limit on how many MIME parts a message may contain, or how deeply they nest, in any profile, and James parses untrusted inbound mail with the fully permissive profile, building an object graph for every part. An unauthenticated sender could deliver a 3.5 MB message of 500,000 empty parts to a local mailbox and exhaust the JVM heap, leaving mail delivery down until a restart, while an ordinary 23 MB message went through fine. Fixed in Mime4J 0.8.15 and James 3.9.1.",
@@ -1321,8 +1339,9 @@ export const DISCLOSURES: Disclosure[] = [
       "Two identifiers: CVE-2026-85108 for the Mime4J library and CVE-2026-85111 for James server. Fixed in Mime4J 0.8.15, which enforces new limits with safer defaults, and James 3.9.1",
     ],
   },
-  // Apache Kafka — five findings published together on 2026-10-28. Apache publishes
-  // a textual severity for Kafka and no CVSS vector, so these rows carry no score.
+  // Apache Kafka — five findings published together on 2026-10-28. Apache rates
+  // Kafka issues in words rather than CVSS, so each row shows the CVSS 3.1 score
+  // CISA added to its record.
   {
     title: "Apache Kafka: Denial of service via unbounded memory allocation when decoding compressed record batches",
     short: "Compressed record decoder allocates attacker-declared body size → broker OOM",
@@ -1332,7 +1351,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important",
     ref: "CVE-2026-114349",
-    credited: true,
+    cveScores: {
+      "CVE-2026-114349": { score: 6.5, version: "3.1", source: "cisa", vendorRating: "Important" },
+    },
     tagline:
       "When a broker decodes a compressed record batch, the per-record decoder allocates a buffer of the body size declared in the decompressed stream before validating it, so a roughly 90-byte, CRC-valid compressed produce request can force the broker to attempt an allocation of up to about 2 GiB and raise OutOfMemoryError. An authenticated principal with Write on a topic can crash request-handler threads (when a batch's codec differs from the topic's compression.type and records are re-encoded) and fetching consumers, terminate the JVM on brokers run with -XX:+ExitOnOutOfMemoryError, and plant a record that kills the log-cleaner thread on a compacted topic; with the default single cleaner thread, compaction then stops broker-wide, including __consumer_offsets and __transaction_state, across restarts until the record is removed. Fixed in 4.2.2, 4.3.2 and 4.4.0, but upgrading alone is not sufficient: operators must also set max.decompressed.message.bytes to a bounded value, since it defaults to an effectively unlimited value (about 2 GiB).",
     links: [
@@ -1356,7 +1377,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important",
     ref: "CVE-2026-111108",
-    credited: true,
+    cveScores: {
+      "CVE-2026-111108": { score: 9.1, version: "3.1", source: "cisa", vendorRating: "Important" },
+    },
     tagline:
       "Kafka's code-generated protocol readers pre-size each array's collection from the sender-declared element count, checked only against the bytes left in the request buffer, so for a keyed array a request of a few tens of megabytes can force an ImplicitLinkedHashCollection of capacity 2 * count + 1, a heap allocation several times larger, before any element is read. Because parsing happens before authorization, an unauthenticated attacker on a listener that does not require authentication (for example PLAINTEXT) can crash the broker with an OutOfMemoryError using a few concurrent requests, and on authenticated listeners valid credentials with no specific ACL are enough. Fixed in 4.2.2, 4.3.2 and 4.4.0.",
     links: [
@@ -1380,7 +1403,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Important",
     ref: "CVE-2026-111551",
-    credited: true,
+    cveScores: {
+      "CVE-2026-111551": { score: 7.5, version: "3.1", source: "cisa", vendorRating: "Important" },
+    },
     tagline:
       "Kafka Streams' ProcessorRecordContext, ChangedDeserializer, CombinedKeySchema, ProcessorMetadata and AssignmentInfo decoding, and the clients' ListDeserializer, allocate directly from a size or count field without checking it against the bytes actually available, so a small crafted input can force a multi-gigabyte allocation and an OutOfMemoryError that crashes the consumer or Streams thread and can recur on restart, while the broker and the rest of the cluster are unaffected. Triggering it takes writing a crafted record to a Streams application's internal changelog or repartition topics, committing crafted offset metadata to its consumer group, writing a crafted record to a topic read with ListSerde, or returning crafted assignment data when elected leader as a member of a Streams consumer group. Fixed in 4.2.2, 4.3.2 and 4.4.0, which validate the declared size against the remaining input before allocating.",
     links: [
@@ -1404,7 +1429,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Low",
     ref: "CVE-2026-83525",
-    credited: true,
+    cveScores: {
+      "CVE-2026-83525": { score: 6.5, version: "3.1", source: "cisa", vendorRating: "Low" },
+    },
     tagline:
       "The FetchSnapshot RPC handler uses an incorrect boolean operator (CWE-480). An authenticated client with CLUSTER_ACTION privilege can send a crafted FetchSnapshotRequest with an empty topics array, or with a topic that has no partitions, and terminate the KRaft controller process. Fixed in 4.2.2, 4.3.2 and 4.4.0.",
     links: [
@@ -1429,7 +1456,9 @@ export const DISCLOSURES: Disclosure[] = [
     status: "CVE published",
     severity: "Low",
     ref: "CVE-2026-111496",
-    credited: true,
+    cveScores: {
+      "CVE-2026-111496": { score: 9.1, version: "3.1", source: "cisa", vendorRating: "Low" },
+    },
     tagline:
       "PunctuationSchedule.next() computes the next stream-time punctuation as timestamp + (intervalsMissed + 1) * interval with no overflow check, so a record timestamped at or near Long.MAX_VALUE advances stream time to that value and overflows the next punctuation to a negative time, which PunctuationQueue re-queues and loops on indefinitely while holding a lock, stalling the StreamThread. Triggering it needs write access to a source topic whose topology uses stream-time punctuation, plus a broker that stores the record (brokers from Apache Kafka 4.0.0 reject such a timestamp by default), and because the record stays in the topic the hang returns on restart. Fixed in Kafka Streams 4.2.2, 4.3.2 and 4.4.0.",
     links: [
@@ -1487,7 +1516,6 @@ export const DISCLOSURES: Disclosure[] = [
       { label: "issue #55916", url: "https://github.com/quarkusio/quarkus/issues/55916" },
       { label: "issue #55917", url: "https://github.com/quarkusio/quarkus/issues/55917" },
     ],
-    credited: true,
     summary: [
       "RFC 9449 gap: DPoP proofs accepted with no iat freshness window and no jti replay cache",
       "Vendor declined a CVE (nonce checks are SHOULD/optional per spec)",
@@ -1543,7 +1571,6 @@ export const DISCLOSURES: Disclosure[] = [
     status: "Merged",
     ref: "PR #55353",
     url: "https://github.com/quarkusio/quarkus/pull/55353",
-    credited: true,
     summary: [
       "Dev MCP endpoints exposed without the localhost, CORS, and Host-header checks that guard other dev-mode endpoints",
       "Lockdown fix landed with credit to me (milestone 3.27.5)",
@@ -1586,7 +1613,6 @@ export const DISCLOSURES: Disclosure[] = [
     status: "Fix in progress",
     ref: "issue #56070",
     url: "https://github.com/quarkusio/quarkus/issues/56070",
-    credited: true,
     summary: [
       "Spring @PostAuthorize / @PreFilter / @PostFilter annotations honored upstream are silently dropped when apps migrate to Quarkus via quarkus-spring-security",
       'Vendor opened public tracking issue #56070 crediting me as "Mike Read"',
@@ -1602,7 +1628,6 @@ export const DISCLOSURES: Disclosure[] = [
     status: "Fix in progress",
     ref: "PR #56359",
     url: "https://github.com/quarkusio/quarkus/pull/56359",
-    credited: true,
     summary: [
       "Discovered and responsibly disclosed to the Quarkus / Red Hat security team",
       "On the server-less OIDC verification path (e.g. inlined public keys), Quarkus did not check the JWT token-type claim, so a refresh token in JWT format — verifiable by the same key — could be presented and accepted as a bearer/access token",
@@ -1618,7 +1643,6 @@ export const DISCLOSURES: Disclosure[] = [
     status: "Fix in progress",
     ref: "issue #51887",
     url: "https://github.com/keycloak/keycloak/issues/51887",
-    credited: true,
     summary: [
       "Keycloak runs a dummy PBKDF2 hash for non-existent users to make login timing uniform — but the empty-password path early-returns for an existing user without hashing, so an existing username answers ~one PBKDF2 faster than a non-existent one",
       "Unauthenticated attacker can enumerate valid usernames from response latency alone; brute-force protection is off by default, so nothing masks it (Keycloak 26.7.2)",
@@ -1653,7 +1677,7 @@ export function cveIdsOf(d: Disclosure): string[] {
 }
 
 /** The published CVSS for one identifier, if a citable source gives one. */
-export function cveScoreOf(d: Disclosure, id: string): string | undefined {
+export function cveScoreOf(d: Disclosure, id: string): CvssScore | undefined {
   return d.cveScores?.[id];
 }
 
@@ -1673,9 +1697,8 @@ export function cveUrlOf(d: Disclosure, id: string): string {
 export const PUBLISHED_CVES: PublishedCve[] = DISCLOSURES.filter(
   (d) => d.status === "CVE published",
 ).flatMap((d) =>
-  cveIdsOf(d).map((id) => ({
-    id,
-    url: cveUrlOf(d, id),
-    label: cveScoreOf(d, id),
-  })),
+  cveIdsOf(d).map((id) => {
+    const score = cveScoreOf(d, id);
+    return { id, url: cveUrlOf(d, id), label: score && formatCvss(score) };
+  }),
 );
