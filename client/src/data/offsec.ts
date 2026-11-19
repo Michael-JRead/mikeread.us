@@ -661,6 +661,32 @@ export const DISCLOSURES: Disclosure[] = [
     ],
   },
   {
+    title:
+      "Apache Tomcat: cluster TLS-PSK over TLS 1.3 never checks that the peer holds the key, so a node without it receives replicated session data",
+    short: "Cluster TLS 1.3 PSK never verifies the peer → a keyless node receives replicated sessions",
+    vendor: "Apache Tomcat",
+    cwe: "CWE-322",
+    type: "Key exchange without entity authentication (cluster session-data disclosure)",
+    status: "CVE published",
+    // Apache rates it "critical" in words; the record has no CVSS yet, so the
+    // ledger shows the word rating until CISA adds a score to the record.
+    severity: "Critical",
+    ref: "CVE-2026-133325",
+    tagline:
+      "Tomcat's new TLS-PSK cluster transport left the client's certificate verification off and, under TLS 1.3, only offered the pre-shared key without checking that it was used. A sending node therefore completed a handshake with a peer that ignored the key and presented its own certificate, then sent it cluster traffic, including replicated session IDs and attribute values. Affects 11.0.29, 10.1.62 and 9.0.124 with cluster TLS enabled; fixed in 11.0.30 and 10.1.63, with 9.0.x to follow, and setting pskProtocol to TLSv1.2 closes it.",
+    links: [
+      { label: "CVE-2026-133325", url: "https://www.cve.org/CVERecord?id=CVE-2026-133325" },
+      { label: "NVD", url: "https://nvd.nist.gov/vuln/detail/CVE-2026-133325" },
+      { label: "Apache advisory", url: "https://lists.apache.org/thread.html/b53dmjwf81667pw1r27zxx8s6hw71bdn" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Apache Tomcat security team",
+      "TribesSslContext built the cluster client context with certificateVerification left at NONE, and under TLS 1.3 the client only offered the pre-shared key; TlsChannel ran the handshake and ParallelNioSender wrote straight after it, so nothing confirmed the peer had used the key",
+      "Demonstrated live on 11.0.29, and on 9.0.124 with a TLS provider that supports pre-shared keys: with one member stopped, a container holding no key ran a TLS server with a throw-away certificate on its address, and the sending node delivered DeltaManager replication, session IDs and attribute values included, without logging a warning. Wrong-key, TLS 1.2 and receiving-side controls were all refused",
+      "Affects 11.0.29, 10.1.62 and 9.0.124 with cluster TLS enabled; fixed in 11.0.30 and 10.1.63, with 9.0.x to follow. Setting pskProtocol to TLSv1.2 is the workaround",
+    ],
+  },
+  {
     title: "Apache Tomcat: OCSP certStatus=UNKNOWN accepted for client-cert auth even with ocspSoftFail=false",
     short: "OCSP certStatus=UNKNOWN accepted for client-cert auth despite soft-fail being disabled",
     vendor: "Apache Tomcat",

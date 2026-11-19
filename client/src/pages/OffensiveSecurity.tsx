@@ -132,12 +132,37 @@ function CvssBadge({ score }: { score: CvssScore }) {
   );
 }
 
+/** A vendor's word rating, mapped onto the CVSS band of the same name. */
+function bandOfWord(word: string): CvssRating | undefined {
+  const w = word.toLowerCase();
+  if (w.startsWith("critical")) return "Critical";
+  if (w.startsWith("high") || w.startsWith("important")) return "High";
+  if (w.startsWith("moderate") || w.startsWith("medium")) return "Medium";
+  if (w.startsWith("low")) return "Low";
+  return undefined;
+}
+
+/** Until a record carries a CVSS score: the vendor's own word rating, in the same badge. */
+function VendorRatingBadge({ word }: { word: string }) {
+  const band = bandOfWord(word);
+  if (!band) return null;
+  return (
+    <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono text-[10px]">
+      <span className={`rounded border px-1.5 py-px uppercase tracking-wider ${RATING_TONE[band]}`}>{word}</span>
+      <span title="The CVE record has no CVSS score yet; this is the vendor's own rating." className="cursor-help text-slate-500">
+        vendor rating
+      </span>
+    </span>
+  );
+}
+
 /**
- * A CVE identifier, linked to its record, with the score that record publishes.
- * `stacked` puts the score under the id from md up (the ledger's id column).
+ * A CVE identifier, linked to its record, with the score that record publishes,
+ * or the vendor's word rating while the record has none. `stacked` puts the score under the id from md up (the ledger's id column).
  */
 function CveIdWithScore({ d, id, stacked = false }: { d: Disclosure; id: string; stacked?: boolean }) {
   const score = cveScoreOf(d, id);
+  const vendorWord = d.severity?.split("·")[0].trim();
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${stacked ? "md:flex-col md:items-start" : ""}`}>
       <a
@@ -148,7 +173,7 @@ function CveIdWithScore({ d, id, stacked = false }: { d: Disclosure; id: string;
       >
         {id}
       </a>
-      {score && <CvssBadge score={score} />}
+      {score ? <CvssBadge score={score} /> : vendorWord && <VendorRatingBadge word={vendorWord} />}
     </div>
   );
 }
@@ -398,12 +423,11 @@ function DisclosureHighlights() {
 /**
  * One finding inside an expanded vendor panel. Mirrors the main record list:
  * each CVE identifier links to its record beside the score that record
- * publishes. Findings without a scored CVE keep the vendor's own rating.
+ * publishes. Findings without a CVE keep the vendor's own rating.
  */
 function FindingRow({ d, vendor }: { d: Disclosure; vendor: VendorInfo }) {
   const ids = cveIdsOf(d);
-  const scored = ids.some((id) => cveScoreOf(d, id));
-  const rating = !scored && d.severity ? d.severity.split("·")[0].trim() : undefined;
+  const rating = ids.length === 0 && d.severity ? d.severity.split("·")[0].trim() : undefined;
   return (
     <li className="grid gap-x-5 gap-y-2 border-b border-slate-800/70 px-4 py-3.5 transition-colors last:border-0 hover:bg-slate-900/40 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
       <div className="min-w-0">
