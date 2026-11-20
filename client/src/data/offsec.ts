@@ -127,7 +127,7 @@ export const VENDORS: VendorInfo[] = [
   },
   {
     key: "spring",
-    match: "Spring",
+    match: "Spring Boot",
     name: "Spring Boot",
     org: "Spring team / Broadcom",
     blurb: "The most widely deployed Java application framework in the world.",
@@ -708,6 +708,33 @@ export const DISCLOSURES: Disclosure[] = [
       "Discovered and responsibly disclosed privately to the Apache Tomcat security team",
       "With ocspSoftFail=false, an UNKNOWN OCSP verdict should fail the handshake; instead the signed UNKNOWN response was treated as acceptable, so CLIENT_CERT authentication did not fail as expected and revocation checking was effectively skipped",
       "Confirmed as a residual of the earlier CVE-2026-34500 soft-fail fix; affects Tomcat 9.0.92–9.0.121, 10.1.22–10.1.59 and 11.0.0-M14–11.0.25, fixed in 9.0.122, 10.1.60 and 11.0.26",
+    ],
+  },
+  {
+    title: "Spring Boot: Redis auto-configuration sets up Jedis SSL connections without TLS hostname verification",
+    short: "Jedis SSL auto-configuration skips TLS hostname verification → Redis traffic open to MITM",
+    vendor: "Spring Boot",
+    cwe: "CWE-297 / CWE-300",
+    type: "Improper certificate validation with host mismatch (man-in-the-middle)",
+    status: "CVE published",
+    // Spring's advisory scores CVSS 3.1 5.0 (AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L).
+    // The CVE record is not in the CVE List yet, so NVD is not linked until it is.
+    severity: "Medium · CVSS 5.0",
+    ref: "CVE-2026-59373",
+    cveScores: {
+      "CVE-2026-59373": { score: 5.0, version: "3.1" },
+    },
+    tagline:
+      "Spring Boot's Redis auto-configuration, when it set up an SSL connection with the Jedis client, did not turn on TLS hostname verification, so a certificate the trust store accepted for any host was accepted for the Redis server. An attacker on the network path could intercept or alter cache traffic. Fixed in 4.1.3 and 4.0.10, and in enterprise releases for the older lines.",
+    links: [
+      { label: "CVE-2026-59373", url: "https://www.cve.org/CVERecord?id=CVE-2026-59373" },
+      { label: "Spring advisory", url: "https://spring.io/security/cve-2026-59373" },
+    ],
+    summary: [
+      "Discovered and responsibly disclosed privately to the Spring team",
+      "Spring Boot's Redis auto-configuration established SSL connections through Jedis without enabling hostname verification, so the connection accepted a trusted certificate issued for a different host",
+      "Spring scores it CVSS 3.1 5.0 Medium (AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L): an attacker positioned on an adjacent network path can read or tamper with Redis traffic",
+      "Affects Spring Boot 4.1.0–4.1.2, 4.0.0–4.0.9, 3.5.0–3.5.17, 3.0.0–3.4.18 and 2.7.35 and earlier; fixed in 4.1.3 and 4.0.10, with 4.1.2.1, 4.0.9.1, 3.5.18, 3.4.19 and 2.7.36 for enterprise support",
     ],
   },
   {
